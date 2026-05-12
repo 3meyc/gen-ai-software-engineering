@@ -1,0 +1,59 @@
+### Task 1: Core API
+
+# Create a completed deposit
+POST http://localhost:3000/transactions
+Content-Type: application/json
+
+{
+  "fromAccount": "ACC-EXTERNAL",
+  "toAccount": "ACC-ALICE",
+  "amount": 1000.00,
+  "currency": "USD",
+  "type": "deposit",
+  "status": "completed"
+}
+
+###
+
+# Create a pending transfer
+POST http://localhost:3000/transactions
+Content-Type: application/json
+
+{
+  "fromAccount": "ACC-ALICE",
+  "toAccount": "ACC-BOB",
+  "amount": 250.50,
+  "currency": "USD",
+  "type": "transfer",
+  "status": "pending"
+}
+
+###
+
+# Get all transactions
+GET http://localhost:3000/transactions
+
+###
+
+# Get account balance (only completed counts)
+GET http://localhost:3000/accounts/ACC-ALICE/balance
+
+### Task 3: Filtering
+
+# Filter by account and type
+GET http://localhost:3000/transactions?accountId=ACC-ALICE&type=transfer
+
+### Task 4: Advanced Features
+
+# Account Summary (matrix + latest date)
+GET http://localhost:3000/accounts/ACC-ALICE/summary
+
+###
+
+# Interest calculation (5% for 30 days)
+GET http://localhost:3000/accounts/ACC-ALICE/interest?rate=0.05&days=30
+
+###
+
+# Export to CSV
+GET http://localhost:3000/transactions/export?format=csv

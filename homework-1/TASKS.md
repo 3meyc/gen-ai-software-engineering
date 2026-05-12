@@ -91,36 +91,76 @@ Implement transaction filtering on the `GET /transactions` endpoint:
 
 ---
 
-### Task 4: Additional Features *(Choose at least 1)* 🌟
+### Task 4: Additional Features 🌟
 
-Implement **at least one** of the following additional features:
-
-#### Option A: Transaction Summary Endpoint 📈
+#### Step A: Transaction Summary Endpoint 📈
 ```
 GET /accounts/:accountId/summary
 ```
-Returns:
-- Total deposits
-- Total withdrawals
-- Number of transactions
-- Most recent transaction date
 
-#### Option B: Simple Interest Calculation 💰
+Returns an aggregated **matrix**: for each transaction `type` (`deposit`, `withdrawal`, `transfer`), count how many rows exist for each `status` (`pending`, `completed`, `failed`). Cell values are **counts** (non-negative integers).
+
+**Scope:** Include a transaction when `:accountId` equals **either** `fromAccount` **or** `toAccount` (same “match any of two” rule as Task 3’s `accountId` filter).
+
+**Response shape (example):**
+```json
+{
+  "summary": {
+    "deposit": {
+      "pending": 10,
+      "completed": 120,
+      "failed": 2
+    },
+    "withdrawal": {
+      "pending": 5,
+      "completed": 80,
+      "failed": 1
+    },
+    "transfer": {
+      "pending": 3,
+      "completed": 200,
+      "failed": 4
+    }
+  }
+}
+```
+
+If the response includes any datetime, use the **same ISO 8601 form** as the transaction `timestamp` field (e.g. `2026-05-12T14:35:22Z`).
+
+#### Step B: Simple Interest Calculation 💰
 ```
 GET /accounts/:accountId/interest?rate=0.05&days=30
 ```
-Calculate simple interest on current balance.
 
-#### Option C: Transaction Export 📤
+- **Formula:** `interest = balance * rate * (days / 365)` where `rate` is an **annual** rate (e.g. `0.05` means 5% per year).
+- **Balance:** Use the **same balance definition** as `GET /accounts/:accountId/balance`.
+
+#### Step C: Transaction Export 📤
 ```
 GET /transactions/export?format=csv
 ```
-Export transactions as CSV format.
 
-#### Option D: Rate Limiting 🚦
-Implement basic rate limiting:
-- Maximum 100 requests per minute per IP
-- Return `429 Too Many Requests` when exceeded
+- **Filters:** The same query parameters as `GET /transactions` (e.g. `accountId`, `type`, `from`, `to`) **can** be applied to the export; when present, the CSV contains **only** the rows that `GET /transactions` would return with those filters (**AND** semantics, same as Task 3).
+- **HTTP:** Respond with CSV as **UTF-8** (`Content-Type` appropriate for CSV with UTF-8) and set a download **filename** via `Content-Disposition` (e.g. `attachment; filename="transactions.csv"`).
+- **Columns:** CSV column headers are the transaction **JSON field names**; each row is one transaction object. Example (one row’s fields become columns):
+```json
+{
+  "id": "txn_9f3c2b7a1d",
+  "fromAccount": "ACC-1029384756",
+  "toAccount": "ACC-5647382910",
+  "amount": 250.75,
+  "currency": "USD",
+  "type": "transfer",
+  "timestamp": "2026-05-12T14:35:22Z",
+  "status": "pending"
+}
+```
+
+#### Step D: Rate Limiting 🚦
+
+- **Limit:** Maximum **100** requests per **client IP** in a **sliding 60-second** window.
+- **Scope:** Count only **API routes** (your banking/transaction endpoints). Do **not** count `OPTIONS` requests toward the limit.
+- **When exceeded:** Return **`429 Too Many Requests`**. The response **must** include appropriate headers for rate limiting — at minimum **`Retry-After`** (value in **seconds** until the client may retry).
 
 ---
 

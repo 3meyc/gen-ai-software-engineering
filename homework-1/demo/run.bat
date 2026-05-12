@@ -1,0 +1,3 @@
+@echo off
+echo Starting Banking Transactions API...
+npm start

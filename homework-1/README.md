@@ -8,36 +8,76 @@
 
 ## 📋 Project Overview
 
-This folder contains a small **REST API** for banking-style **transactions**, implemented in **TypeScript** with **Hono**, **in-memory** storage, and **Vitest** for tests.
+This project is a REST API for banking transactions, designed to demonstrate AI-assisted development. It follows a clean, functional architecture using **TypeScript** and **Hono**.
 
-**Implemented behavior**
+### 🛠️ Technology Stack
+- **Runtime**: Node.js
+- **Framework**: [Hono](https://hono.dev/) (Lightweight, fast, and TypeScript-native)
+- **Storage**: In-memory (Map/Array) — optimized for speed and disposable testing
+- **Testing**: [Vitest](https://vitest.dev/)
+- **Tooling**: `tsx` for execution and watch mode
 
-1. **Transactions** — `POST /transactions` creates a row (server assigns `id` and ISO `timestamp`; client sends `status`). `GET /transactions` lists rows, optionally filtered by query params (**Task 3**): `accountId` (matches **either** `fromAccount` or `toAccount`), `type` (`deposit` \| `withdrawal` \| `transfer`), and `from` / `to` as **inclusive UTC calendar days** (`YYYY-MM-DD`) on `timestamp`; multiple params combine with **AND**. Bad `type` or date values → **400** with the same validation shape as creates. `GET /transactions/:id` returns one or **404**.
-2. **Balances** — `GET /accounts/:accountId/balance` returns **per-currency** balances from **completed** transactions only, using deposit / withdrawal / transfer rules described in `AI_CONTEXT.md`.
-3. **Validation (Task 2)** — Invalid create bodies return **400** with `{ "error": "Validation failed", "details": [...] }`: positive **amount** with at most **two** decimal places; **`fromAccount` and `toAccount`** both required and matching **`ACC-` + alphanumeric**; **currency** normalized to uppercase and checked against **ISO 4217** (via the `currency-codes` dataset).
+### 🏗️ Architecture Decisions
+- **Functional Approach**: Logic is separated into pure functions (e.g., `balance.ts`, `summary.ts`) for high testability.
+- **In-Memory Store**: A simple singleton-like store holds transaction state, matching the "no database" requirement.
+- **Hono Routes**: Organized by resource under `src/routes/` for clarity and scalability.
+- **ISO 8601**: Strict adherence to ISO 8601 for all timestamps (server-generated).
+- **Validation-First**: Requests are validated using custom logic and the `currency-codes` library to ensure data integrity before processing.
 
-## How to run
+### 📂 Project Structure
+```
+homework-1/
+├── src/
+│   ├── routes/              # API Route definitions (accounts, transactions)
+│   ├── app.ts               # App factory and middleware
+│   ├── server.ts            # Entry point
+│   ├── store.ts             # In-memory data storage
+│   ├── transaction-logic.ts # Validation and filtering logic
+│   └── (logic files)        # balance.ts, interest.ts, summary.ts, etc.
+├── test/                    # Comprehensive Vitest suite
+├── demo/                    # Sample requests and scripts
+├── docs/screenshots/        # Evidence of AI interaction and API testing
+└── README.md, HOWTORUN.md   # Project documentation
+```
 
-1. Install [Node.js](https://nodejs.org/) (LTS recommended).
-2. From the repository root, go into this project: `cd homework-1`.
-3. Install dependencies: `npm install`.
-4. Start the API:
-   - **Development** (reload on file changes): `npm run dev`.
-   - **One-off run**: `npm start`.
-5. The server listens on port **3000** by default. Override with `PORT` (examples: Unix `PORT=4000 npm start`; PowerShell `$env:PORT=4000; npm start`; Command Prompt `set PORT=4000&& npm start`).
-6. Run the test suite once: `npm test`. Run tests in watch mode: `npm run test:watch`.
+### ✅ Implemented Features
 
-## Happy flow (user actions)
+1. **Task 1: Core API**
+   - `POST /transactions`: Creates rows with server-generated `id` and `timestamp`.
+   - `GET /transactions`: Lists all transactions or specific `id`.
+   - `GET /accounts/:accountId/balance`: Per-currency balance aggregation for **completed** transactions.
 
-Assume the API is running at `http://localhost:3000` and you use a client such as [curl](https://curl.se/) or an HTTP file in your editor.
+2. **Task 2: Validation**
+   - Amount: Positive, max 2 decimal places.
+   - Accounts: Must match `ACC-` + alphanumeric.
+   - Currencies: Full ISO 4217 validation via library.
+   - Error Handling: Returns 400 with structured details.
 
-1. **Fund an account** — Create a completed deposit so balances can reflect it later: `POST /transactions` with `type: "deposit"`, valid **`fromAccount` and `toAccount`** (both `ACC-…`), positive `amount`, a real **ISO 4217** `currency`, and `status: "completed"`. Only `toAccount` affects the deposit balance; expect **201** with server-generated `id` and `timestamp`.
-2. **Check the balance** — `GET /accounts/{accountId}/balance` for the same account id you credited. Expect **200** and a JSON object with `accountId` and `balances` (per-currency numbers; only **completed** transactions count).
-3. **Move money between accounts** — `POST /transactions` with `type: "transfer"`, valid `ACC-…` accounts for `fromAccount` and `toAccount`, `amount`, ISO `currency`, and `status: "completed"`. Expect **201**.
-4. **Re-check balances** — Call `GET /accounts/.../balance` for the sender and receiver; amounts should match your deposits and transfers.
-5. **Review history** — `GET /transactions` returns **200** with an array (insertion order). Narrow with `?accountId=ACC-…`, `?type=transfer`, and/or `?from=2024-01-01&to=2024-01-31` (UTC day bounds, inclusive); combine filters as needed.
-6. **Inspect one transaction** — Copy an `id` from the list or from a create response, then `GET /transactions/{id}`. Expect **200** and the full transaction object, or **404** if the id is wrong.
+3. **Task 3: Transaction History**
+   - Filtering: `accountId` (matches both legs), `type`, and `from`/`to` date ranges.
+   - Dates: Inclusive UTC calendar days.
+   - Logic: Multiple filters combine with **AND** semantics.
 
+4. **Task 4: Advanced Features**
+   - **Summary**: `GET /accounts/:accountId/summary` matrix of counts/amounts + most recent date.
+   - **Interest**: `GET /accounts/:accountId/interest` calculation using annual formula.
+   - **Export**: `GET /transactions/export?format=csv` for downloadable filtered history.
+   - **Rate Limiting**: 100 req/60s sliding window with `Retry-After`.
+
+---
+
+## 🚀 How to Run
+
+Please see [HOWTORUN.md](file:///c:/Users/Admin/DEV/gen-ai-software-engineering/homework-1/HOWTORUN.md) for detailed setup and execution instructions.
+
+## 🧪 Testing
+
+Run the test suite to verify all tasks:
+```bash
+npm test
+```
+
+---
 
 <div align="center">
 

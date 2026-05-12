@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createApp } from "../src/app.js";
 import { balancesForAccount } from "../src/balance.js";
 import { createStore } from "../src/store.js";
-import type { Transaction } from "../src/types.js";
+import type { Transaction, TransactionStatus } from "../src/types.js";
 
 function json(res: Response) {
   return res.json() as Promise<Record<string, unknown>>;
@@ -513,5 +513,172 @@ describe("balancesForAccount", () => {
     ];
     expect(balancesForAccount("A", txs)).toEqual({ USD: -40 });
     expect(balancesForAccount("B", txs)).toEqual({ USD: 40 });
+  });
+});
+
+describe("Task 4", () => {
+  it("GET /accounts/:accountId/summary returns type × status counts for from/to scope", async () => {
+    const store = createStore();
+    store.add({
+      id: "s1",
+      fromAccount: "ACC-HUB",
+      toAccount: "ACC-A",
+      amount: 1,
+      currency: "USD",
+      type: "deposit",
+      timestamp: "2026-01-01T00:00:00.000Z",
+      status: "completed",
+    });
+    store.add({
+      id: "s2",
+      fromAccount: "ACC-B",
+      toAccount: "ACC-HUB",
+      amount: 2,
+      currency: "USD",
+      type: "transfer",
+      timestamp: "2026-01-02T00:00:00.000Z",
+      status: "pending",
+    });
+    store.add({
+      id: "s3",
+      fromAccount: "ACC-X",
+      toAccount: "ACC-Y",
+      amount: 3,
+      currency: "EUR",
+      type: "withdrawal",
+      timestamp: "2026-01-03T00:00:00.000Z",
+      status: "failed",
+    });
+
+    const app = createApp(store);
+    const res = await app.request("http://localhost/accounts/ACC-HUB/summary");
+    expect(res.status).toBe(200);
+    const body = (await json(res)) as {
+      summary: Record<string, Record<string, { count: number; amount: number }>>;
+      mostRecentTransactionDate: string | null;
+    };
+    expect(body.summary.deposit.completed).toEqual({ count: 1, amount: 1 });
+    expect(body.summary.deposit.pending).toEqual({ count: 0, amount: 0 });
+    expect(body.summary.transfer.pending).toEqual({ count: 1, amount: 2 });
+    expect(body.summary.withdrawal.pending).toEqual({ count: 0, amount: 0 });
+    expect(body.mostRecentTransactionDate).toBe("2026-01-02T00:00:00.000Z");
+  });
+
+  it("GET /accounts/:accountId/interest uses annual formula on /balance balances", async () => {
+    const store = createStore();
+    store.add({
+      id: "i1",
+      fromAccount: "ACC-OUT",
+      toAccount: "ACC-Z",
+      amount: 100,
+      currency: "USD",
+      type: "deposit",
+      timestamp: "2026-01-01T00:00:00.000Z",
+      status: "completed",
+    });
+    const app = createApp(store);
+    const res = await app.request(
+      "http://localhost/accounts/ACC-Z/interest?rate=0.05&days=365",
+    );
+    expect(res.status).toBe(200);
+    const body = (await json(res)) as { interest: Record<string, number> };
+    expect(body.interest.USD).toBeCloseTo(5, 5);
+  });
+
+  it("GET /accounts/:accountId/interest returns 400 when query is invalid", async () => {
+    const app = createApp(createStore());
+    const res = await app.request("http://localhost/accounts/ACC-Z/interest");
+    expect(res.status).toBe(400);
+  });
+
+  it("GET /transactions/export?format=csv returns UTF-8 CSV with headers and Content-Disposition", async () => {
+    const store = createStore();
+    store.add({
+      id: "e1",
+      fromAccount: "ACC-1",
+      toAccount: "ACC-2",
+      amount: 10.5,
+      currency: "USD",
+      type: "transfer",
+      timestamp: "2026-05-12T14:35:22.000Z",
+      status: "pending",
+    });
+    const app = createApp(store);
+    const res = await app.request("http://localhost/transactions/export?format=csv");
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Content-Type")).toMatch(/text\/csv/i);
+    expect(res.headers.get("Content-Type")).toMatch(/charset=utf-8/i);
+    expect(res.headers.get("Content-Disposition")).toContain("attachment");
+    expect(res.headers.get("Content-Disposition")).toContain("transactions.csv");
+    const text = await res.text();
+    const lines = text.split("\n");
+    expect(lines[0]).toBe("id,fromAccount,toAccount,amount,currency,type,timestamp,status");
+    expect(lines[1]).toContain("e1");
+    expect(lines[1]).toContain("ACC-1");
+    expect(lines[1]).toContain("10.5");
+  });
+
+  it("GET /transactions/export applies the same filters as GET /transactions", async () => {
+    const store = createStore();
+    store.add({
+      id: "f1",
+      fromAccount: "ACC-P",
+      toAccount: "ACC-Q",
+      amount: 1,
+      currency: "USD",
+      type: "deposit",
+      timestamp: "2024-06-01T00:00:00.000Z",
+      status: "completed",
+    });
+    store.add({
+      id: "f2",
+      fromAccount: "ACC-R",
+      toAccount: "ACC-S",
+      amount: 2,
+      currency: "USD",
+      type: "deposit",
+      timestamp: "2024-07-01T00:00:00.000Z",
+      status: "completed",
+    });
+    const app = createApp(store);
+    const res = await app.request(
+      "http://localhost/transactions/export?format=csv&accountId=ACC-P&type=deposit&from=2024-01-01&to=2024-12-31",
+    );
+    expect(res.status).toBe(200);
+    const text = await res.text();
+    expect(text).toContain("f1");
+    expect(text).not.toContain("f2");
+  });
+
+  it("GET /transactions/export returns 400 when format is not csv", async () => {
+    const app = createApp(createStore());
+    const res = await app.request("http://localhost/transactions/export?format=json");
+    expect(res.status).toBe(400);
+  });
+
+  it("returns 429 with Retry-After after 100 API requests in a sliding window", async () => {
+    const app = createApp(createStore());
+    for (let i = 0; i < 100; i++) {
+      const r = await app.request("http://localhost/accounts/ACC-X/balance");
+      expect(r.status).toBe(200);
+    }
+    const blocked = await app.request("http://localhost/accounts/ACC-X/balance");
+    expect(blocked.status).toBe(429);
+    const ra = blocked.headers.get("Retry-After");
+    expect(ra).toBeTruthy();
+    expect(Number(ra)).toBeGreaterThanOrEqual(1);
+  });
+
+  it("does not count OPTIONS toward the rate limit", async () => {
+    const app = createApp(createStore());
+    for (let i = 0; i < 99; i++) {
+      await app.request("http://localhost/transactions");
+    }
+    const opt = await app.request("http://localhost/transactions", { method: "OPTIONS" });
+    expect([404, 204]).toContain(opt.status);
+    const ok100 = await app.request("http://localhost/transactions");
+    expect(ok100.status).toBe(200);
+    const blocked = await app.request("http://localhost/transactions");
+    expect(blocked.status).toBe(429);
   });
 });

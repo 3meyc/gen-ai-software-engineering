@@ -46,8 +46,8 @@ describe("Task 1 API", () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        fromAccount: "A",
-        toAccount: "B",
+        fromAccount: "ACC-1",
+        toAccount: "ACC-2",
         amount: 1,
         currency: "USD",
         type: "transfer",
@@ -63,6 +63,7 @@ describe("Task 1 API", () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        fromAccount: "ACC-SRC",
         toAccount: "ACC-X",
         amount: 1,
         currency: "USD",
@@ -78,6 +79,7 @@ describe("Task 1 API", () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        fromAccount: "ACC-SRC",
         toAccount: "ACC-X",
         amount: 0,
         currency: "USD",
@@ -87,7 +89,8 @@ describe("Task 1 API", () => {
     });
     expect(res.status).toBe(400);
     const body = await json(res);
-    expect(body.error).toBeDefined();
+    expect(body.error).toBe("Validation failed");
+    expect(Array.isArray(body.details)).toBe(true);
   });
 
   it("deposit requires toAccount", async () => {
@@ -96,6 +99,7 @@ describe("Task 1 API", () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        fromAccount: "ACC-SRC",
         amount: 5,
         currency: "EUR",
         type: "deposit",
@@ -119,6 +123,8 @@ describe("Task 1 API", () => {
       }),
     });
     expect(res.status).toBe(400);
+    const body = await json(res);
+    expect((body.details as { field: string }[]).some((d) => d.field === "fromAccount")).toBe(true);
   });
 
   it("GET /transactions/:id returns a single row", async () => {
@@ -129,6 +135,7 @@ describe("Task 1 API", () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        fromAccount: "ACC-ORIGIN",
         toAccount: "ACC-Z",
         amount: 7.5,
         currency: "JPY",
@@ -153,8 +160,8 @@ describe("Task 1 API", () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        fromAccount: "A",
-        toAccount: "B",
+        fromAccount: "ACC-A",
+        toAccount: "ACC-B",
         amount: 1,
         currency: "USD",
         type: "transfer",
@@ -241,6 +248,114 @@ describe("Task 1 API", () => {
     const res = await app.request("http://localhost/accounts/ACC-X/balance");
     const body = await json(res);
     expect(body.balances).toEqual({});
+  });
+});
+
+describe("Task 2 validation", () => {
+  it("rejects invalid account format with details", async () => {
+    const app = createApp(createStore());
+    const res = await app.request("http://localhost/transactions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fromAccount: "WRONG-1",
+        toAccount: "ACC-2",
+        amount: 1,
+        currency: "USD",
+        type: "transfer",
+        status: "pending",
+      }),
+    });
+    expect(res.status).toBe(400);
+    const body = await json(res);
+    expect(body.error).toBe("Validation failed");
+    const details = body.details as { field: string; message: string }[];
+    expect(details.some((d) => d.field === "fromAccount")).toBe(true);
+  });
+
+  it("rejects amount with more than two decimal places", async () => {
+    const app = createApp(createStore());
+    const res = await app.request("http://localhost/transactions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fromAccount: "ACC-1",
+        toAccount: "ACC-2",
+        amount: 1.001,
+        currency: "USD",
+        type: "transfer",
+        status: "pending",
+      }),
+    });
+    expect(res.status).toBe(400);
+    const body = await json(res);
+    const details = body.details as { field: string }[];
+    expect(details.some((d) => d.field === "amount")).toBe(true);
+  });
+
+  it("rejects invalid ISO 4217 currency code", async () => {
+    const app = createApp(createStore());
+    const res = await app.request("http://localhost/transactions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fromAccount: "ACC-1",
+        toAccount: "ACC-2",
+        amount: 10,
+        currency: "QQQ",
+        type: "transfer",
+        status: "pending",
+      }),
+    });
+    expect(res.status).toBe(400);
+    const body = await json(res);
+    const details = body.details as { field: string; message: string }[];
+    expect(details.find((d) => d.field === "currency")?.message).toContain("Invalid");
+  });
+
+  it("accepts a less common valid ISO 4217 code", async () => {
+    const app = createApp(createStore());
+    const res = await app.request("http://localhost/transactions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fromAccount: "ACC-1",
+        toAccount: "ACC-2",
+        amount: 1,
+        currency: "chf",
+        type: "transfer",
+        status: "pending",
+      }),
+    });
+    expect(res.status).toBe(201);
+    const body = await json(res);
+    expect(body.currency).toBe("CHF");
+  });
+
+  it("returns multiple validation details when several fields are invalid", async () => {
+    const app = createApp(createStore());
+    const res = await app.request("http://localhost/transactions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fromAccount: "bad",
+        toAccount: "",
+        amount: -1,
+        currency: "NOT",
+        type: "wire",
+        status: "maybe",
+      }),
+    });
+    expect(res.status).toBe(400);
+    const body = await json(res);
+    expect(body.error).toBe("Validation failed");
+    const fields = new Set((body.details as { field: string }[]).map((d) => d.field));
+    expect(fields.has("type")).toBe(true);
+    expect(fields.has("status")).toBe(true);
+    expect(fields.has("amount")).toBe(true);
+    expect(fields.has("currency")).toBe(true);
+    expect(fields.has("fromAccount")).toBe(true);
+    expect(fields.has("toAccount")).toBe(true);
   });
 });
 

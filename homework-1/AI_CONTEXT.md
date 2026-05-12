@@ -108,6 +108,13 @@ Example stored / response payload after creation (same shape the list and get-by
 2. **Deposits** increase balance for `toAccount`; **withdrawals** decrease balance for `fromAccount`; **transfers** move amount from `fromAccount` to `toAccount`.
 3. Expose balance **per currency** (multi-currency): aggregate amounts separately for each ISO 4217 `currency` value seen in completed transactions for that account.
 
+## Transaction validation (Task 2)
+
+1. **Accounts** — Must match `ACC-` followed by **one or more** alphanumeric characters (suffix length is not limited to five; longer IDs are fine).
+2. **Both account fields** — Validate **`fromAccount` and `toAccount`** against that format on create (not only the field implied by `type`).
+3. **Currency** — Accept **any** valid ISO 4217 alphabetic currency code (not a hand-picked short list only). Use an authoritative code list or a maintained library; reject codes that are not valid ISO 4217.
+4. **HTTP** — Validation failures return **400** with a clear body (for example the `error` + `details[]` shape in `TASKS.md`).
+
 ## Testing
 
 Use:

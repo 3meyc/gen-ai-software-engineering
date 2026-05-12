@@ -63,9 +63,9 @@ Create a REST API with the following endpoints:
 Add validation logic for transactions:
 
 - **Amount validation**: Must be positive, maximum 2 decimal places
-- **Account validation**: Account numbers should follow format `ACC-XXXXX` (where X is alphanumeric)
-- **Currency validation**: Only accept valid ISO 4217 currency codes (USD, EUR, GBP, JPY, etc.)
-- Return meaningful error messages for invalid requests
+- **Account validation**: `ACC-` followed by one or more alphanumeric characters (suffix may be longer than five characters). Validate **both** `fromAccount` and `toAccount` on every create (not only the account used for a given `type`).
+- **Currency validation**: Accept **any** valid ISO 4217 currency code (use a real code list or library; do not hard-code only a few examples).
+- **HTTP**: Return **400** for validation failures, with meaningful error messages for invalid requests
 
 **Example validation error response:**
 ```json

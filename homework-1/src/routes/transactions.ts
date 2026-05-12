@@ -30,7 +30,7 @@ export function createTransactionRoutes(store: TransactionStore) {
 
     const parsed = parseCreateTransactionBody(body as Record<string, unknown>);
     if (!parsed.ok) {
-      return c.json({ error: parsed.error }, 400);
+      return c.json({ error: parsed.error, details: parsed.details }, 400);
     }
 
     const created = finalizeTransaction(parsed.transaction);

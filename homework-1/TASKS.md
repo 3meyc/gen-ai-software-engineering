@@ -84,10 +84,10 @@ Add validation logic for transactions:
 
 Implement transaction filtering on the `GET /transactions` endpoint:
 
-- Filter by account: `?accountId=ACC-12345`
+- Filter by account: `?accountId=ACC-12345` — compare the ID to **both** `fromAccount` and `toAccount`; include the transaction if it equals either field
 - Filter by type: `?type=transfer`
-- Filter by date range: `?from=2024-01-01&to=2024-01-31`
-- Combine multiple filters
+- Filter by date range: `?from=2024-01-01&to=2024-01-31` — match on each transaction’s `timestamp`; `from` and `to` are **whole calendar days in UTC**, bounds **inclusive** (e.g. `from=2024-01-01` includes all times on that UTC day through the end of `to`)
+- Combine multiple filters — when several are present, apply them together with **AND** semantics
 
 ---
 

@@ -1,11 +1,22 @@
 import { Hono } from "hono";
 import type { TransactionStore } from "../store.js";
-import { finalizeTransaction, parseCreateTransactionBody } from "../transaction-logic.js";
+import {
+  filterTransactionsForListQuery,
+  finalizeTransaction,
+  parseCreateTransactionBody,
+} from "../transaction-logic.js";
 
 export function createTransactionRoutes(store: TransactionStore) {
   const r = new Hono();
 
-  r.get("/", (c) => c.json(store.list(), 200));
+  r.get("/", (c) => {
+    const params = new URL(c.req.url).searchParams;
+    const result = filterTransactionsForListQuery(store.list(), params);
+    if (!result.ok) {
+      return c.json({ error: result.error, details: result.details }, 400);
+    }
+    return c.json(result.filtered, 200);
+  });
 
   r.get("/:id", (c) => {
     const id = c.req.param("id");

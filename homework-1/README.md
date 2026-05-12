@@ -12,7 +12,7 @@ This folder contains a small **REST API** for banking-style **transactions**, im
 
 **Implemented behavior**
 
-1. **Transactions** — `POST /transactions` creates a row (server assigns `id` and ISO `timestamp`; client sends `status`). `GET /transactions` lists all rows; `GET /transactions/:id` returns one or **404**.
+1. **Transactions** — `POST /transactions` creates a row (server assigns `id` and ISO `timestamp`; client sends `status`). `GET /transactions` lists rows, optionally filtered by query params (**Task 3**): `accountId` (matches **either** `fromAccount` or `toAccount`), `type` (`deposit` \| `withdrawal` \| `transfer`), and `from` / `to` as **inclusive UTC calendar days** (`YYYY-MM-DD`) on `timestamp`; multiple params combine with **AND**. Bad `type` or date values → **400** with the same validation shape as creates. `GET /transactions/:id` returns one or **404**.
 2. **Balances** — `GET /accounts/:accountId/balance` returns **per-currency** balances from **completed** transactions only, using deposit / withdrawal / transfer rules described in `AI_CONTEXT.md`.
 3. **Validation (Task 2)** — Invalid create bodies return **400** with `{ "error": "Validation failed", "details": [...] }`: positive **amount** with at most **two** decimal places; **`fromAccount` and `toAccount`** both required and matching **`ACC-` + alphanumeric**; **currency** normalized to uppercase and checked against **ISO 4217** (via the `currency-codes` dataset).
 
@@ -35,7 +35,7 @@ Assume the API is running at `http://localhost:3000` and you use a client such a
 2. **Check the balance** — `GET /accounts/{accountId}/balance` for the same account id you credited. Expect **200** and a JSON object with `accountId` and `balances` (per-currency numbers; only **completed** transactions count).
 3. **Move money between accounts** — `POST /transactions` with `type: "transfer"`, valid `ACC-…` accounts for `fromAccount` and `toAccount`, `amount`, ISO `currency`, and `status: "completed"`. Expect **201**.
 4. **Re-check balances** — Call `GET /accounts/.../balance` for the sender and receiver; amounts should match your deposits and transfers.
-5. **Review history** — `GET /transactions` returns **200** with an array of all stored transactions (newest appended after older ones in the current implementation).
+5. **Review history** — `GET /transactions` returns **200** with an array (insertion order). Narrow with `?accountId=ACC-…`, `?type=transfer`, and/or `?from=2024-01-01&to=2024-01-31` (UTC day bounds, inclusive); combine filters as needed.
 6. **Inspect one transaction** — Copy an `id` from the list or from a create response, then `GET /transactions/{id}`. Expect **200** and the full transaction object, or **404** if the id is wrong.
 
 

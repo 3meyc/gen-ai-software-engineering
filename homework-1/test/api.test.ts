@@ -359,6 +359,128 @@ describe("Task 2 validation", () => {
   });
 });
 
+describe("Task 3 GET /transactions filters", () => {
+  function seedTask3Store() {
+    const store = createStore();
+    const base = {
+      amount: 1,
+      currency: "USD",
+      status: "completed" as const,
+    };
+    store.add({
+      ...base,
+      id: "t-from",
+      fromAccount: "ACC-ALICE",
+      toAccount: "ACC-BOB",
+      type: "transfer",
+      timestamp: "2024-01-01T12:00:00.000Z",
+    });
+    store.add({
+      ...base,
+      id: "t-to",
+      fromAccount: "ACC-CAROL",
+      toAccount: "ACC-ALICE",
+      type: "deposit",
+      timestamp: "2024-01-31T23:59:59.999Z",
+    });
+    store.add({
+      ...base,
+      id: "t-outside",
+      fromAccount: "ACC-X",
+      toAccount: "ACC-Y",
+      type: "withdrawal",
+      timestamp: "2024-02-01T00:00:00.000Z",
+    });
+    store.add({
+      ...base,
+      id: "t-edge-start",
+      fromAccount: "ACC-EDGE",
+      toAccount: "ACC-Z",
+      type: "transfer",
+      timestamp: "2024-01-01T00:00:00.000Z",
+    });
+    store.add({
+      ...base,
+      id: "t-edge-end",
+      fromAccount: "ACC-EDGE",
+      toAccount: "ACC-Z",
+      type: "transfer",
+      timestamp: "2024-01-31T23:59:59.999Z",
+    });
+    return store;
+  }
+
+  it("returns full list when no query params", async () => {
+    const store = seedTask3Store();
+    const app = createApp(store);
+    const res = await app.request("http://localhost/transactions");
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { id: string }[];
+    expect(body.map((x) => x.id).sort()).toEqual(
+      ["t-edge-end", "t-edge-start", "t-from", "t-outside", "t-to"].sort(),
+    );
+  });
+
+  it("filters by accountId against both fromAccount and toAccount", async () => {
+    const store = seedTask3Store();
+    const app = createApp(store);
+    const res = await app.request("http://localhost/transactions?accountId=ACC-ALICE");
+    expect(res.status).toBe(200);
+    const ids = ((await res.json()) as { id: string }[]).map((x) => x.id).sort();
+    expect(ids).toEqual(["t-from", "t-to"].sort());
+  });
+
+  it("filters by type", async () => {
+    const store = seedTask3Store();
+    const app = createApp(store);
+    const res = await app.request("http://localhost/transactions?type=transfer");
+    expect(res.status).toBe(200);
+    const ids = ((await res.json()) as { id: string }[]).map((x) => x.id).sort();
+    expect(ids).toEqual(["t-edge-end", "t-edge-start", "t-from"].sort());
+  });
+
+  it("filters by inclusive UTC calendar day range on timestamp", async () => {
+    const store = seedTask3Store();
+    const app = createApp(store);
+    const res = await app.request(
+      "http://localhost/transactions?from=2024-01-01&to=2024-01-31",
+    );
+    expect(res.status).toBe(200);
+    const ids = ((await res.json()) as { id: string }[]).map((x) => x.id).sort();
+    expect(ids).not.toContain("t-outside");
+    expect(ids).toEqual(["t-edge-end", "t-edge-start", "t-from", "t-to"].sort());
+  });
+
+  it("combines filters with AND semantics", async () => {
+    const store = seedTask3Store();
+    const app = createApp(store);
+    const res = await app.request(
+      "http://localhost/transactions?accountId=ACC-ALICE&type=deposit&from=2024-01-01&to=2024-01-31",
+    );
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { id: string }[];
+    expect(body).toHaveLength(1);
+    expect(body[0].id).toBe("t-to");
+  });
+
+  it("returns 400 for invalid type query", async () => {
+    const app = createApp(seedTask3Store());
+    const res = await app.request("http://localhost/transactions?type=wire");
+    expect(res.status).toBe(400);
+    const body = await json(res);
+    expect(body.error).toBe("Validation failed");
+  });
+
+  it("returns 400 for invalid from date", async () => {
+    const app = createApp(seedTask3Store());
+    const res = await app.request("http://localhost/transactions?from=2024-02-30");
+    expect(res.status).toBe(400);
+    const body = await json(res);
+    const details = body.details as { field: string }[];
+    expect(details.some((d) => d.field === "from")).toBe(true);
+  });
+});
+
 describe("balancesForAccount", () => {
   it("applies withdrawal to fromAccount", () => {
     const txs: Transaction[] = [

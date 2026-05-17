@@ -1,0 +1,30 @@
+{
+  "name": "homework-1",
+  "version": "1.0.0",
+  "description": "Banking Transactions API",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [],
+  "author": "Maxim Ogorodnikov",
+  "license": "MIT",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^25.7.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.6"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.0.2",
+    "currency-codes": "^2.2.0",
+    "hono": "^4.12.18"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "customer_id": "cust_1",
+  "customer_email": "user@example.com",
+  "customer_name": "Jane Doe",
+  "subject": "Login issue",
+  "description": "Cannot log in after password reset yesterday.",
+  "category": "account_access",
+  "priority": "high",
+  "status": "new"
+}

@@ -62,10 +62,10 @@ Use project skills when relevant: `.cursor/skills/hono-backend`, `.cursor/skills
 ## API Philosophy
 
 1. REST JSON for all ticket endpoints.
-2. In-memory ticket store until a database is requested.
+2. **In-memory** ticket store (`createStore()`) until a database is requested; inject into `createApp(store)`.
 3. No auth initially.
-4. Consistent error body: `{ error: string }` or `{ error, details: [{ field, message }] }`.
-5. Status codes: `200`, `201`, `400`, `404`, `429` (if rate limiting added), `500` for unexpected errors.
+4. Error bodies aligned with **Homework 1**: `{ error: string }` or `{ error: "Validation failed", details: [{ field, message }] }`.
+5. Status codes: `200`, `201`, `204` (delete), `400`, `404`, `429` (if rate limiting added), `500` for unexpected errors.
 
 ## Endpoints (Task 1)
 
@@ -84,32 +84,33 @@ Use project skills when relevant: `.cursor/skills/hono-backend`, `.cursor/skills
 |--------|------|---------|
 | `POST` | `/tickets/:id/auto-classify` | Run classifier; return category, priority, confidence, reasoning, keywords |
 
-## Ticket model
+## Ticket model (Task 1 — locked)
 
-Allowed enum values (reject anything else on write/import unless overridden by classification):
+Allowed enum values (reject anything else on write/import unless overridden by Task 2 classification):
 
 | Field | Values / rules |
 |-------|----------------|
-| `id` | UUID — **server-generated** on create; ignore or overwrite client `id` |
-| `customer_id` | non-empty string |
-| `customer_email` | valid email format |
-| `customer_name` | non-empty string |
-| `subject` | string, 1–200 chars |
-| `description` | string, 10–2000 chars |
-| `category` | `account_access`, `technical_issue`, `billing_question`, `feature_request`, `bug_report`, `other` |
-| `priority` | `urgent`, `high`, `medium`, `low` |
-| `status` | `new`, `in_progress`, `waiting_customer`, `resolved`, `closed` |
-| `created_at`, `updated_at` | ISO datetime — **server-generated** on create; bump `updated_at` on update |
-| `resolved_at` | ISO datetime or `null` |
-| `assigned_to` | string or `null` |
-| `tags` | array of strings (default `[]`) |
+| `id` | UUID — **server-generated** on create/import; client `id` ignored |
+| `customer_id` | non-empty string — **required** on create/import |
+| `customer_email` | valid email format — **required** |
+| `customer_name` | non-empty string — **required** |
+| `subject` | string, 1–200 chars — **required** |
+| `description` | optional; default `""`; if non-empty, 10–2000 chars |
+| `category` | enum — **required** on create/import |
+| `priority` | enum — **required** on create/import |
+| `status` | enum — **required** on create/import |
+| `created_at`, `updated_at` | ISO datetime — **server-generated**; `updated_at` bumped on every successful `PUT` |
+| `resolved_at` | ISO datetime or `null` — optional |
+| `assigned_to` | string or `null` — optional |
+| `tags` | array of strings — optional; default `[]` |
+| `metadata` | object — optional; all subfields optional when `metadata` is sent |
 | `metadata.source` | `web_form`, `email`, `api`, `chat`, `phone` |
 | `metadata.browser` | string |
 | `metadata.device_type` | `desktop`, `mobile`, `tablet` |
 
-**N.B.** On `POST /tickets`, set sensible defaults: e.g. `status: "new"`, `priority: "medium"`, `category: "other"` if omitted, then validate. Document behavior in API docs.
+**N.B.** Do **not** default `category`, `priority`, or `status` on create — the client must supply them (see `TASKS spec.md` Task 1).
 
-Example create request (client may omit server fields):
+Example create request (minimum required fields):
 
 ```json
 {
@@ -117,14 +118,13 @@ Example create request (client may omit server fields):
   "customer_email": "user@example.com",
   "customer_name": "Jane Doe",
   "subject": "Cannot log in after password reset",
-  "description": "I reset my password but still get invalid credentials on the web app.",
-  "metadata": {
-    "source": "web_form",
-    "browser": "Chrome",
-    "device_type": "desktop"
-  }
+  "category": "account_access",
+  "priority": "high",
+  "status": "new"
 }
 ```
+
+Optional fields may be added: `description`, `resolved_at`, `assigned_to`, `tags`, `metadata`.
 
 ## `POST /tickets` — optional auto-classify
 
@@ -161,14 +161,33 @@ Support optional auto-classification on create, e.g. query `?auto_classify=true`
 
 ## `GET /tickets` — filtering
 
-Support query filters as applicable (implement at least):
+Response: `200` with `{ "tickets": [ ... ] }` (not a bare array).
 
-1. `status`
-2. `category`
-3. `priority`
-4. `customer_id` or `customer_email` (at least one identifier filter)
+Query filters (all optional; **AND** semantics):
 
-Combine filters with AND semantics. Empty list → `200` + `[]`.
+1. `customer_id`
+2. `customer_email`
+3. `customer_name`
+4. `category`
+5. `priority`
+6. `status`
+7. `tags` — comma-separated; ticket must contain **every** listed tag
+8. `assigned_to` — exact match
+
+No matches → `200` with `{ "tickets": [] }`.
+
+## `PUT /tickets/:id` — partial update (Task 1)
+
+1. Only keys present in the JSON body are validated and applied.
+2. `id` and `created_at` are never taken from the client.
+3. `updated_at` is set server-side on success.
+4. `metadata` merges with existing object (patch per subfield).
+5. `200` + updated ticket; `404` if not found; `400` with Homework 1-style `details` on validation failure.
+
+## `DELETE /tickets/:id` (Task 1)
+
+1. Success → `204` with empty body.
+2. Missing id → `404` `{ "error": "Ticket not found" }`.
 
 ## Auto-classification (Task 2)
 
@@ -280,10 +299,11 @@ homework-2/
     server.ts
     store.ts
     types.ts
-    routes/tickets.ts
-    import/              # csv.ts, json.ts, xml.ts
-    classify.ts
     validation.ts
+    ticket-logic.ts      # finalize, filter, partial update helpers
+    routes/tickets.ts
+    import/              # csv.ts, json.ts, xml.ts, index.ts
+    classify.ts          # Task 2
   test/
     *.test.ts
     fixtures/

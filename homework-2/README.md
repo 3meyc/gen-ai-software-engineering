@@ -1,8 +1,8 @@
 # 🏦 Homework 1: Banking Transactions API
 
-> **Student Name**: [Your Name]
-> **Date Submitted**: [Date]
-> **AI Tools Used**: [List tools, e.g., Claude Code, GitHub Copilot]
+> **Student Name**: Maxim Ogorodnikov
+> **Date Submitted**: 20.05.2026
+> **AI Tools Used**: Cursor, ChatGPT, Antigravity
 
 ---
 

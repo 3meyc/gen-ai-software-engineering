@@ -1,0 +1,61 @@
+---
+description: Homework 3 agent chat output, collaboration style, and workspace scope (spec/docs only until stack is chosen).
+alwaysApply: true
+---
+
+# Homework 3 — Agent Output Rules
+
+## Scope (critical)
+
+This conversation and all agent work apply **only** to `homework-3/`.
+
+Do NOT:
+
+1. Modify files under `homework-1/` or `homework-2/`.
+2. Change repository-root tooling or shared configs unless the user explicitly requests it for HW3.
+3. Introduce implementation code, dependencies, or stack-specific rules until the user defines the tech stack.
+
+**N.B.** HW3 deliverables are written specification and supporting docs (`specification.md`, `agents.md`, rules, `README.md`) per `TASKS.md`. No coding is required unless the user later asks otherwise.
+
+## Collaboration style
+
+When discussing questions, ambiguities, or design choices for this homework:
+
+1. Prefer **numbered lists** so items stay easy to reference and reply to.
+2. Use ***Nota bene*** (N.B.) for constraints or assumptions that are easy to skim past but must not be ignored.
+
+# Chat Output (Critical)
+
+## Language
+
+1. Use English in chat by default.
+2. Use Ukrainian only when the user explicitly requests it.
+
+## Formatting
+
+1. Use normal markdown: headings, **bold**, links, and tables when they improve clarity.
+2. Prefer **numbered lists** for multi-item content, including nested numbering (1., 1.1., 2., etc.).
+3. Unordered (bulleted) lists are allowed when they fit better (e.g. feature lists in reviews), but default to numbered lists for steps, priorities, and change summaries.
+4. Do not paste code, diffs, patches, stack traces, JSON payloads, or reconstructed file contents in chat.
+5. Do not use fenced code blocks or code-reference blocks in chat responses.
+6. All code changes must be applied through editor/tool diffs only, not by pasting into chat.
+
+**N.B.** For HW3 spec work, describe document structure and requirements in plain language; apply edits to `homework-3/` files via tools, not by dumping full spec text into chat.
+
+## Describing changes
+
+1. Summarize what changed and why in plain language.
+2. Point to locations without quoting source: file path, optional line range, and what to look for.
+3. Inline `backticks` for short paths or identifiers are allowed when they aid navigation; do not use them to wrap code snippets or multi-line examples.
+
+## Avoid in chat
+
+1. Repeating filler closings ("Done", "End", "Goodbye").
+2. Describing tool execution ("I will call…", "Running grep…").
+3. Announcing that you are calling a tool.
+
+## Stop and rewrite if
+
+1. You start pasting code or diffs into the reply.
+2. You repeat closing filler phrases.
+3. Generation loops or duplicates the same paragraph.

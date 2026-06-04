@@ -1,8 +1,8 @@
 # Homework 3: Specification-Driven Design — Household Budget Platform
 
-> **Student name:** [Your Name]  
-> **Date submitted:** [Date]  
-> **AI tools used:** [e.g. Cursor, Claude]
+> **Student name:** [Max Ogorodnikov]  
+> **Date submitted:** [04.06.2026]  
+> **AI tools used:** [Cursor (IDE, Agent mode), Antigravity, ChatGPT]
 
 ---
 

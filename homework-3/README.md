@@ -32,7 +32,7 @@ The graded artifact is [`specification.md`](specification.md). Supporting materi
 3. **Independent scaling** — sync jobs and CSV workers do not contend with read-heavy BFF paths.
 4. **MVP integration simplicity** — REST + scheduled jobs avoid operating an event bus before volume justifies it.
 
-See [`specification.md` §12](specification.md#12-context-beginning--ending) and [`docs/architecture-overview.md`](docs/architecture-overview.md).
+See [`specification.md` §12](specification.md#12-context-beginning--ending) and [`docs/architecture/architecture-overview.md`](docs/architecture/architecture-overview.md).
 
 ### Why MongoDB with one database per service (shared cluster)
 
@@ -51,7 +51,7 @@ See [`specification.md` §12](specification.md#12-context-beginning--ending) and
 | Booked-only budget + CSV export | Manual cash (`PH2-CASH`) |
 | Within-bank dedup | Cross-source dedup receipt vs bank (`PH2-XDEDUP`) |
 
-Boundary sentence: [`specification.md` §1](specification.md#1-high-level-objective). IDs: [`docs/scope-and-traceability.md`](docs/scope-and-traceability.md).
+Boundary sentence: [`specification.md` §1](specification.md#1-high-level-objective). IDs: [`docs/registry/scope-and-traceability.md`](docs/registry/scope-and-traceability.md).
 
 ### Performance and SLO targets (assumed)
 
@@ -70,18 +70,18 @@ Verification that implementations respect these is in [`specification.md` §11](
 
 | Practice | Why it matters | Primary references |
 |----------|----------------|-------------------|
-| **Confirm before ingest** | Prevents unreviewed bank data from affecting household truth | [`specification.md` §2 `MO-2`](specification.md#2-mid-level-objectives), [`docs/ingestion-sources-matrix.md`](docs/ingestion-sources-matrix.md), [`docs/household-rbac.md`](docs/household-rbac.md) |
-| **Idempotent import / dedup** | Safe re-sync and overlapping date windows | [`specification.md` §8](specification.md#8-canonical-model-and-dedup), [`docs/deduplication-reconciliation-specification.md`](docs/deduplication-reconciliation-specification.md), [`docs/canonical-banking-transaction-model.md`](docs/canonical-banking-transaction-model.md) |
+| **Confirm before ingest** | Prevents unreviewed bank data from affecting household truth | [`specification.md` §2 `MO-2`](specification.md#2-mid-level-objectives), [`docs/domain/ingestion-sources-matrix.md`](docs/domain/ingestion-sources-matrix.md), [`docs/domain/household-rbac.md`](docs/domain/household-rbac.md) |
+| **Idempotent import / dedup** | Safe re-sync and overlapping date windows | [`specification.md` §8](specification.md#8-canonical-model-and-dedup), [`docs/domain/deduplication-reconciliation-specification.md`](docs/domain/deduplication-reconciliation-specification.md), [`docs/domain/canonical-banking-transaction-model.md`](docs/domain/canonical-banking-transaction-model.md) |
 | **Booked-only budget and export** | Pending bank rows are not financial truth | [`specification.md` §5](specification.md#5-implementation-notes), [`docs/services/ledger.md`](docs/services/ledger.md), [`docs/services/budget.md`](docs/services/budget.md) |
-| **Immutable audit trail** | Regulated environments need non-repudiation | [`specification.md` §4](specification.md#4-non-functional-and-policy), [`docs/services/audit.md`](docs/services/audit.md), [`docs/compliance-ukraine.md`](docs/compliance-ukraine.md) |
-| **UA personal data minimization & erasure** | Ukraine jurisdiction; processor not bank | [`specification.md` §4](specification.md#4-non-functional-and-policy), [`docs/compliance-ukraine.md`](docs/compliance-ukraine.md), [`docs/data-lifecycle.md`](docs/data-lifecycle.md) |
+| **Immutable audit trail** | Regulated environments need non-repudiation | [`specification.md` §4](specification.md#4-non-functional-and-policy), [`docs/services/audit.md`](docs/services/audit.md), [`docs/compliance/compliance-ukraine.md`](docs/compliance/compliance-ukraine.md) |
+| **UA personal data minimization & erasure** | Ukraine jurisdiction; processor not bank | [`specification.md` §4](specification.md#4-non-functional-and-policy), [`docs/compliance/compliance-ukraine.md`](docs/compliance/compliance-ukraine.md), [`docs/compliance/data-lifecycle.md`](docs/compliance/data-lifecycle.md) |
 | **RBAC and least privilege** | Viewer cannot export; user cannot confirm import | [`specification.md` §9](specification.md#9-household-rbac), [`mocks/household-family.json`](mocks/household-family.json) |
 | **Service boundary: ledger sole writer** | Single source of truth for transactions | [`specification.md` §5](specification.md#5-implementation-notes), [`agents.md` §4](agents.md#4-service-boundaries-non-negotiable) |
 | **Secrets never in logs** | FinTech baseline | [`agents.md` §5](agents.md#5-fintech-and-security-rules), [`.cursor/rules/Stack-Domain-Rules.mdc`](.cursor/rules/Stack-Domain-Rules.mdc) |
 
 **Edge cases** (token revoke mid-import, viewer export denied, export during sync, etc.): [`specification.md` §10](specification.md#10-edge-cases-and-failure-modes).
 
-**Executable decomposition:** 38 low-level tasks in [`specification.md` §13](specification.md#13-low-level-tasks), traced to `MO-*` in [`docs/scope-and-traceability.md`](docs/scope-and-traceability.md).
+**Executable decomposition:** 38 low-level tasks in [`specification.md` §13](specification.md#13-low-level-tasks), traced to `MO-*` in [`docs/registry/scope-and-traceability.md`](docs/registry/scope-and-traceability.md).
 
 ---
 
@@ -89,27 +89,30 @@ Verification that implementations respect these is in [`specification.md` §11](
 
 ```text
 homework-3/
-  README.md                 # this file
-  TASKS.md                  # assignment brief
-  specification.md          # graded layered spec
-  agents.md                 # AI agent guidelines
-  .cursor/rules/            # Cursor agent rules
+  README.md
+  TASKS.md
+  specification.md
+  agents.md
+  .cursor/rules/
   docs/
-    scope-and-traceability.md
-    architecture-overview.md
-    canonical-banking-transaction-model.md
-    deduplication-reconciliation-specification.md
-    data-lifecycle.md
-    ingestion-sources-matrix.md
-    bank-provider-adapter.md
-    household-rbac.md
-    compliance-ukraine.md
-    services/               # per-service beginning/ending context
+    README.md               # docs index & source-of-truth table
+    registry/               # scope, traceability matrix
+    architecture/           # overview, configuration
+    domain/                 # canonical model, dedup, RBAC, bank port
+    compliance/             # UA compliance, data lifecycle
+    api/                    # routes, headers, errors
+    testing/                # strategy, fixtures guide
+    services/               # per-SVC-* context
+    phase2/                 # PH2-* roadmap
+    _archive/
   mocks/
-    household-family.json   # Mars Family RBAC fixture
+    README.md
+    household-family.json
     sample-transactions.json
     sample-budget-period.json
     sample-export-manifest.json
+    bank-payloads/          # optional provider samples
+  platform/                 # future implementation only (README)
 ```
 
 ---
@@ -129,10 +132,10 @@ Fixture: [`mocks/household-family.json`](mocks/household-family.json).
 
 ## How to read or implement with an AI agent
 
-1. Start with [`specification.md`](specification.md) (sections §1–§14).
+1. Start with [`docs/README.md`](docs/README.md) for reading order, then [`specification.md`](specification.md) (§1–§14).
 2. Follow [`agents.md`](agents.md) and Cursor rules under `.cursor/rules/`.
-3. Drill into `docs/` for canonical model, dedup, lifecycle, and per-service REST/index detail.
-4. Use `mocks/` as test fixtures; do not invent conflicting field names or roles (`superadmin`, `admin`, `user`, `viewer`; `source_system`: `mono`, `otp`, `privat24`).
+3. Use [`docs/api/errors-and-status-codes.md`](docs/api/errors-and-status-codes.md) and [`docs/testing/testing-strategy.md`](docs/testing/testing-strategy.md) before implementing tasks.
+4. Drill into `docs/domain/`, `docs/services/`, and [`mocks/README.md`](mocks/README.md) for fixtures; do not invent conflicting roles or `source_system` values.
 
 ---
 

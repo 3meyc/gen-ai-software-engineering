@@ -2,7 +2,30 @@
 
 > Ingest this specification, implement the low-level tasks, and satisfy the high- and mid-level objectives. Supporting depth lives in [`docs/`](docs/) and [`mocks/`](mocks/); this document is **self-contained enough to grade** without opening every reference file.
 
-**IDs:** `MO-1`…`MO-8` (objectives), `SVC-*` (services), `PH2-*` (Phase 2 only), `TASK-{SVC}-{nnn}` (implementation slices). Registry: [`docs/scope-and-traceability.md`](docs/scope-and-traceability.md).
+**IDs:** `MO-1`…`MO-8` (objectives), `SVC-*` (services), `PH2-*` (Phase 2 only), `TASK-{SVC}-{nnn}` (implementation slices). Registry: [`docs/registry/scope-and-traceability.md`](docs/registry/scope-and-traceability.md).
+
+### Contents (grader skim)
+
+| § | Section |
+|---|---------|
+| [1](#1-high-level-objective) | High-level objective |
+| [2](#2-mid-level-objectives) | Mid-level objectives (`MO-1`…`MO-8`) |
+| [3](#3-stakeholders) | Stakeholders |
+| [4](#4-non-functional-and-policy) | Non-functional, SLOs, audit |
+| [5](#5-implementation-notes) | Stack, DB names, booked-only |
+| [6](#6-ingestion-sources) | MVP banks + deferred `PH2-*` |
+| [7](#7-bankprovider) | BankProvider port |
+| [8](#8-canonical-model-and-dedup) | Canonical model and dedup |
+| [9](#9-household-rbac) | RBAC + Mars Family |
+| [10](#10-edge-cases-and-failure-modes) | Edge cases |
+| [11](#11-verification) | Verification per `MO-*` |
+| [12](#12-context-beginning--ending) | Context beginning / ending |
+| [13](#13-low-level-tasks) | **38** low-level tasks |
+| [14](#14-phase-2-roadmap) | Phase 2 roadmap |
+| [A](#appendix-a--traceability-audit-phase-7) | Traceability audit |
+| [B](#appendix-b--mars--locked-decisions-checklist) | Mars / locked decisions |
+
+**Locked MVP decisions (in-body):** admin/superadmin **confirm import**; **CSV-only** export; **booked-only** budget/export; cluster DBs `identity_mvp` … `audit_mvp`; demo household **`hh_mars_001`** (Mars Family).
 
 ---
 
@@ -36,7 +59,7 @@ Household members in Ukraine see a **single, trustworthy view of booked bank spe
 | **Household end-users** | Connect banks (admins), review spending, set budgets, export own data | MO-1–MO-6, §9 RBAC, mock [Mars Family](mocks/household-family.json) |
 | **Household admin** (e.g. father) | Confirm imports, household-wide budget, full CSV | MO-2, MO-5, MO-6 |
 | **Household superadmin** (e.g. mother) | Member management, erasure, platform ops audit | MO-4, MO-7, MO-8 |
-| **Internal ops / compliance** | Read-only audit trail, export job history, erasure evidence | MO-7, MO-8, [`docs/compliance-ukraine.md`](docs/compliance-ukraine.md) |
+| **Internal ops / compliance** | Read-only audit trail, export job history, erasure evidence | MO-7, MO-8, [`docs/compliance/compliance-ukraine.md`](docs/compliance/compliance-ukraine.md) |
 | **Support** (optional) | Manual re-auth guidance when bank tokens expire | §10 edge cases |
 
 ---
@@ -47,7 +70,7 @@ Household members in Ukraine see a **single, trustworthy view of booked bank spe
 
 - JWT authentication via `SVC-ID`; RBAC enforced at `SVC-BFF` and originating services.
 - Bank tokens encrypted at rest; never logged. Masked PAN only in storage and CSV where allowed.
-- Ukraine personal data: minimization, erasure orchestration, purpose limitation — see [`docs/compliance-ukraine.md`](docs/compliance-ukraine.md).
+- Ukraine personal data: minimization, erasure orchestration, purpose limitation — see [`docs/compliance/compliance-ukraine.md`](docs/compliance/compliance-ukraine.md).
 - **Booked-only** for budget actuals and export default (`status=booked`).
 
 ### Audit
@@ -121,7 +144,7 @@ Household members in Ukraine see a **single, trustworthy view of booked bank spe
 | `PH2-CASH` | Manual cash | Separate trust model |
 | `PH2-XDEDUP` | Cross-source dedup | Receipt vs bank **out of MVP** |
 
-Full matrix: [`docs/ingestion-sources-matrix.md`](docs/ingestion-sources-matrix.md).
+Full matrix: [`docs/domain/ingestion-sources-matrix.md`](docs/domain/ingestion-sources-matrix.md).
 
 ---
 
@@ -145,7 +168,7 @@ Abstract port implemented in `SVC-BANK` for Mono, OTP, Privat24:
 | Pagination | Cursor | offset/limit | `continue` token |
 | Typical failures | `401`, `429` | `403` consent revoked | `400` date range |
 
-No adapter writes to `ledger_mvp`. Detail: [`docs/bank-provider-adapter.md`](docs/bank-provider-adapter.md).
+No adapter writes to `ledger_mvp`. Detail: [`docs/domain/bank-provider-adapter.md`](docs/domain/bank-provider-adapter.md).
 
 ---
 
@@ -159,7 +182,7 @@ No adapter writes to `ledger_mvp`. Detail: [`docs/bank-provider-adapter.md`](doc
 - **Statuses:** `pending`, `booked`, `reversed`, `failed` — budget/export use **`booked`** only.
 - **Amount rule:** signed `amount` + matching `direction`; quarantine rows that disagree after normalization.
 
-Full schema: [`docs/canonical-banking-transaction-model.md`](docs/canonical-banking-transaction-model.md).  
+Full schema: [`docs/domain/canonical-banking-transaction-model.md`](docs/domain/canonical-banking-transaction-model.md).  
 Fixtures: [`mocks/sample-transactions.json`](mocks/sample-transactions.json).
 
 ### Deduplication (summary)
@@ -172,7 +195,7 @@ Fixtures: [`mocks/sample-transactions.json`](mocks/sample-transactions.json).
 
 **MVP scope:** Within-bank only; **no** `PH2-XDEDUP` receipt-vs-bank merge.
 
-Full rules: [`docs/deduplication-reconciliation-specification.md`](docs/deduplication-reconciliation-specification.md).
+Full rules: [`docs/domain/deduplication-reconciliation-specification.md`](docs/domain/deduplication-reconciliation-specification.md).
 
 ---
 
@@ -187,16 +210,17 @@ Full rules: [`docs/deduplication-reconciliation-specification.md`](docs/deduplic
 | **user** | Own linked txns/budget; CSV own scope; **cannot** confirm import |
 | **viewer** | Read-only scoped view; **no** bank connect, confirm, or export |
 
-### Mock household: Mars Family
+### Mock household: Mars Family (`hh_mars_001`)
 
-| Member | Role |
-|--------|------|
-| Elena (mother) | superadmin |
-| Oleksandr (father) | admin |
-| Maksym, Sofia (son, daughter) | user |
-| Barsik (cat), Ihor (uncle), Oksana (niece) | viewer |
+| Member | `user_id` (fixture) | Role |
+|--------|---------------------|------|
+| Elena (mother) | `usr_mars_mother` | superadmin |
+| Oleksandr (father) | `usr_mars_father` | admin — **can confirm import** |
+| Maksym, Sofia (son, daughter) | `usr_mars_son`, `usr_mars_daughter` | user |
+| Barsik (cat) | `usr_mars_cat` | viewer — demo profile; **no export** |
+| Ihor (uncle), Oksana (niece) | `usr_mars_uncle`, `usr_mars_niece` | viewer |
 
-Fixture: [`mocks/household-family.json`](mocks/household-family.json). Son/daughter are **user** (not viewer) to test per-user scope.
+Fixture: [`mocks/household-family.json`](mocks/household-family.json) (`household_id`: **`hh_mars_001`**). Son/daughter are **user** (not viewer) to test per-user scope. Active bank connections in fixture: father's Mono, mother's OTP.
 
 ### Permission matrix (abbreviated)
 
@@ -209,7 +233,7 @@ Fixture: [`mocks/household-family.json`](mocks/household-family.json). Son/daugh
 | CSV export | ✓ | ✓ | own scope | **denied** |
 | Ops audit read | ✓ | — | — | — |
 
-Full matrix: [`docs/household-rbac.md`](docs/household-rbac.md).
+Full matrix: [`docs/domain/household-rbac.md`](docs/domain/household-rbac.md).
 
 ---
 
@@ -246,7 +270,7 @@ Verification is **documented** (no code required for homework). Each `MO-*` maps
 | **MO-4** | Integration per role: admin sees all txns; son sees subset; cat export `403`. Seed: Mars Family. |
 | **MO-5** | Integration: `bp_2026_06` actuals match booked sum in [`mocks/sample-budget-period.json`](mocks/sample-budget-period.json); pending excluded. |
 | **MO-6** | Integration: CSV columns match [`mocks/sample-export-manifest.json`](mocks/sample-export-manifest.json); user redaction omits `attributed_user_id`. |
-| **MO-7** | Unit: audit payload validator rejects tokens; append-only API has no DELETE; compliance checklist in [`docs/compliance-ukraine.md`](docs/compliance-ukraine.md). |
+| **MO-7** | Unit: audit payload validator rejects tokens; append-only API has no DELETE; compliance checklist in [`docs/compliance/compliance-ukraine.md`](docs/compliance/compliance-ukraine.md). |
 | **MO-8** | Integration: ops `GET /ops/audit/events` returns `import.confirmed` chain for household. |
 
 **Cross-cutting:** Correlation id on BFF → downstream; reconciliation report after each apply (`created`, `updated`, `duplicate_skipped`).
@@ -264,14 +288,17 @@ homework-3/                    # specs + mocks only (this homework)
   docs/                        # reference architecture
   mocks/                       # Mars Family + sample data
   specification.md             # this file
+  platform/                    # optional; empty until implementation requested
 ```
+
+**Implementation location:** Application code belongs under `homework-3/platform/` (not repo root, not `homework-1/` or `homework-2/`). See [`agents.md` §3](agents.md#3-monorepo-layout-hypothetical).
 
 Hypothetical implementation repo **before** tasks:
 
 ```text
-apps/web/                      # Angular shell, empty routes
-apps/gateway-bff/              # Nest bootstrap, GET /health only
-services/                      # six empty Nest services, no Mongoose schemas
+homework-3/platform/apps/web/           # Angular shell, empty routes
+homework-3/platform/apps/gateway-bff/  # Nest bootstrap, GET /health only
+homework-3/platform/services/         # six empty Nest services, no Mongoose schemas
 ```
 
 No MongoDB data; no JWT issuer; no bank adapters.
@@ -279,17 +306,17 @@ No MongoDB data; no JWT issuer; no bank adapters.
 ### Platform ending (after all tasks)
 
 ```text
-apps/web/                      # routes: dashboard, banks, import preview, budget, export
-apps/gateway-bff/              # full /api/v1 proxy + RBAC guards
-services/identity-household/   # identity_mvp + Mars seed
-services/bank-connector/       # bank_mvp + Mono/OTP/Privat24 adapters + sync cron
-services/ledger/               # ledger_mvp.transactions (sole writer)
-services/budget/               # budget_mvp periods/categories/rollups
-services/export/               # export_mvp CSV jobs
-services/audit/                # audit_mvp append-only events
+homework-3/platform/apps/web/              # routes: dashboard, banks, import preview, budget, export
+homework-3/platform/apps/gateway-bff/    # full /api/v1 proxy + RBAC guards
+homework-3/platform/services/identity-household/   # identity_mvp + Mars seed
+homework-3/platform/services/bank-connector/         # bank_mvp + Mono/OTP/Privat24 adapters + sync cron
+homework-3/platform/services/ledger/               # ledger_mvp.transactions (sole writer)
+homework-3/platform/services/budget/               # budget_mvp periods/categories/rollups
+homework-3/platform/services/export/               # export_mvp CSV jobs
+homework-3/platform/services/audit/                # audit_mvp append-only events
 ```
 
-Shared MongoDB cluster with six databases (§5). REST map: [`docs/architecture-overview.md`](docs/architecture-overview.md).
+Shared MongoDB cluster with six databases (§5). REST map: [`docs/architecture/architecture-overview.md`](docs/architecture/architecture-overview.md).
 
 ### Per-service ending (condensed)
 
@@ -309,7 +336,9 @@ Detail: [`docs/services/`](docs/services/).
 
 ## 13. Low-level tasks
 
-Each task references one or more `MO-*`, includes a prompt-style intent, hypothetical path, and definition of done (DoD).
+**Count:** 38 tasks (`TASK-BFF-*` … `TASK-WEB-*`). **Scope guard:** No task ID, file path, or DoD references `PH2-FILE`, `PH2-OCR`, `PH2-CASH`, or `PH2-XDEDUP` implementation (Phase 2 is §6 and §14 only).
+
+Each task references one or more `MO-*`, includes a prompt-style intent, hypothetical path, and definition of done (DoD). Traceability counts: [Appendix A](#appendix-a--traceability-audit-phase-7).
 
 ### TASK-BFF-001 — JWT auth guard
 
@@ -590,7 +619,46 @@ Each task references one or more `MO-*`, includes a prompt-style intent, hypothe
 | — | PostgreSQL migration | Per-service, REST unchanged |
 | — | Event bus | Optional async decoupling post-MVP |
 
-**Scope guard:** §13 tasks MUST NOT require Phase 2 implementation. Phase 2 rows in §6 are informative only.
+**Scope guard:** §13 tasks MUST NOT require Phase 2 implementation. Phase 2 rows in §6 are informative only. Receipt-vs-bank dedup remains **`PH2-XDEDUP`** (see §8).
+
+---
+
+## Appendix A — Traceability audit (Phase 7)
+
+Audit date: integration pass on `specification.md`. Requirement: each `MO-*` has **≥ 2** tasks in §13 and **≥ 1** verification row in §11.
+
+| MO | §13 tasks (count) | §11 verification | Primary `TASK-*` prefixes |
+|----|-------------------|------------------|---------------------------|
+| MO-1 | 7 | Yes | `TASK-BANK-001`…`005`, `008`; `TASK-BFF-003` |
+| MO-2 | 6 | Yes | `TASK-BFF-004`, `TASK-BANK-006`…`007`, `008`; `TASK-LED-003`; `TASK-WEB-002` |
+| MO-3 | 10 | Yes | `TASK-LED-001`…`005`; `TASK-BANK-002`, `007`; `TASK-BFF-005`; `TASK-BUD-002`; `TASK-EXP-002` |
+| MO-4 | 13 | Yes | `TASK-BFF-001`…`006`; `TASK-ID-001`…`004`; `TASK-LED-004`; `TASK-BUD-003`; `TASK-EXP-003`; `TASK-WEB-001` |
+| MO-5 | 6 | Yes | `TASK-BUD-001`…`003`; `TASK-BFF-006`; `TASK-WEB-003` |
+| MO-6 | 5 | Yes | `TASK-EXP-001`…`004`; `TASK-BFF-006` |
+| MO-7 | 5 | Yes | `TASK-AUD-001`, `003`; `TASK-ID-005`; `TASK-BANK-004`; `TASK-EXP-004` |
+| MO-8 | 3 | Yes | `TASK-BFF-007`; `TASK-AUD-002`, `003` |
+
+**Cross-cutting in spec (no extra docs required to grade):** §4 SLO table (11 metrics); §10 edge cases (12 rows); §13 task list; §9 Mars Family + RBAC matrix.
+
+**Submission scope:** Homework deliverables live under `homework-3/` only (`specification.md`, `agents.md`, `README.md`, `.cursor/rules/`, `docs/`, `mocks/`). Do not modify `homework-1/` or `homework-2/` for this assignment.
+
+---
+
+## Appendix B — Mars / locked decisions checklist
+
+| Check | Spec location | Expected |
+|-------|---------------|----------|
+| Admin/superadmin confirm import | §1, §2 `MO-2`, §9 matrix, §10, `TASK-BFF-004`, `TASK-BANK-007` | User/viewer cannot confirm |
+| CSV export only (MVP) | §1, §2 `MO-6`, §5, §6, `TASK-EXP-001` | `format=csv` only; no PDF/XLSX tasks |
+| Booked-only budget/export | §1, §2 `MO-3`/`MO-5`, §5, §8, `TASK-BUD-002`, `TASK-LED-004` | Pending preview excluded |
+| Shared cluster DB names | §5, §12 table | `identity_mvp`, `bank_mvp`, `ledger_mvp`, `budget_mvp`, `export_mvp`, `audit_mvp` |
+| Ledger sole writer | §5, §12 `SVC-LED` | No `TASK-*` writes `ledger_mvp` outside LED |
+| Mars Family mock | §3, §9, §11 `MO-4`, `TASK-ID-003` | `hh_mars_001`; cat viewer export denied |
+| Father confirms import | §11 `MO-2`, `TASK-WEB-002` | Oleksandr (`usr_mars_father`), admin |
+| Superadmin override audited | §2 `MO-2`, §10 | `actor_role=superadmin` |
+| Cat viewer edge case | §10, §11 `MO-4`/`MO-6`, `TASK-WEB-001` | `export.denied` / BFF `403` |
+| Phase 2 not in tasks | §13 scope guard, §14 | `PH2-*` descriptive only |
+| Cross-source dedup out of MVP | §8, §14 `PH2-XDEDUP` | Bank-only dedup in `TASK-LED-002` |
 
 ---
 
@@ -598,14 +666,19 @@ Each task references one or more `MO-*`, includes a prompt-style intent, hypothe
 
 | Topic | Deep dive |
 |-------|-----------|
+| Docs index & reading order | [`docs/README.md`](docs/README.md) |
 | Submission overview & rationale | [`README.md`](README.md) |
 | Agent guidelines | [`agents.md`](agents.md) |
-| Architecture & REST | [`docs/architecture-overview.md`](docs/architecture-overview.md) |
-| Scope & traceability | [`docs/scope-and-traceability.md`](docs/scope-and-traceability.md) |
-| Compliance | [`docs/compliance-ukraine.md`](docs/compliance-ukraine.md) |
-| Data lifecycle | [`docs/data-lifecycle.md`](docs/data-lifecycle.md) |
+| Architecture & REST | [`docs/architecture/architecture-overview.md`](docs/architecture/architecture-overview.md) |
+| Scope & traceability | [`docs/registry/scope-and-traceability.md`](docs/registry/scope-and-traceability.md) |
+| Task ↔ MO matrix | [`docs/registry/traceability-matrix.md`](docs/registry/traceability-matrix.md) |
+| Public / internal API | [`docs/api/`](docs/api/) |
+| Testing strategy | [`docs/testing/`](docs/testing/) |
+| Compliance | [`docs/compliance/compliance-ukraine.md`](docs/compliance/compliance-ukraine.md) |
+| Data lifecycle | [`docs/compliance/data-lifecycle.md`](docs/compliance/data-lifecycle.md) |
 | Services | [`docs/services/`](docs/services/) |
+| Fixtures | [`mocks/README.md`](mocks/README.md) |
 
 ---
 
-*Homework 3 — specification-only deliverable. Implementation tasks above describe a hypothetical NestJS + Angular monorepo for agent-driven development.*
+*Homework 3 — specification-only deliverable (Phase 7 integration complete). Implementation tasks above describe a hypothetical NestJS + Angular monorepo for agent-driven development.*

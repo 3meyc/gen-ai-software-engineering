@@ -14,7 +14,7 @@ You are helping build (or specify) a **Ukraine-focused household budget platform
 - **Out of MVP:** File upload (`PH2-FILE`), receipt OCR (`PH2-OCR`), manual cash (`PH2-CASH`), cross-source dedup (`PH2-XDEDUP`), event bus, non-CSV export.
 - **North star:** One trustworthy view of **booked** bank spending per household with UA privacy and immutable audit.
 
-**IDs:** `MO-1`…`MO-8`, `SVC-*`, `TASK-{SVC}-{nnn}`, `PH2-*` — see [`docs/scope-and-traceability.md`](docs/scope-and-traceability.md).
+**IDs:** `MO-1`…`MO-8`, `SVC-*`, `TASK-{SVC}-{nnn}`, `PH2-*` — see [`docs/registry/scope-and-traceability.md`](docs/registry/scope-and-traceability.md).
 
 **Demo household:** Mars Family — [`mocks/household-family.json`](mocks/household-family.json) (mother=superadmin, father=admin, cat=viewer for permission edge tests).
 
@@ -37,26 +37,36 @@ You are helping build (or specify) a **Ukraine-focused household budget platform
 
 ## 3. Monorepo layout (hypothetical)
 
-When the user asks for implementation, use this structure unless they specify otherwise:
+### Implementation location (documentation only)
+
+| Location | Contents |
+|----------|----------|
+| `homework-3/` | **Specs, mocks, agents** — graded deliverables; do not put application source here |
+| `homework-3/platform/` | **Future code only** — NestJS `apps/` + `services/` when user requests implementation |
+| Repo root `homework-1/`, `homework-2/` | Out of scope — never modify for HW3 |
+
+When the user asks for implementation, scaffold under `homework-3/platform/` unless they specify otherwise:
 
 ```text
-apps/
-  web/                         # Angular (SVC-BFF client)
-  gateway-bff/                 # SVC-BFF — port 3000
-services/
-  identity-household/          # SVC-ID — identity_mvp — 3001
-  bank-connector/              # SVC-BANK — bank_mvp — 3002
-  ledger/                      # SVC-LED — ledger_mvp — 3003
-  budget/                      # SVC-BUD — budget_mvp — 3004
-  export/                      # SVC-EXP — export_mvp — 3005
-  audit/                       # SVC-AUD — audit_mvp — 3006
-homework-3/                    # specs, mocks, agents (this folder)
+homework-3/
   specification.md
+  agents.md
   docs/
   mocks/
+  platform/                    # implementation root (not required for grading)
+    apps/
+      web/                       # Angular — SVC-BFF client
+      gateway-bff/               # SVC-BFF — port 3000
+    services/
+      identity-household/        # SVC-ID — identity_mvp — 3001
+      bank-connector/            # SVC-BANK — bank_mvp — 3002
+      ledger/                    # SVC-LED — ledger_mvp — 3003
+      budget/                    # SVC-BUD — budget_mvp — 3004
+      export/                    # SVC-EXP — export_mvp — 3005
+      audit/                     # SVC-AUD — audit_mvp — 3006
 ```
 
-**N.B.** Homework grading is **spec-first**; create `apps/` and `services/` only when the user requests code. Default task is documentation and spec alignment under `homework-3/`.
+**N.B.** Homework grading is **spec-first**; create `platform/apps/` and `platform/services/` only when the user requests code. Default work stays under `homework-3/` documentation.
 
 ---
 
@@ -71,7 +81,7 @@ homework-3/                    # specs, mocks, agents (this folder)
 | **BFF is thin** | No domain logic, no Mongo in BFF; enforce RBAC and forward `X-Request-Id`, `X-Actor-User-Id` |
 | **Audit append-only** | All writers call `SVC-AUD` `POST /internal/audit/events`; no secrets in payload |
 
-Architecture map: [`docs/architecture-overview.md`](docs/architecture-overview.md). Per-service detail: [`docs/services/`](docs/services/).
+Architecture map: [`docs/architecture/architecture-overview.md`](docs/architecture/architecture-overview.md). Per-service detail: [`docs/services/`](docs/services/).
 
 ---
 
@@ -86,7 +96,7 @@ Architecture map: [`docs/architecture-overview.md`](docs/architecture-overview.m
 
 ### Always do
 
-- Store **masked PAN** only; encrypt bank tokens at rest ([`docs/data-lifecycle.md`](docs/data-lifecycle.md))  
+- Store **masked PAN** only; encrypt bank tokens at rest ([`docs/compliance/data-lifecycle-mvp.md`](docs/compliance/data-lifecycle-mvp.md))  
 - Use **decimal/string** for money — never JavaScript `number` for amounts  
 - Default currency **UAH** (ISO 4217)  
 - Enforce **signed `amount` + `direction`** agreement (positive=credit, negative=debit); quarantine mismatches in preview  
@@ -106,14 +116,14 @@ Architecture map: [`docs/architecture-overview.md`](docs/architecture-overview.m
 - **User:** per-user transaction and budget scope; export with redaction per manifest  
 - **Admin / superadmin:** household-wide visibility where documented  
 
-Matrix: [`docs/household-rbac.md`](docs/household-rbac.md).
+Matrix: [`docs/domain/household-rbac.md`](docs/domain/household-rbac.md).
 
 ---
 
 ## 6. Ukraine / compliance
 
 - Jurisdiction: **Ukraine**; lawful basis = user consent at bank connect  
-- Follow minimization, erasure, retention in [`docs/compliance-ukraine.md`](docs/compliance-ukraine.md)  
+- Follow minimization, erasure, retention in [`docs/compliance/compliance-ukraine.md`](docs/compliance/compliance-ukraine.md)  
 - Erasure: revoke tokens immediately; PII deletion orchestration within documented SLA  
 - Ops/compliance: read-only audit query (`MO-8`) — no mutation via ops API  
 
@@ -191,23 +201,30 @@ Detailed rules: [`.cursor/rules/Stack-Domain-Rules.mdc`](.cursor/rules/Stack-Dom
 
 | Topic | Document |
 |-------|----------|
+| Docs index | [`docs/README.md`](docs/README.md) |
 | Product spec | [`specification.md`](specification.md) |
-| Traceability | [`docs/scope-and-traceability.md`](docs/scope-and-traceability.md) |
-| Canonical transactions | [`docs/canonical-banking-transaction-model.md`](docs/canonical-banking-transaction-model.md) |
-| Dedup / reconcile | [`docs/deduplication-reconciliation-specification.md`](docs/deduplication-reconciliation-specification.md) |
-| Tokens / erasure | [`docs/data-lifecycle.md`](docs/data-lifecycle.md) |
-| Bank port | [`docs/bank-provider-adapter.md`](docs/bank-provider-adapter.md) |
-| Ingestion matrix | [`docs/ingestion-sources-matrix.md`](docs/ingestion-sources-matrix.md) |
-| RBAC | [`docs/household-rbac.md`](docs/household-rbac.md) |
-| UA compliance | [`docs/compliance-ukraine.md`](docs/compliance-ukraine.md) |
+| Traceability | [`docs/registry/scope-and-traceability.md`](docs/registry/scope-and-traceability.md) |
+| Task ↔ MO matrix | [`docs/registry/traceability-matrix.md`](docs/registry/traceability-matrix.md) |
+| Public / internal API | [`docs/api/public-routes.md`](docs/api/public-routes.md), [`internal-routes.md`](docs/api/internal-routes.md) |
+| HTTP errors (§10) | [`docs/api/errors-and-status-codes.md`](docs/api/errors-and-status-codes.md) |
+| Headers | [`docs/api/headers.md`](docs/api/headers.md) |
+| Testing | [`docs/testing/testing-strategy.md`](docs/testing/testing-strategy.md), [`fixtures-guide.md`](docs/testing/fixtures-guide.md) |
+| Canonical transactions | [`docs/domain/canonical-banking-transaction-model.md`](docs/domain/canonical-banking-transaction-model.md) |
+| Dedup / reconcile | [`docs/domain/deduplication-reconciliation-specification.md`](docs/domain/deduplication-reconciliation-specification.md) |
+| Tokens / erasure (MVP) | [`docs/compliance/data-lifecycle-mvp.md`](docs/compliance/data-lifecycle-mvp.md) |
+| Bank port | [`docs/domain/bank-provider-adapter.md`](docs/domain/bank-provider-adapter.md) |
+| Ingestion matrix | [`docs/domain/ingestion-sources-matrix.md`](docs/domain/ingestion-sources-matrix.md) |
+| RBAC | [`docs/domain/household-rbac.md`](docs/domain/household-rbac.md) |
+| UA compliance | [`docs/compliance/compliance-ukraine.md`](docs/compliance/compliance-ukraine.md) |
 
 ---
 
 ## 11. Workflow for agents
 
-1. Read the relevant **`MO-*`** and **`TASK-*`** in `specification.md` before coding.  
+0. Read [`docs/README.md`](docs/README.md) and [`docs/api/errors-and-status-codes.md`](docs/api/errors-and-status-codes.md) before coding.  
+1. Read the relevant **`MO-*`** and **`TASK-*`** in `specification.md`.  
 2. Check **service doc** under `docs/services/` for endpoints, indexes, and verification hooks.  
-3. Implement the smallest slice that satisfies **DoD**; add tests listed in §8.  
+3. Implement under `homework-3/platform/` per §3; smallest slice that satisfies **DoD**; tests per [`docs/testing/testing-strategy.md`](docs/testing/testing-strategy.md).  
 4. Never bypass **confirm → ledger** or **booked-only** shortcuts for convenience.  
 5. On ambiguity, prefer spec + `docs/` over inventing new fields or roles.  
 6. Phase 2 (`PH2-*`): mention in design comments only unless user opts in.

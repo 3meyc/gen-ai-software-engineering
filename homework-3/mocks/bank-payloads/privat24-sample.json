@@ -1,0 +1,8 @@
+{
+  "ref": "p24_txn_sample_001",
+  "paymentRef": "p24_pay_sample_001",
+  "date": "2024-06-01T12:00:00Z",
+  "amount": "-75.50",
+  "currency": "UAH",
+  "description": "Adapter unit test fixture — signed amount"
+}

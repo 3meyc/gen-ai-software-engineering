@@ -117,10 +117,10 @@ Does not call ledger or bank directly.
 
 ## Related documents
 
-- [`../household-rbac.md`](../household-rbac.md)
+- [`../domain/household-rbac.md`](../domain/household-rbac.md)
 - [`../../mocks/household-family.json`](../../mocks/household-family.json)
-- [`../compliance-ukraine.md`](../compliance-ukraine.md)
-- [`../data-lifecycle.md`](../data-lifecycle.md)
+- [`../compliance/compliance-ukraine.md`](../compliance/compliance-ukraine.md)
+- [`../compliance/data-lifecycle-mvp.md`](../compliance/data-lifecycle-mvp.md)
 
 ---
 

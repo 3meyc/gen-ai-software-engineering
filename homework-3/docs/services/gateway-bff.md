@@ -89,7 +89,7 @@ Base: `/api/v1`. Guards: `@Roles(...)` from JWT claims (`household_id`, `user_id
 | GET | `/ops/audit/events` | superadmin, ops | `SVC-AUD` |
 
 \*User: preview rows for own-linked accounts only.  
-†User: own-scope categories per [`household-rbac.md`](../household-rbac.md).
+†User: own-scope categories per [`household-rbac.md`](../domain/household-rbac.md).
 
 **Denied at BFF (never proxied):** viewer → export, user → confirm import, any → connect bank without admin role.
 
@@ -125,7 +125,7 @@ Base: `/api/v1`. Guards: `@Roles(...)` from JWT claims (`household_id`, `user_id
 
 ## Related documents
 
-- [`../architecture-overview.md`](../architecture-overview.md)
+- [`../architecture/architecture-overview.md`](../architecture/architecture-overview.md)
 - [`../household-rbac.md`](../household-rbac.md)
 
 ---

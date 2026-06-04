@@ -47,7 +47,7 @@ services/audit/
 | `audit_events` | `{ event_type: 1, timestamp: -1 }` |
 | `audit_events` | `{ actor_user_id: 1, timestamp: -1 }` |
 
-**Retention:** 7 years per [`compliance-ukraine.md`](../compliance-ukraine.md); archive tier Phase 2.
+**Retention:** 7 years per [`compliance-ukraine.md`](../compliance/compliance-ukraine.md); archive tier Phase 2.
 
 ---
 
@@ -138,7 +138,7 @@ Audit event types for `PH2-OCR.confirm`, `PH2-FILE.import` — append same handl
 ## Related documents
 
 - [`../compliance-ukraine.md`](../compliance-ukraine.md)
-- [`../deduplication-reconciliation-specification.md`](../deduplication-reconciliation-specification.md) — reconcile audit fields
+- [`../domain/deduplication-reconciliation-specification.md`](../domain/deduplication-reconciliation-specification.md) — reconcile audit fields
 
 ---
 

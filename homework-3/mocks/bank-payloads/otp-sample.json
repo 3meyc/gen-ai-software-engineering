@@ -1,0 +1,8 @@
+{
+  "transactionId": "otp_txn_sample_001",
+  "bookingDate": "2024-06-01",
+  "amount": 250.0,
+  "debitCredit": "DEBIT",
+  "currency": "UAH",
+  "description": "Adapter unit test fixture — normalize to signed canonical amount"
+}

@@ -32,7 +32,7 @@ Database names: `identity_mvp`, `bank_mvp`, `ledger_mvp`, `budget_mvp`, `export_
 1. **`strict` on**; avoid `any` — use `unknown` + narrow or explicit interfaces.
 2. Prefer **named exports**; avoid default export except Angular route/config entrypoints.
 3. Files: `kebab-case.ts`; classes: `PascalCase`; constants: `SCREAMING_SNAKE` for enums used across services.
-4. Service IDs in comments/logs: `SVC-BFF`, `SVC-LED`, etc., matching `docs/scope-and-traceability.md`.
+4. Service IDs in comments/logs: `SVC-BFF`, `SVC-LED`, etc., matching `docs/registry/scope-and-traceability.md`.
 5. Canonical enums: `source_system` ∈ `mono | otp | privat24` (MVP); `source_kind` = `bank_api` on ledger writes.
 6. Roles: `superadmin | admin | user | viewer` — exact strings for guards and JWT claims.
 
@@ -101,7 +101,8 @@ Confirm import **before** ledger write. Budget and export **booked only**.
 
 ## Ukraine / compliance pointers
 
-- Data minimization and erasure: `docs/compliance-ukraine.md`, `docs/data-lifecycle.md`
+- HTTP errors / edge cases: `docs/api/errors-and-status-codes.md`
+- Data minimization and erasure: `docs/compliance/compliance-ukraine.md`, `docs/compliance/data-lifecycle-mvp.md`
 - CSV PII columns: `mocks/sample-export-manifest.json`
 - Audit retention assumption: 7 years, immutable
 

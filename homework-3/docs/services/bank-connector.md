@@ -9,7 +9,7 @@
 | Aggregate | Collection | Description |
 |-----------|------------|-------------|
 | Bank connection | `connections` | Household link to provider |
-| OAuth token | `tokens` | Encrypted secrets; see [`data-lifecycle.md`](../data-lifecycle.md) |
+| OAuth token | `tokens` | Encrypted secrets; see [`data-lifecycle-mvp.md`](../compliance/data-lifecycle-mvp.md) |
 | Sync checkpoint | `sync_checkpoints` | Per account incremental watermark |
 | Import preview | `import_previews` | Pending txns + summary before confirm |
 | Raw payload archive | `raw_payloads` | Optional compressed provider JSON (TTL) |
@@ -130,16 +130,16 @@ services/bank-connector/
 | `PH2-OCR` | Receipt upload + always-confirm preview |
 | `PH2-CASH` | Manual entry preview (TBD collection) |
 
-MVP: **bank API only** per [`bank-provider-adapter.md`](../bank-provider-adapter.md).
+MVP: **bank API only** per [`bank-provider-adapter.md`](../domain/bank-provider-adapter.md).
 
 ---
 
 ## Related documents
 
 - [`../bank-provider-adapter.md`](../bank-provider-adapter.md)
-- [`../ingestion-sources-matrix.md`](../ingestion-sources-matrix.md)
-- [`../canonical-banking-transaction-model.md`](../canonical-banking-transaction-model.md)
-- [`../data-lifecycle.md`](../data-lifecycle.md)
+- [`../domain/ingestion-sources-matrix.md`](../domain/ingestion-sources-matrix.md)
+- [`../domain/canonical-banking-transaction-model.md`](../domain/canonical-banking-transaction-model.md)
+- [`../compliance/data-lifecycle-mvp.md`](../compliance/data-lifecycle-mvp.md)
 
 ---
 

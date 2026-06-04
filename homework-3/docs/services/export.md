@@ -126,7 +126,7 @@ Redaction per role in manifest: admin full household; user omits PII columns and
 ## Related documents
 
 - [`../../mocks/sample-export-manifest.json`](../../mocks/sample-export-manifest.json)
-- [`../household-rbac.md`](../household-rbac.md)
+- [`../domain/household-rbac.md`](../domain/household-rbac.md)
 - [`ledger.md`](ledger.md)
 
 ---

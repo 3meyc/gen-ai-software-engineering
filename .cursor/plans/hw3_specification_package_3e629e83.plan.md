@@ -28,7 +28,7 @@ todos:
     status: completed
   - id: phase-7-final-audit
     content: "Phase 7: Final specification.md integration pass + TASKS/Mars checklist"
-    status: pending
+    status: completed
 isProject: false
 ---
 

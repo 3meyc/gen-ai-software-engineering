@@ -8,7 +8,7 @@
 
 | Aggregate | Collection | Description |
 |-----------|------------|-------------|
-| Transaction | `transactions` | Canonical model per [`canonical-banking-transaction-model.md`](../canonical-banking-transaction-model.md) |
+| Transaction | `transactions` | Canonical model per [`canonical-banking-transaction-model.md`](../domain/canonical-banking-transaction-model.md) |
 | Import batch | `import_batches` | Applied preview metadata, counts, actor |
 | Dedup fingerprint | `dedup_fingerprints` | Fallback keys when `source_transaction_id` missing |
 
@@ -127,7 +127,7 @@ Query params: `status=booked` (default), `from`, `to`, `user_id` (admin optional
 | `PH2-XDEDUP` | Cross-source merge engine extension |
 | `PH2-OCR`, `PH2-CASH`, `PH2-FILE` | New `source_kind` writes through same apply handler |
 
-MVP: bank-only dedup per [`deduplication-reconciliation-specification.md`](../deduplication-reconciliation-specification.md) — **no receipt-vs-bank merge**.
+MVP: bank-only dedup per [`deduplication-reconciliation-specification.md`](../domain/deduplication-reconciliation-specification.md) — **no receipt-vs-bank merge**.
 
 ---
 

@@ -128,7 +128,7 @@ Rollup rules:
 ## Related documents
 
 - [`../../mocks/sample-budget-period.json`](../../mocks/sample-budget-period.json)
-- [`../household-rbac.md`](../household-rbac.md)
+- [`../domain/household-rbac.md`](../domain/household-rbac.md)
 - [`ledger.md`](ledger.md)
 
 ---

@@ -15,6 +15,7 @@ The graded artifact is [`specification.md`](specification.md). Supporting materi
 | Deliverable | Path |
 |-------------|------|
 | Layered product spec | [`specification.md`](specification.md) |
+| How to review / verify | [`HOWTORUN.md`](HOWTORUN.md) |
 | Agent guidelines | [`agents.md`](agents.md) |
 | Cursor rules & skills | [`.cursor/README.md`](.cursor/README.md) — output, stack, startup, Vitest, commit/PR skills |
 | Task description | [`TASKS.md`](TASKS.md) |
@@ -91,6 +92,7 @@ Verification that implementations respect these is in [`specification.md` §11](
 ```text
 homework-3/
   README.md
+  HOWTORUN.md
   TASKS.md
   specification.md
   agents.md
@@ -141,6 +143,12 @@ Three archived Cursor plans in [`plans/`](plans/) describe how this submission w
 3. **Contracts and tooling** — OpenAPI YAML, Mongo persistence §9, Vitest/npm standard  
 
 See [`plans/README.md`](plans/README.md) for summaries. These are **not** substitutes for the graded [`specification.md`](specification.md).
+
+---
+
+## How to review this submission
+
+Step-by-step instructions for reviewers and PR verification: [`HOWTORUN.md`](HOWTORUN.md) (OpenAPI preview, fixtures, checklist). There is no runnable API in this package.
 
 ---
 

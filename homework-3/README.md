@@ -16,7 +16,7 @@ The graded artifact is [`specification.md`](specification.md). Supporting materi
 |-------------|------|
 | Layered product spec | [`specification.md`](specification.md) |
 | Agent guidelines | [`agents.md`](agents.md) |
-| Cursor rules | [`.cursor/rules/Agent-Output-Rules.mdc`](.cursor/rules/Agent-Output-Rules.mdc), [`.cursor/rules/Stack-Domain-Rules.mdc`](.cursor/rules/Stack-Domain-Rules.mdc) |
+| Cursor rules & skills | [`.cursor/README.md`](.cursor/README.md) — output, stack, startup, Vitest, commit/PR skills |
 | Task description | [`TASKS.md`](TASKS.md) |
 | Reference docs | [`docs/`](docs/) |
 | Fixtures | [`mocks/`](mocks/) |
@@ -93,7 +93,7 @@ homework-3/
   TASKS.md
   specification.md
   agents.md
-  .cursor/rules/
+  .cursor/                  # rules + skills — see .cursor/README.md
   docs/
     README.md               # docs index & source-of-truth table
     registry/               # scope, traceability matrix

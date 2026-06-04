@@ -1,6 +1,6 @@
 # Homework 3 — AI Agent Guidelines
 
-> Use this file with [`specification.md`](specification.md) (primary product spec), [`.cursor/rules/Agent-Output-Rules.mdc`](.cursor/rules/Agent-Output-Rules.mdc) (chat/workspace scope), and [`.cursor/rules/Stack-Domain-Rules.mdc`](.cursor/rules/Stack-Domain-Rules.mdc) (Nest/Angular/Mongo/FinTech defaults).
+> Use this file with [`specification.md`](specification.md) (primary product spec) and Cursor config under [`.cursor/`](.cursor/) (rules + skills). Key rules: [`Agent-Output-Rules.mdc`](.cursor/rules/Agent-Output-Rules.mdc), [`Stack-Domain-Rules.mdc`](.cursor/rules/Stack-Domain-Rules.mdc), [`Agent-Context-Startup-Rules.mdc`](.cursor/rules/Agent-Context-Startup-Rules.mdc).
 
 **Workspace:** Work only under `homework-3/` unless the user explicitly expands scope. Do not modify `homework-1/` or `homework-2/`.
 
@@ -221,13 +221,14 @@ Detailed rules: [`.cursor/rules/Stack-Domain-Rules.mdc`](.cursor/rules/Stack-Dom
 
 ## 11. Workflow for agents
 
-0. Read [`docs/README.md`](docs/README.md) and [`docs/api/errors-and-status-codes.md`](docs/api/errors-and-status-codes.md) before coding.  
+0. Read [`docs/README.md`](docs/README.md) and [`docs/api/errors-and-status-codes.md`](docs/api/errors-and-status-codes.md) before coding (see also [`Agent-Context-Startup-Rules.mdc`](.cursor/rules/Agent-Context-Startup-Rules.mdc)).  
 1. Read the relevant **`MO-*`** and **`TASK-*`** in `specification.md`.  
 2. Check **service doc** under `docs/services/` for endpoints, indexes, and verification hooks.  
-3. Implement under `homework-3/platform/` per §3; smallest slice that satisfies **DoD**; tests per [`docs/testing/testing-strategy.md`](docs/testing/testing-strategy.md).  
+3. Implement under `homework-3/platform/` per §3; smallest slice that satisfies **DoD**; tests per [`docs/testing/testing-strategy.md`](docs/testing/testing-strategy.md) and [`.cursor/skills/vitest-testing/SKILL.md`](.cursor/skills/vitest-testing/SKILL.md).  
 4. Never bypass **confirm → ledger** or **booked-only** shortcuts for convenience.  
 5. On ambiguity, prefer spec + `docs/` over inventing new fields or roles.  
-6. Phase 2 (`PH2-*`): mention in design comments only unless user opts in.
+6. Phase 2 (`PH2-*`): mention in design comments only unless user opts in.  
+7. Commits/PRs: use [`.cursor/skills/commit-messages/`](.cursor/skills/commit-messages/) and [`.cursor/skills/pr-messages/`](.cursor/skills/pr-messages/) when the user asks.
 
 ---
 

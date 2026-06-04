@@ -1,0 +1,16 @@
+---
+description: >-
+  Draft pull request titles and descriptions for branches that include homework-3
+  work. Use when the user asks for a PR message before opening a pull request.
+globs: homework-3/**/*
+alwaysApply: false
+---
+
+# PR messages (HW3)
+
+When the user wants a PR title or body for work that includes `homework-3/`:
+
+1. Read and follow the **pr-messages** skill at `homework-3/.cursor/skills/pr-messages/SKILL.md`.
+2. Resolve base branch, then `git diff <branch>...HEAD` and `git log <branch>...HEAD --oneline`.
+3. For spec-only PRs, **How to check** should cite doc review steps (link integrity, Appendix B checklist) not fictional `npm test` unless code exists.
+4. Do not open the PR unless the user explicitly asks.

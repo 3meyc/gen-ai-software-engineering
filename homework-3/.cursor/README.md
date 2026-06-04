@@ -19,7 +19,7 @@ Project-local rules and skills for agents working in `homework-3/`.
 |-------|---------|
 | `commit-messages/` | Draft git commit messages (HW3-scoped examples) |
 | `pr-messages/` | Draft pull request descriptions |
-| `vitest-testing/` | Tests per [`docs/testing/testing-strategy.md`](../docs/testing/testing-strategy.md) |
+| `vitest-testing/` | Vitest + supertest (NestJS); [`docs/architecture/monorepo-and-tooling.md`](../docs/architecture/monorepo-and-tooling.md) |
 
 ## Repo root
 

@@ -673,6 +673,9 @@ Audit date: integration pass on `specification.md`. Requirement: each `MO-*` has
 | Scope & traceability | [`docs/registry/scope-and-traceability.md`](docs/registry/scope-and-traceability.md) |
 | Task ↔ MO matrix | [`docs/registry/traceability-matrix.md`](docs/registry/traceability-matrix.md) |
 | Public / internal API | [`docs/api/`](docs/api/) |
+| OpenAPI (HTTP JSON schemas) | [`docs/api/openapi/`](docs/api/openapi/) |
+| MongoDB persistence | [`docs/persistence/`](docs/persistence/), [`docs/services/`](docs/services/) §9 |
+| Monorepo / Vitest toolchain | [`docs/architecture/monorepo-and-tooling.md`](docs/architecture/monorepo-and-tooling.md) |
 | Testing strategy | [`docs/testing/`](docs/testing/) |
 | Compliance | [`docs/compliance/compliance-ukraine.md`](docs/compliance/compliance-ukraine.md) |
 | Data lifecycle | [`docs/compliance/data-lifecycle.md`](docs/compliance/data-lifecycle.md) |

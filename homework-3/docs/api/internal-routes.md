@@ -1,8 +1,9 @@
 # Internal API Routes (Service-to-Service)
 
-> **Not public.** Called only between NestJS services. Product rules — [`specification.md`](../../specification.md) §5.
+> **Not public.** Called only between NestJS services. Product rules — [`specification.md`](../../specification.md) §5. **JSON schemas** — [`openapi/internal.openapi.yaml`](openapi/internal.openapi.yaml).
 
 **Base path:** `/internal/v1`  
+**Full schemas:** [`openapi/internal.openapi.yaml`](openapi/internal.openapi.yaml)  
 **Auth (MVP assumed):** Signed **service token** in `Authorization: Bearer <service-jwt>` or `X-Service-Token` header. Each service has a shared secret rotated via ops (document only; no secrets in repo).
 
 **Alternative (post-MVP):** mTLS between pods — same route shapes.
@@ -58,6 +59,7 @@ Per-service expansions: [`services/`](../services/).
 
 ## Related documents
 
+- [`openapi/README.md`](openapi/README.md)
 - [`public-routes.md`](public-routes.md)
 - [`headers.md`](headers.md)
 - [`errors-and-status-codes.md`](errors-and-status-codes.md)

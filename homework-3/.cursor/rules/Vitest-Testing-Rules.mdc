@@ -6,12 +6,13 @@ alwaysApply: false
 
 # Vitest Testing Standard (HW3)
 
-Scoped to NestJS/Angular implementation under `homework-3/platform/`.
+Scoped to NestJS/Angular implementation under `homework-3/platform/`. **Not Hono.**
 
 1. All newly created test files must use **Vitest**.
-2. Any modified existing tests must be migrated to Vitest in the same change when practical.
-3. Do not use Node test runner APIs such as `node:test` or `node:assert` in tests.
-4. Prefer importing test functions and assertions from `vitest`.
-5. Use the project test script for verification so tests run through the Vitest setup.
+2. Do not use **Jest**, `node:test`, or `node:assert` in HW3 platform tests.
+3. Prefer importing `describe`, `it`, `expect`, `vi` from `vitest`.
+4. Run tests via each package `npm test` script (Vitest config in workspace).
+5. NestJS HTTP integration: use **`@nestjs/testing` + supertest** on `app.getHttpServer()` — not Hono `app.request()`.
 6. Map tests to [`docs/testing/testing-strategy.md`](../../docs/testing/testing-strategy.md) and Mars Family fixtures in [`mocks/`](../../mocks/).
-7. For NestJS BFF/services: prefer `app.request()` integration tests where applicable; see [`homework-3/.cursor/skills/vitest-testing/SKILL.md`](../skills/vitest-testing/SKILL.md).
+7. Assert request/response shapes against [`docs/api/openapi/`](../../docs/api/openapi/) where applicable.
+8. See [`homework-3/.cursor/skills/vitest-testing/SKILL.md`](../skills/vitest-testing/SKILL.md) and [`docs/architecture/monorepo-and-tooling.md`](../../docs/architecture/monorepo-and-tooling.md).

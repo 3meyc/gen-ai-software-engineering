@@ -131,6 +131,63 @@ MVP: bank-only dedup per [`deduplication-reconciliation-specification.md`](../do
 
 ---
 
+## 9. Persistence schema (Mongoose)
+
+Database: **`ledger_mvp`**. **Only `SVC-LED` writes `transactions`.** Canonical fields: [`../domain/canonical-banking-transaction-model.md`](../domain/canonical-banking-transaction-model.md). API uses string decimals; store as **Decimal128** or **string** — never JavaScript `number`.
+
+### `transactions`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `transaction_id` | string | yes | unique | Internal id |
+| `household_id` | string | yes | indexed | Ledger extension (RBAC scope) |
+| `attributed_user_id` | string | no | indexed | Per-user budget/export scope |
+| `source_system` | string | yes | compound unique with `source_transaction_id` | mono, otp, privat24 |
+| `source_kind` | string | yes | `bank_api` in MVP | |
+| `source_transaction_id` | string | yes | compound unique | Level-1 dedup key |
+| `account_id` | string | yes | — | Canonical account |
+| `source_account_id` | string | yes | — | Masked in exports where required |
+| `booking_timestamp` | Date | yes | indexed desc | UTC |
+| `transaction_timestamp` | Date | no | — | |
+| `amount` | Decimal128/string | yes | signed | Agrees with `direction` |
+| `currency` | string | yes | ISO 4217 | Default UAH |
+| `description` | string | no | — | |
+| `merchant_name` | string | no | — | |
+| `merchant_category_code` | string | no | — | |
+| `counterparty_name` | string | no | — | |
+| `counterparty_account` | string | no | — | PII — redact in user CSV |
+| `transaction_type` | string | yes | enum | See canonical doc |
+| `direction` | string | yes | debit, credit | |
+| `status` | string | yes | indexed | booked for BUD/EXP consumers |
+| `metadata` | object | no | — | Provider-specific |
+| `created_at` | Date | yes | — | |
+| `updated_at` | Date | yes | — | |
+
+Fixture alignment: [`../../mocks/sample-transactions.json`](../../mocks/sample-transactions.json).
+
+### `import_batches`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `batch_id` | string | yes | unique | |
+| `preview_id` | string | yes | unique | Idempotent apply key |
+| `household_id` | string | yes | — | |
+| `actor_user_id` | string | yes | — | |
+| `actor_role` | string | yes | — | superadmin when applicable |
+| `applied_at` | Date | yes | — | |
+| `counts` | object | yes | — | created, updated, duplicate_skipped |
+
+### `dedup_fingerprints`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `fingerprint` | string | yes | unique | Level-2 fallback hash |
+| `transaction_id` | string | yes | — | Points to canonical row |
+| `source_system` | string | yes | — | |
+| `created_at` | Date | yes | — | |
+
+---
+
 ## Related documents
 
 - [`../canonical-banking-transaction-model.md`](../canonical-banking-transaction-model.md)

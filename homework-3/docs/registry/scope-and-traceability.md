@@ -66,6 +66,7 @@ Phase 2 extends ingestion with `PH2-FILE`, `PH2-OCR`, and `PH2-CASH`, enables `P
 | **PH2-OCR** | Receipt OCR | Medium | Deferred (always confirm when built) |
 | **PH2-CASH** | Manual cash entry | Low | Deferred |
 | **PH2-XDEDUP** | Cross-source deduplication | — | Deferred |
+| **PH2-PET** | Pet allowance / non-human viewer banking | — | Deferred (demo Easter egg; `usr_mars_cat`) |
 
 MVP bank sources (no `PH2-` prefix): **Mono**, **OTP**, **Privat24** — High priority; implemented via `BankProvider` port in `SVC-BANK`.
 

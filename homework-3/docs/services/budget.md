@@ -125,6 +125,54 @@ Rollup rules:
 
 ---
 
+## 9. Persistence schema (Mongoose)
+
+Database: **`budget_mvp`**. Does **not** store transactions — `actual_booked` computed from `SVC-LED` with `status=booked`. Indexes in §3.
+
+### `categories`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `category_id` | string | yes | unique per household slug | e.g. `cat_groceries` |
+| `household_id` | string | yes | compound unique with `slug` | |
+| `slug` | string | yes | compound unique | |
+| `name` | string | yes | — | |
+| `user_scope` | string | no | — | `user_id` when category is personal |
+| `created_at` | Date | yes | — | |
+
+### `budget_periods`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `period_id` | string | yes | unique | e.g. `bp_2026_06` |
+| `household_id` | string | yes | compound unique with `start_date` | |
+| `label` | string | yes | — | |
+| `start_date` | Date | yes | compound unique | |
+| `end_date` | Date | yes | — | |
+| `currency` | string | yes | ISO 4217 | |
+
+### `period_limits`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `period_id` | string | yes | compound unique with `category_id` | |
+| `category_id` | string | yes | compound unique | |
+| `limit_amount` | Decimal128/string | yes | — | Nullable for informational categories |
+| `excluded_from_overspend_alerts` | bool | no | default false | e.g. income category |
+
+### `user_envelopes`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `period_id` | string | yes | compound unique | |
+| `user_id` | string | yes | compound unique | |
+| `category_id` | string | yes | compound unique | |
+| `limit_amount` | Decimal128/string | yes | — | Son personal envelope |
+
+Fixture: [`../../mocks/sample-budget-period.json`](../../mocks/sample-budget-period.json).
+
+---
+
 ## Related documents
 
 - [`../../mocks/sample-budget-period.json`](../../mocks/sample-budget-period.json)

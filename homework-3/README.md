@@ -20,6 +20,7 @@ The graded artifact is [`specification.md`](specification.md). Supporting materi
 | Task description | [`TASKS.md`](TASKS.md) |
 | Reference docs | [`docs/`](docs/) |
 | Fixtures | [`mocks/`](mocks/) |
+| Development plans (archive) | [`plans/`](plans/) — how the package was built in three Cursor iterations |
 
 ---
 
@@ -113,6 +114,7 @@ homework-3/
     sample-export-manifest.json
     bank-payloads/          # optional provider samples
   platform/                 # future implementation only (README)
+  plans/                    # archived Cursor plans — see plans/README.md
 ```
 
 ---
@@ -127,6 +129,18 @@ homework-3/
 | Barsik (cat), Ihor, Oksana | viewer | Cat = non-human RBAC edge test; no export |
 
 Fixture: [`mocks/household-family.json`](mocks/household-family.json).
+
+---
+
+## Development plans (optional reading)
+
+Three archived Cursor plans in [`plans/`](plans/) describe how this submission was built:
+
+1. **Initial specification package** — domain, services, `specification.md`, mocks  
+2. **Documentation fixes** — API index, testing guides, `docs/` structure  
+3. **Contracts and tooling** — OpenAPI YAML, Mongo persistence §9, Vitest/npm standard  
+
+See [`plans/README.md`](plans/README.md) for summaries. These are **not** substitutes for the graded [`specification.md`](specification.md).
 
 ---
 

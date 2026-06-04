@@ -1,0 +1,672 @@
+# Shared OpenAPI 3.1 components — Household Budget Platform MVP
+# Referenced from public-bff.openapi.yaml and internal.openapi.yaml
+
+components:
+  parameters:
+    HouseholdId:
+      name: householdId
+      in: path
+      required: true
+      schema:
+        type: string
+        example: hh_mars_001
+    RequestId:
+      name: X-Request-Id
+      in: header
+      required: false
+      schema:
+        type: string
+        format: uuid
+      description: Correlation id; BFF generates if absent
+    ActorUserId:
+      name: X-Actor-User-Id
+      in: header
+      required: false
+      schema:
+        type: string
+      description: JWT user_id on mutating actions
+    ActorRole:
+      name: X-Actor-Role
+      in: header
+      required: false
+      schema:
+        $ref: '#/components/schemas/Role'
+    ServiceToken:
+      name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Bearer service JWT (internal routes)
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: string
+    Limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 200
+        default: 50
+
+  schemas:
+    DecimalAmount:
+      type: string
+      pattern: '^-?\d{1,16}(\.\d{1,2})?$'
+      description: Signed decimal string (18,2 max); never JSON number in API bodies
+      example: "-432.50"
+
+    CurrencyCode:
+      type: string
+      minLength: 3
+      maxLength: 3
+      example: UAH
+
+    SourceSystem:
+      type: string
+      enum: [mono, otp, privat24]
+
+    SourceKind:
+      type: string
+      enum: [bank_api]
+      description: MVP only; Phase 2 adds file, ocr, manual
+
+    Role:
+      type: string
+      enum: [superadmin, admin, user, viewer]
+
+    TransactionDirection:
+      type: string
+      enum: [debit, credit]
+
+    TransactionStatus:
+      type: string
+      enum: [pending, booked, reversed, failed]
+
+    TransactionType:
+      type: string
+      enum:
+        - transfer
+        - card_payment
+        - cash_withdrawal
+        - cash_deposit
+        - fee
+        - interest
+        - refund
+        - adjustment
+        - loan_payment
+        - salary
+        - tax
+        - other
+
+    ErrorResponse:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          example: import.aborted
+        message:
+          type: string
+        request_id:
+          type: string
+          format: uuid
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: ok
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    TokenResponse:
+      type: object
+      required: [access_token, token_type, expires_in]
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        token_type:
+          type: string
+          example: Bearer
+        expires_in:
+          type: integer
+        user_id:
+          type: string
+        household_id:
+          type: string
+        role:
+          $ref: '#/components/schemas/Role'
+
+    RefreshRequest:
+      type: object
+      required: [refresh_token]
+      properties:
+        refresh_token:
+          type: string
+
+    Household:
+      type: object
+      required: [household_id, display_name, currency_default]
+      properties:
+        household_id:
+          type: string
+        display_name:
+          type: string
+        currency_default:
+          $ref: '#/components/schemas/CurrencyCode'
+        jurisdiction:
+          type: string
+          example: UA
+
+    Member:
+      type: object
+      required: [user_id, role]
+      properties:
+        user_id:
+          type: string
+        display_name:
+          type: string
+        role:
+          $ref: '#/components/schemas/Role'
+        email:
+          type: string
+          format: email
+        is_human:
+          type: boolean
+
+    MemberListResponse:
+      type: object
+      properties:
+        household_id:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/Member'
+
+    InvitationCreate:
+      type: object
+      required: [email, role]
+      properties:
+        email:
+          type: string
+          format: email
+        role:
+          $ref: '#/components/schemas/Role'
+
+    MemberRolePatch:
+      type: object
+      required: [role]
+      properties:
+        role:
+          $ref: '#/components/schemas/Role'
+
+    ErasureRequestCreate:
+      type: object
+      properties:
+        reason:
+          type: string
+        scope:
+          type: string
+          enum: [household, self]
+          default: self
+
+    ErasureRequestResponse:
+      type: object
+      properties:
+        erasure_request_id:
+          type: string
+        status:
+          type: string
+          enum: [requested, in_progress, completed]
+        acknowledged_at:
+          type: string
+          format: date-time
+
+    BankConnectionCreate:
+      type: object
+      required: [source_system]
+      properties:
+        source_system:
+          $ref: '#/components/schemas/SourceSystem'
+        owner_user_id:
+          type: string
+          description: Defaults to actor when omitted
+
+    BankConnection:
+      type: object
+      required: [connection_id, household_id, source_system, status]
+      properties:
+        connection_id:
+          type: string
+        household_id:
+          type: string
+        source_system:
+          $ref: '#/components/schemas/SourceSystem'
+        owner_user_id:
+          type: string
+        status:
+          type: string
+          enum: [pending, active, revoked, error]
+        created_at:
+          type: string
+          format: date-time
+
+    BankConnectionList:
+      type: object
+      properties:
+        connections:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankConnection'
+
+    SyncResponse:
+      type: object
+      properties:
+        preview_id:
+          type: string
+        status:
+          type: string
+          enum: [pending_confirmation, delayed]
+        transaction_count:
+          type: integer
+
+    PreviewTransaction:
+      type: object
+      required:
+        - source_system
+        - source_transaction_id
+        - amount
+        - currency
+        - direction
+        - status
+      properties:
+        source_system:
+          $ref: '#/components/schemas/SourceSystem'
+        source_transaction_id:
+          type: string
+        amount:
+          $ref: '#/components/schemas/DecimalAmount'
+        currency:
+          $ref: '#/components/schemas/CurrencyCode'
+        direction:
+          $ref: '#/components/schemas/TransactionDirection'
+        status:
+          $ref: '#/components/schemas/TransactionStatus'
+        description:
+          type: string
+        row_status:
+          type: string
+          enum: [ready, quarantined, duplicate_skipped]
+
+    ImportPreview:
+      type: object
+      required: [preview_id, household_id, status]
+      properties:
+        preview_id:
+          type: string
+        household_id:
+          type: string
+        connection_id:
+          type: string
+        status:
+          type: string
+          enum: [pending_confirmation, confirmed, aborted]
+        summary:
+          type: object
+          properties:
+            ready_count:
+              type: integer
+            quarantined_count:
+              type: integer
+            duplicate_skipped_count:
+              type: integer
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PreviewTransaction'
+        pinned_version:
+          type: string
+          description: Snapshot version at confirm time
+
+    ImportConfirmResponse:
+      type: object
+      properties:
+        preview_id:
+          type: string
+        status:
+          type: string
+          example: confirmed
+        apply_result:
+          $ref: '#/components/schemas/ApplyImportResult'
+
+    ApplyImportResult:
+      type: object
+      required: [created, updated, duplicate_skipped, review_required]
+      properties:
+        created:
+          type: integer
+          minimum: 0
+        updated:
+          type: integer
+          minimum: 0
+        duplicate_skipped:
+          type: integer
+          minimum: 0
+        review_required:
+          type: integer
+          minimum: 0
+
+    CanonicalTransaction:
+      type: object
+      required:
+        - transaction_id
+        - household_id
+        - source_system
+        - source_kind
+        - source_transaction_id
+        - account_id
+        - source_account_id
+        - booking_timestamp
+        - amount
+        - currency
+        - transaction_type
+        - direction
+        - status
+      properties:
+        transaction_id:
+          type: string
+        household_id:
+          type: string
+        attributed_user_id:
+          type: string
+          description: Household scope / RBAC attribution (ledger extension)
+        source_system:
+          $ref: '#/components/schemas/SourceSystem'
+        source_kind:
+          $ref: '#/components/schemas/SourceKind'
+        source_transaction_id:
+          type: string
+        account_id:
+          type: string
+        source_account_id:
+          type: string
+        booking_timestamp:
+          type: string
+          format: date-time
+        transaction_timestamp:
+          type: string
+          format: date-time
+        amount:
+          $ref: '#/components/schemas/DecimalAmount'
+        currency:
+          $ref: '#/components/schemas/CurrencyCode'
+        description:
+          type: string
+        merchant_name:
+          type: string
+        merchant_category_code:
+          type: string
+        counterparty_name:
+          type: string
+        counterparty_account:
+          type: string
+        transaction_type:
+          $ref: '#/components/schemas/TransactionType'
+        direction:
+          $ref: '#/components/schemas/TransactionDirection'
+        status:
+          $ref: '#/components/schemas/TransactionStatus'
+        metadata:
+          type: object
+          additionalProperties: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    TransactionListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CanonicalTransaction'
+        next_cursor:
+          type: string
+          nullable: true
+        limit:
+          type: integer
+          default: 50
+
+    BudgetPeriodSummary:
+      type: object
+      properties:
+        period_id:
+          type: string
+        label:
+          type: string
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        currency:
+          $ref: '#/components/schemas/CurrencyCode'
+
+    BudgetCategoryRollup:
+      type: object
+      properties:
+        category_id:
+          type: string
+        name:
+          type: string
+        limit_amount:
+          $ref: '#/components/schemas/DecimalAmount'
+        actual_booked:
+          $ref: '#/components/schemas/DecimalAmount'
+
+    BudgetPeriodDetail:
+      type: object
+      properties:
+        period_id:
+          type: string
+        household_id:
+          type: string
+        label:
+          type: string
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        currency:
+          $ref: '#/components/schemas/CurrencyCode'
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/BudgetCategoryRollup'
+        total_debit_booked:
+          $ref: '#/components/schemas/DecimalAmount'
+        total_credit_booked:
+          $ref: '#/components/schemas/DecimalAmount'
+
+    BudgetCategoryUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        limit_amount:
+          $ref: '#/components/schemas/DecimalAmount'
+
+    ExportJobCreate:
+      type: object
+      required: [format]
+      properties:
+        format:
+          type: string
+          enum: [csv]
+        date_from:
+          type: string
+          format: date
+        date_to:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [booked]
+          default: booked
+
+    ExportJob:
+      type: object
+      properties:
+        export_job_id:
+          type: string
+        household_id:
+          type: string
+        format:
+          type: string
+          enum: [csv]
+        status:
+          type: string
+          enum: [queued, processing, completed, failed]
+        row_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+
+    AuditEvent:
+      type: object
+      required: [event_id, event_type, timestamp]
+      properties:
+        event_id:
+          type: string
+          format: uuid
+        event_type:
+          type: string
+        household_id:
+          type: string
+        actor_user_id:
+          type: string
+          nullable: true
+        actor_role:
+          $ref: '#/components/schemas/Role'
+        resource_type:
+          type: string
+        resource_id:
+          type: string
+        payload:
+          type: object
+          additionalProperties: true
+          description: No tokens, PAN, or full CSV bodies
+        timestamp:
+          type: string
+          format: date-time
+
+    AuditEventAppend:
+      type: object
+      required: [event_type]
+      properties:
+        event_id:
+          type: string
+          format: uuid
+        event_type:
+          type: string
+        household_id:
+          type: string
+        actor_user_id:
+          type: string
+        actor_role:
+          $ref: '#/components/schemas/Role'
+        resource_type:
+          type: string
+        resource_id:
+          type: string
+        payload:
+          type: object
+          additionalProperties: true
+
+    AuditEventList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditEvent'
+        next_cursor:
+          type: string
+
+    MembershipResolve:
+      type: object
+      properties:
+        household_id:
+          type: string
+        user_id:
+          type: string
+        role:
+          $ref: '#/components/schemas/Role'
+        scope:
+          type: string
+          enum: [household, user, viewer_readonly]
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid JWT
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Valid JWT but role denied
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Conflict:
+      description: Conflict or aborted state
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    ServiceToken:
+      type: http
+      scheme: bearer
+      description: Service-to-service JWT

@@ -115,6 +115,71 @@ Does not call ledger or bank directly.
 
 ---
 
+## 9. Persistence schema (Mongoose)
+
+Database: **`identity_mvp`**. OpenAPI shapes: [`../api/openapi/`](../api/openapi/). Indexes in §3 above.
+
+### `users`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `_id` | ObjectId | auto | — | Internal |
+| `user_id` | string | yes | unique | e.g. `usr_mars_father` |
+| `email` | string | yes | unique, indexed | Login identifier |
+| `email_hash` | string | no | — | Optional search hash |
+| `display_name` | string | yes | — | |
+| `password_hash` | string | yes | — | Never log or expose |
+| `is_human` | bool | yes | default true | `false` for demo pet viewer |
+| `profile_label` | string | no | — | e.g. `demo_pet_viewer` |
+| `created_at` | Date | yes | — | UTC |
+| `updated_at` | Date | yes | — | UTC |
+
+### `households`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `household_id` | string | yes | unique | e.g. `hh_mars_001` |
+| `display_name` | string | yes | — | |
+| `currency_default` | string | yes | ISO 4217 | Default `UAH` |
+| `jurisdiction` | string | yes | — | `UA` for MVP |
+| `created_at` | Date | yes | — | |
+
+### `memberships`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `household_id` | string | yes | compound unique with `user_id` | |
+| `user_id` | string | yes | compound unique with `household_id` | |
+| `role` | string | yes | enum: superadmin, admin, user, viewer | Exact strings for guards |
+| `relationship` | string | no | — | Optional relative label |
+| `joined_at` | Date | yes | — | |
+
+### `invitations`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `invitation_id` | string | yes | unique | |
+| `household_id` | string | yes | — | |
+| `email` | string | yes | — | |
+| `role` | string | yes | enum | Cannot exceed inviter cap |
+| `token` | string | yes | unique, indexed | TTL index on `expires_at` |
+| `expires_at` | Date | yes | TTL | |
+| `status` | string | yes | pending, accepted, expired | |
+
+### `erasure_requests`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `erasure_request_id` | string | yes | unique | |
+| `household_id` | string | yes | — | |
+| `subject_user_id` | string | yes | — | Self or household per scope |
+| `requested_by` | string | yes | — | Actor |
+| `status` | string | yes | requested, in_progress, completed | |
+| `acknowledged_at` | Date | no | — | ≤ 24h SLA (doc) |
+| `completed_at` | Date | no | — | PII purge ≤ 30 days |
+
+---
+
 ## Related documents
 
 - [`../domain/household-rbac.md`](../domain/household-rbac.md)

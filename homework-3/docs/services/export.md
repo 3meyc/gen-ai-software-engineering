@@ -123,6 +123,41 @@ Redaction per role in manifest: admin full household; user omits PII columns and
 
 ---
 
+## 9. Persistence schema (Mongoose)
+
+Database: **`export_mvp`**. Reads ledger with `status=booked` only; max **50 000** rows per job. Indexes in §3.
+
+### `export_jobs`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `export_job_id` | string | yes | unique | e.g. `exp_mars_20260604_01` |
+| `household_id` | string | yes | indexed | |
+| `requested_by` | string | yes | — | `user_id` |
+| `requester_role` | string | yes | enum | Drives redaction |
+| `format` | string | yes | `csv` only in MVP | |
+| `status` | string | yes | queued, processing, completed, failed | Worker poll index |
+| `filters` | object | yes | — | `date_from`, `date_to`, `status` default booked |
+| `row_count` | int | no | max 50000 | |
+| `snapshot_at` | Date | yes | — | Edge case: export during sync |
+| `created_at` | Date | yes | indexed | |
+| `completed_at` | Date | no | — | |
+
+### `export_artifacts`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `export_job_id` | string | yes | unique | 1:1 with job |
+| `storage_key` | string | yes | — | Blob path or GridFS id |
+| `filename` | string | yes | — | e.g. `mars_family_transactions_2026-06-04.csv` |
+| `column_manifest_version` | string | yes | — | Aligns with sample-export-manifest |
+| `byte_size` | long | no | — | |
+| `created_at` | Date | yes | — | |
+
+Redaction rules: [`../../mocks/sample-export-manifest.json`](../../mocks/sample-export-manifest.json) — not stored as full CSV in audit.
+
+---
+
 ## Related documents
 
 - [`../../mocks/sample-export-manifest.json`](../../mocks/sample-export-manifest.json)

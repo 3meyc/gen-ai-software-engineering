@@ -123,6 +123,12 @@ Base: `/api/v1`. Guards: `@Roles(...)` from JWT claims (`household_id`, `user_id
 
 ---
 
+## 9. Persistence schema (Mongoose)
+
+**No persistence.** `SVC-BFF` must not connect to MongoDB or any service database. JWT validation uses `SVC-ID`; all household and transaction data is proxied over REST. See [`../persistence/README.md`](../persistence/README.md).
+
+---
+
 ## Related documents
 
 - [`../architecture/architecture-overview.md`](../architecture/architecture-overview.md)

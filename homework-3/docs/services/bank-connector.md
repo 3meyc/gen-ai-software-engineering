@@ -134,6 +134,79 @@ MVP: **bank API only** per [`bank-provider-adapter.md`](../domain/bank-provider-
 
 ---
 
+## 9. Persistence schema (Mongoose)
+
+Database: **`bank_mvp`**. Preview transactions are **not** ledger rows until confirm → apply. Indexes in §3.
+
+### `connections`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `connection_id` | string | yes | unique | e.g. `mono_conn_mars_01` |
+| `household_id` | string | yes | indexed with `source_system` | |
+| `source_system` | string | yes | mono, otp, privat24 | |
+| `owner_user_id` | string | yes | — | Links to `users.user_id` |
+| `status` | string | yes | pending, active, revoked, error | |
+| `created_at` | Date | yes | — | |
+| `updated_at` | Date | yes | — | |
+
+### `tokens`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `connection_id` | string | yes | unique | FK to connection |
+| `access_token_enc` | Binary | yes | encrypted at rest | Never log |
+| `refresh_token_enc` | Binary | no | encrypted | |
+| `expires_at` | Date | no | — | |
+| `rotated_at` | Date | no | — | |
+
+### `sync_checkpoints`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `connection_id` | string | yes | compound unique with `source_account_id` | |
+| `source_account_id` | string | yes | compound unique | Provider account id |
+| `watermark` | string | no | — | Incremental cursor |
+| `last_sync_at` | Date | no | — | |
+
+### `import_previews`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `preview_id` | string | yes | unique | |
+| `household_id` | string | yes | indexed with `status` | |
+| `connection_id` | string | yes | — | |
+| `status` | string | yes | pending_confirmation, confirmed, aborted | Aborted on token revoke |
+| `pinned_version` | string | no | — | Set at confirm |
+| `summary` | object | no | — | ready/quarantined/duplicate counts |
+| `transactions` | array | yes | embedded | See **Preview row** below |
+| `created_at` | Date | yes | — | Retention 90 days |
+| `confirmed_at` | Date | no | — | |
+
+**Preview row** (embedded in `transactions[]`):
+
+| Field | BSON type | Required | Notes |
+|-------|-----------|----------|-------|
+| `source_system` | string | yes | |
+| `source_transaction_id` | string | yes | |
+| `amount` | string | yes | Decimal string; sign must match `direction` |
+| `currency` | string | yes | |
+| `direction` | string | yes | debit, credit |
+| `status` | string | yes | pending, booked, … |
+| `row_status` | string | yes | ready, quarantined, duplicate_skipped | |
+| `description` | string | no | |
+
+### `raw_payloads` (optional)
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `payload_id` | string | yes | unique | |
+| `connection_id` | string | yes | — | |
+| `provider_response` | Binary | yes | compressed | TTL index recommended |
+| `captured_at` | Date | yes | TTL | Not used for budget/export |
+
+---
+
 ## Related documents
 
 - [`../bank-provider-adapter.md`](../bank-provider-adapter.md)

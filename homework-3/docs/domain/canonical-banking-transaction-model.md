@@ -71,6 +71,17 @@ The model normalizes account and transaction data into a consistent internal rep
 | created_at             | datetime      | Yes      | Ingestion timestamp                              |
 | updated_at             | datetime      | Yes      | Last modification timestamp                      |
 
+### Ledger persistence extensions (`SVC-LED`)
+
+When stored in `ledger_mvp.transactions`, the canonical entity also includes household scope fields (required for RBAC and budget/export):
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `household_id` | string | Yes | Tenant boundary (e.g. `hh_mars_001`) |
+| `attributed_user_id` | string | No | Member attribution for per-user scope |
+
+OpenAPI: [`CanonicalTransaction`](../api/openapi/components/schemas.yaml). Persistence detail: [`services/ledger.md`](../services/ledger.md) §9.
+
 ---
 
 # Transaction Types

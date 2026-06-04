@@ -1,8 +1,9 @@
 # Public API Routes (BFF)
 
-> **Authority:** Full route list and guards — this document. Product behavior — [`specification.md`](../../specification.md). Per-service detail — [`services/gateway-bff.md`](../services/gateway-bff.md).
+> **Authority:** Route list and guards — this document. **JSON request/response schemas** — [`openapi/`](openapi/) (OpenAPI 3.1). Product behavior — [`specification.md`](../../specification.md). Per-service detail — [`services/gateway-bff.md`](../services/gateway-bff.md).
 
 **Base path:** `/api/v1`  
+**Full schemas:** [`openapi/public-bff.openapi.yaml`](openapi/public-bff.openapi.yaml), [`openapi/components/schemas.yaml`](openapi/components/schemas.yaml)  
 **Auth:** `Authorization: Bearer <jwt>` (except `/health`, `/auth/login`)  
 **Issuer:** `SVC-ID` via `SVC-BFF` proxy
 
@@ -66,6 +67,7 @@ See [`errors-and-status-codes.md`](errors-and-status-codes.md) for audit events 
 
 ## Related documents
 
+- [`openapi/README.md`](openapi/README.md)
 - [`headers.md`](headers.md)
 - [`internal-routes.md`](internal-routes.md)
 - [`../architecture/architecture-overview.md`](../architecture/architecture-overview.md)

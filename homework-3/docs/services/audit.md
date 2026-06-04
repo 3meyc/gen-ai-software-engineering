@@ -102,6 +102,7 @@ Read-only; no mutation endpoints on public API.
 | `export.requested` | EXP |
 | `export.completed` | EXP |
 | `export.denied` | EXP / BFF |
+| `pet.profile.viewed` | BFF / WEB — demo only; Barsik (`usr_mars_cat`) dashboard telemetry; **not in MVP test DoD** |
 | `erasure.requested` | ID |
 | `erasure.completed` | ID |
 
@@ -131,7 +132,36 @@ Read-only; no mutation endpoints on public API.
 
 ## 8. Phase 2 touchpoints
 
-Audit event types for `PH2-OCR.confirm`, `PH2-FILE.import` — append same handler; **no MVP implementation**.
+Audit event types for `PH2-OCR.confirm`, `PH2-FILE.import` — append same handler; **no MVP implementation**. Fictional `PH2-PET` (pet allowance / interspecies banking) — see [`../phase2/roadmap.md`](../phase2/roadmap.md); joke row only.
+
+---
+
+## 9. Persistence schema (Mongoose)
+
+Database: **`audit_mvp`**. **Append-only** — no application-layer UPDATE/DELETE on `audit_events`. Retention 7 years (assumed). Indexes in §3.
+
+### `audit_events`
+
+| Field | BSON type | Required | Constraints | Notes |
+|-------|-----------|----------|-------------|-------|
+| `event_id` | string | yes | unique, UUID | Optional idempotent reject on duplicate |
+| `event_type` | string | yes | indexed | See §5 standard types |
+| `household_id` | string | no | indexed | Nullable for platform ops |
+| `actor_user_id` | string | no | indexed | Nullable for system |
+| `actor_role` | string | no | enum | `superadmin` on mother confirm |
+| `resource_type` | string | no | — | preview, transaction, export_job, … |
+| `resource_id` | string | no | — | |
+| `payload` | object | no | **no secrets** | No tokens, PAN, full CSV |
+| `timestamp` | Date | yes | indexed desc | UTC |
+| `request_id` | string | no | — | From `X-Request-Id` |
+
+**Payload prohibitions:** OAuth tokens, refresh tokens, full PAN, unmasked account numbers, raw JWT strings, full CSV row dumps.
+
+**Standard `event_type` values (MVP):** `bank.connected`, `bank.disconnected`, `import.previewed`, `import.confirmed`, `transaction.created`, `transaction.updated`, `duplicate.skipped`, `budget.limit.changed`, `export.requested`, `export.completed`, `export.denied`, `erasure.requested`, `erasure.completed`, `token.revoked`, `import.aborted`.
+
+**Demo-only (optional telemetry, not in §13 DoD):** `pet.profile.viewed` — e.g. when `usr_mars_cat` (Barsik) loads a read-only dashboard tile.
+
+OpenAPI append body: [`../api/openapi/components/schemas.yaml`](../api/openapi/components/schemas.yaml) (`AuditEventAppend`).
 
 ---
 

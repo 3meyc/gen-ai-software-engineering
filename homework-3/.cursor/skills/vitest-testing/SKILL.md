@@ -12,6 +12,8 @@ Use when implementing under `homework-3/platform/`. Rule: [`Vitest-Testing-Rules
 
 **Spec authority:** [`docs/testing/testing-strategy.md`](../../docs/testing/testing-strategy.md), [`agents.md`](../../agents.md) §8, [`specification.md`](../../specification.md) §11.
 
+**Toolchain:** npm workspaces + Vitest only — [`docs/architecture/monorepo-and-tooling.md`](../../docs/architecture/monorepo-and-tooling.md). **HW3 is NestJS, not Hono.**
+
 ---
 
 ## Test layers
@@ -19,10 +21,34 @@ Use when implementing under `homework-3/platform/`. Rule: [`Vitest-Testing-Rules
 | Layer | When | NestJS pattern |
 |-------|------|----------------|
 | **Unit** | Dedup engine, redaction, audit validator, pure mappers | Vitest `describe`/`it`; no HTTP |
-| **Integration** | Service + Mongo; BFF guards | `Test.createTestingModule`; supertest or `app.request()` on Hono-style apps if used |
+| **Integration** | Service + Mongo; BFF guards | `Test.createTestingModule` + **supertest** on `app.getHttpServer()` |
 | **E2E-doc** | Mars Family flows | Documented steps; optional Playwright later |
 
 **Booked-only:** Tests must not assert budget/export totals from pending preview rows.
+
+---
+
+## HTTP integration (supertest)
+
+```typescript
+import { Test } from '@nestjs/testing';
+import request from 'supertest';
+import { AppModule } from '../src/app.module';
+
+it('viewer export returns 403', async () => {
+  const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+  const app = moduleRef.createNestApplication();
+  await app.init();
+  await request(app.getHttpServer())
+    .post('/api/v1/households/hh_mars_001/exports')
+    .set('Authorization', 'Bearer <viewer-jwt>')
+    .send({ format: 'csv', date_from: '2026-06-01', date_to: '2026-06-30', status: 'booked' })
+    .expect(403);
+  await app.close();
+});
+```
+
+Align status codes with [`docs/api/errors-and-status-codes.md`](../../docs/api/errors-and-status-codes.md) and request bodies with [`docs/api/openapi/`](../../docs/api/openapi/).
 
 ---
 
@@ -36,7 +62,7 @@ Use when implementing under `homework-3/platform/`. Rule: [`Vitest-Testing-Rules
 | [`mocks/sample-export-manifest.json`](../../mocks/sample-export-manifest.json) | MO-6 columns |
 | [`mocks/bank-payloads/`](../../mocks/bank-payloads/) | Adapter unit tests |
 
-See [`docs/testing/fixtures-guide.md`](../../docs/testing/fixtures-guide.md).
+See [`docs/testing/fixtures-guide.md`](../../docs/testing/fixtures-guide.md). Normalize fixture numeric amounts to **strings** when asserting API responses.
 
 ---
 
@@ -58,22 +84,12 @@ See [`docs/testing/fixtures-guide.md`](../../docs/testing/fixtures-guide.md).
 ## Vitest standards
 
 1. Import `describe`, `it`, `expect`, `vi` from `vitest`.
-2. No `node:test` / `node:assert`.
-3. Run via project `npm test` script (Vitest config per package in monorepo).
+2. No `node:test` / `node:assert` / **Jest**.
+3. Run via `npm test` in the workspace package (Vitest config per package).
 4. Prefer one behavior per test; name tests by outcome (`viewer export returns 403`).
-
----
-
-## HTTP / RBAC tests
-
-Align status codes with [`docs/api/errors-and-status-codes.md`](../../docs/api/errors-and-status-codes.md):
-
-- User confirm import → `403`
-- Viewer export → `403` + audit `export.denied` when audit client mocked
-- Double confirm → idempotent `200`
 
 ---
 
 ## Related
 
-- Repo-wide Hono Vitest patterns (homework-1/2): `/.cursor/skills/vitest-testing/` at repository root when present — adapt for NestJS, do not copy Hono `app.request()` blindly.
+- Repo-root Hono Vitest skill (`/.cursor/skills/vitest-testing/`) — **not applicable to HW3**; use Nest + supertest patterns above only.

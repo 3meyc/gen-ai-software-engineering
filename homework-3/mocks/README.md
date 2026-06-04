@@ -25,6 +25,8 @@
 | Maksym (son) | `usr_mars_son` | user |
 | Sofia (daughter) | `usr_mars_daughter` | user |
 | Barsik (cat) | `usr_mars_cat` | viewer (non-human profile) |
+
+The demo household includes a **non-human viewer** (Barsik) for RBAC edge tests; in-joke references: audit `pet.profile.viewed`, OpenAPI `export.denied` for the cat, and fictional Phase 2 id **`PH2-PET`** (not MVP).
 | Ihor (uncle) | `usr_mars_uncle` | viewer |
 | Oksana (niece) | `usr_mars_niece` | viewer |
 
@@ -38,3 +40,9 @@
 2. Ledger tests use `sample-transactions.json` for expected create/update/skip counts.
 3. Budget tests assert actuals against **booked** rows only; pending preview data is not in these fixtures.
 4. Export tests validate column manifest and redaction — viewer must not call export API regardless of fixture.
+
+---
+
+## Amounts and API types
+
+JSON fixtures may use **numeric** `amount` values for human readability (e.g. `-432.50` in `sample-transactions.json`). **Runtime, REST API, and MongoDB** must use **string decimals** or Decimal128 per [specification.md §5](../specification.md#5-implementation-notes) and [OpenAPI `DecimalAmount`](../docs/api/openapi/components/schemas.yaml). Tests should normalize fixture numbers to strings when asserting API responses.

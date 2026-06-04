@@ -8,9 +8,11 @@
 
 | Layer | Scope | Tools (when implemented) |
 |-------|--------|---------------------------|
-| **Unit** | Pure logic: dedup engine, amount normalization, audit payload validator, export redaction manifest | Vitest/Jest in each service |
-| **Integration** | Service + MongoDB; `BankProvider` mocks; BFF guard matrix | `app.request()` or supertest + test DB |
+| **Unit** | Pure logic: dedup engine, amount normalization, audit payload validator, export redaction manifest | **Vitest** in each workspace package |
+| **Integration** | Service + MongoDB; `BankProvider` mocks; BFF guard matrix | **`@nestjs/testing` + supertest** + MongoDB Memory Server |
 | **E2E-doc** | Scripted scenarios (father confirms, son denied, cat export denied) | Documented steps + fixtures; optional Playwright later |
+
+**Toolchain:** npm workspaces, Vitest only (no Jest). **Not Hono** — see [`../architecture/monorepo-and-tooling.md`](../architecture/monorepo-and-tooling.md). HTTP contracts for assertions: [`../api/openapi/`](../api/openapi/).
 
 **Rule:** No test may assert budget/export totals from **pending** preview rows — booked-only per spec §5.
 
@@ -65,3 +67,5 @@ Each [`services/*.md`](../services/) §7 lists service-specific tests. Implement
 - [`fixtures-guide.md`](fixtures-guide.md)
 - [`../../agents.md`](../../agents.md) §8
 - [`../api/errors-and-status-codes.md`](../api/errors-and-status-codes.md)
+- [`../architecture/monorepo-and-tooling.md`](../architecture/monorepo-and-tooling.md)
+- [`../api/openapi/`](../api/openapi/)

@@ -8,6 +8,7 @@
 | `PH2-OCR` | Receipt OCR | Always confirm; image retention per [`data-lifecycle-phase2.md`](../compliance/data-lifecycle-phase2.md) |
 | `PH2-CASH` | Manual cash | New `source_kind=manual`; separate validation |
 | `PH2-XDEDUP` | Cross-source dedup | User merge/split for receipt vs bank |
+| `PH2-PET` | Pet profile / allowance ledger | **Easter egg / joke row** — Barsik (`usr_mars_cat`); not implementable in MVP; see [`../../mocks/household-family.json`](../../mocks/household-family.json) |
 | — | PostgreSQL migration | Per-service, REST unchanged |
 | — | Event bus | Optional async decoupling post-MVP |
 

@@ -30,6 +30,10 @@ You are helping build (or specify) a **Ukraine-focused household budget platform
 | Persistence | **Mongoose** per service; **one MongoDB database per service** on a shared cluster |
 | Inter-service | **REST** only in MVP (`/api/v1` public, `/internal/v1` service-to-service) |
 | Jobs | Cron in `SVC-BANK` (sync), worker in `SVC-EXP` (CSV) — no message bus in MVP |
+| Monorepo / tests | **npm workspaces** + **Vitest** + Nest **supertest** — see [`docs/architecture/monorepo-and-tooling.md`](docs/architecture/monorepo-and-tooling.md) |
+| HTTP contracts | OpenAPI 3.1 YAML — [`docs/api/openapi/`](docs/api/openapi/) |
+
+**HW3 does not use Hono** (homework-1/2 stack). Do not copy `app.request()` patterns from repo-root Vitest skills.
 
 **Post-MVP note:** Services may migrate to PostgreSQL independently; keep REST contracts stable.
 
@@ -146,6 +150,7 @@ When implementing or reviewing code, explicitly handle these (see [`specificatio
 | Bank `429` | Backoff; do not hammer provider |
 | Double confirm same preview | Idempotent ledger apply |
 | Empty budget month | Zero actuals; valid empty state |
+| Reviewer asks: can Barsik export or confirm? | **No** — only `admin`/`superadmin` confirm; viewers get `403` + `export.denied`. Interspecies banking is the documented joke id **`PH2-PET`** ([`docs/phase2/roadmap.md`](docs/phase2/roadmap.md)); optional audit `pet.profile.viewed` for demo dashboards |
 
 Prefer **fail closed** on auth and permission errors.
 
@@ -155,10 +160,12 @@ Prefer **fail closed** on auth and permission errors.
 
 Map tests to [`specification.md` §11](specification.md) and each task’s **DoD** in §13.
 
+**Single test stack:** Vitest 2.x only; run via `npm test` in each `platform/` workspace. Nest HTTP integration: `@nestjs/testing` + **supertest** on `app.getHttpServer()`. MongoDB: **mongodb-memory-server** (documented default). Full detail: [`docs/architecture/monorepo-and-tooling.md`](docs/architecture/monorepo-and-tooling.md). Skill: [`.cursor/skills/vitest-testing/SKILL.md`](.cursor/skills/vitest-testing/SKILL.md).
+
 | Category | When to use |
 |----------|-------------|
 | **Unit** | Dedup engine, amount normalization, audit payload validator, redaction manifest |
-| **Integration** | Service + Mongo; `BankProvider` mocks; BFF guard matrix |
+| **Integration** | Service + Mongo; `BankProvider` mocks; BFF guard matrix (supertest) |
 | **E2E (documented)** | Father confirms import → ledger count; son confirm → `403`; cat export → `403` |
 
 **Fixtures (required for realistic tests):**
@@ -206,6 +213,9 @@ Detailed rules: [`.cursor/rules/Stack-Domain-Rules.mdc`](.cursor/rules/Stack-Dom
 | Traceability | [`docs/registry/scope-and-traceability.md`](docs/registry/scope-and-traceability.md) |
 | Task ↔ MO matrix | [`docs/registry/traceability-matrix.md`](docs/registry/traceability-matrix.md) |
 | Public / internal API | [`docs/api/public-routes.md`](docs/api/public-routes.md), [`internal-routes.md`](docs/api/internal-routes.md) |
+| OpenAPI (JSON schemas) | [`docs/api/openapi/`](docs/api/openapi/) |
+| Persistence (Mongo) | [`docs/persistence/README.md`](docs/persistence/README.md), `docs/services/` §9 |
+| Monorepo / Vitest | [`docs/architecture/monorepo-and-tooling.md`](docs/architecture/monorepo-and-tooling.md) |
 | HTTP errors (§10) | [`docs/api/errors-and-status-codes.md`](docs/api/errors-and-status-codes.md) |
 | Headers | [`docs/api/headers.md`](docs/api/headers.md) |
 | Testing | [`docs/testing/testing-strategy.md`](docs/testing/testing-strategy.md), [`fixtures-guide.md`](docs/testing/fixtures-guide.md) |

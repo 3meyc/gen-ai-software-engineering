@@ -13,9 +13,11 @@ Do NOT:
 
 1. Modify files under `homework-1/` or `homework-2/`.
 2. Change repository-root tooling or shared configs unless the user explicitly requests it for HW3.
-3. Introduce implementation code, dependencies, or stack-specific rules until the user defines the tech stack.
+3. Introduce implementation code or dependencies outside `homework-3/` unless the user explicitly requests it.
 
 **N.B.** HW3 deliverables are written specification and supporting docs (`specification.md`, `agents.md`, rules, `README.md`) per `TASKS.md`. No coding is required unless the user later asks otherwise.
+
+**N.B.** Tech stack and FinTech domain rules are defined in `homework-3/agents.md` and `Stack-Domain-Rules.mdc` (NestJS, Angular, MongoDB per service).
 
 ## Collaboration style
 

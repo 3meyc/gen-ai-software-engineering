@@ -22,7 +22,7 @@ todos:
     status: completed
   - id: phase-5-agents-rules
     content: "Phase 5: Write agents.md and .cursor/rules/Stack-Domain-Rules.mdc"
-    status: pending
+    status: completed
   - id: phase-6-readme-polish
     content: "Phase 6: Write README.md; backlink polish on existing docs"
     status: pending

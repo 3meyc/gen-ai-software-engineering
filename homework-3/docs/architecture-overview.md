@@ -98,7 +98,19 @@ Internal routes are service-to-service (mTLS or signed service token — documen
 
 \*User sees only own-linked preview slice.
 
-Per-service detail expands in Phase 3 `docs/services/*.md`.
+Per-service detail: [`docs/services/`](services/) (Phase 3 complete).
+
+| Service doc | ID |
+|-------------|-----|
+| [`services/gateway-bff.md`](services/gateway-bff.md) | `SVC-BFF` |
+| [`services/identity-household.md`](services/identity-household.md) | `SVC-ID` |
+| [`services/bank-connector.md`](services/bank-connector.md) | `SVC-BANK` |
+| [`services/ledger.md`](services/ledger.md) | `SVC-LED` |
+| [`services/budget.md`](services/budget.md) | `SVC-BUD` |
+| [`services/export.md`](services/export.md) | `SVC-EXP` |
+| [`services/audit.md`](services/audit.md) | `SVC-AUD` |
+
+**Ledger rule:** Only `SVC-LED` writes `ledger_mvp.transactions` — see [`services/ledger.md`](services/ledger.md).
 
 ---
 

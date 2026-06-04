@@ -16,7 +16,7 @@ todos:
     status: completed
   - id: phase-3-services
     content: "Phase 3: Write docs/services/*.md (7 services, beginning/ending, REST, collections)"
-    status: pending
+    status: completed
   - id: phase-4-specification
     content: "Phase 4: Draft homework-3/specification.md (all TASKS layers, 20-35 tasks, edge cases, SLOs, verification)"
     status: pending

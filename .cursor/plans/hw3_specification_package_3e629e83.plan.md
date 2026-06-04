@@ -19,7 +19,7 @@ todos:
     status: completed
   - id: phase-4-specification
     content: "Phase 4: Draft homework-3/specification.md (all TASKS layers, 20-35 tasks, edge cases, SLOs, verification)"
-    status: pending
+    status: completed
   - id: phase-5-agents-rules
     content: "Phase 5: Write agents.md and .cursor/rules/Stack-Domain-Rules.mdc"
     status: pending

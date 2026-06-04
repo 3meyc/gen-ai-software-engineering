@@ -141,4 +141,4 @@ Rollup rules:
 | §12 Context ending | Budget collections |
 | §13 Low-level tasks | `TASK-BUD-*` |
 
-*Final synthesis in Phase 4 — see `specification.md` when published.*
+**See also:** [`specification.md`](../../specification.md) — §5, §12, §13 (table above).

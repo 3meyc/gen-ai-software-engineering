@@ -139,4 +139,4 @@ Redaction per role in manifest: admin full household; user omits PII columns and
 | §10 Edge cases | Export during sync |
 | §13 Low-level tasks | `TASK-EXP-*` |
 
-*Final synthesis in Phase 4 — see `specification.md` when published.*
+**See also:** [`specification.md`](../../specification.md) — §6, §10, §13 (table above).

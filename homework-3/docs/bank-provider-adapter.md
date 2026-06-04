@@ -133,4 +133,4 @@ No adapter writes to `ledger_mvp` directly.
 | §10 Edge cases | Token revoke mid-import, rate limit |
 | §5 Implementation notes | Checkpoint incremental sync |
 
-*Final synthesis in Phase 4 — see `specification.md` when published.*
+**See also:** [`specification.md`](../specification.md) — §7, §6, §10, §5 (table above).

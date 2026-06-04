@@ -103,4 +103,4 @@ Budget and export services call `SVC-LED` / `SVC-ID` with `household_id` + `call
 | §11 Verification | RBAC integration tests per role |
 | §3 Stakeholders | End-user roles called out |
 
-*Final synthesis in Phase 4 — see `specification.md` when published.*
+**See also:** [`specification.md`](../specification.md) — §9, §10, §11, §3 (table above).

@@ -150,4 +150,4 @@ Audit event types for `PH2-OCR.confirm`, `PH2-FILE.import` — append same handl
 | §11 Verification | Ops audit query checks |
 | §13 Low-level tasks | `TASK-AUD-*` |
 
-*Final synthesis in Phase 4 — see `specification.md` when published.*
+**See also:** [`specification.md`](../../specification.md) — §4, §11, §13 (table above).

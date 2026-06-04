@@ -79,4 +79,4 @@ Pending transactions may exist in preview storage (`bank_mvp`) but **must not** 
 | §5 Implementation notes | Confirmation before ledger; idempotency keys |
 | §14 Phase 2 roadmap | Deferred rows only |
 
-*Final synthesis in Phase 4 — see `specification.md` when published.*
+**See also:** [`specification.md`](../specification.md) — §6, §5, §14 (table above).

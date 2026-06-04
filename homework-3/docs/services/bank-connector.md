@@ -151,4 +151,4 @@ MVP: **bank API only** per [`bank-provider-adapter.md`](../bank-provider-adapter
 | §6 Ingestion sources | Confirm pipeline |
 | §13 Low-level tasks | `TASK-BANK-*` |
 
-*Final synthesis in Phase 4 — see `specification.md` when published.*
+**See also:** [`specification.md`](../../specification.md) — §7, §6, §13 (table above).

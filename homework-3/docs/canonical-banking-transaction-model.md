@@ -16,6 +16,8 @@ The model normalizes account and transaction data into a consistent internal rep
 * **Out of scope (Phase 2):** `PH2-FILE`, `PH2-OCR`, `PH2-CASH` — see [`ingestion-sources-matrix.md`](ingestion-sources-matrix.md) and [`scope-and-traceability.md`](scope-and-traceability.md).
 * **Budget and export** consume rows with `status = booked` only (`MO-5`, `MO-6`).
 
+**See also:** [`specification.md`](../specification.md) §8 (canonical summary), §5 (implementation notes), §6 (ingestion sources).
+
 ---
 
 ## Related documents
@@ -385,7 +387,7 @@ Before import execution:
 | §5 Implementation notes | Signed decimal, UTC timestamps, booked-only reads |
 | §6 Ingestion sources | MVP bank `source_system` enum |
 
-*Final synthesis in Phase 4 — see `specification.md` when published.*
+**See also:** [`specification.md`](../specification.md) — §8, §5, §6 (table above).
 
 ---
 

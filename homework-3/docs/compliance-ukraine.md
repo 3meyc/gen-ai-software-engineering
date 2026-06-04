@@ -124,4 +124,4 @@ MVP assumes primary data residency in **UA/EU-aligned hosting** (documented assu
 | §11 Verification | Compliance review checklist |
 | §3 Stakeholders | Ops/compliance |
 
-*Final synthesis in Phase 4 — see `specification.md` when published.*
+**See also:** [`specification.md`](../specification.md) — §4, §7 (MO-7/MO-8), §11 (table above).

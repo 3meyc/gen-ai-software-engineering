@@ -132,4 +132,4 @@ Does not call ledger or bank directly.
 | §9 Household RBAC | Membership model |
 | §13 Low-level tasks | `TASK-ID-*` |
 
-*Final synthesis in Phase 4 — see `specification.md` when published.*
+**See also:** [`specification.md`](../../specification.md) — §12, §9, §13 (table above).

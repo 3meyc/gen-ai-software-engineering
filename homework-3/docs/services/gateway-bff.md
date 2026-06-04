@@ -138,4 +138,4 @@ Base: `/api/v1`. Guards: `@Roles(...)` from JWT claims (`household_id`, `user_id
 | §9 Household RBAC | Guard matrix |
 | §13 Low-level tasks | `TASK-BFF-*` |
 
-*Final synthesis in Phase 4 — see `specification.md` when published.*
+**See also:** [`specification.md`](../../specification.md) — §12, §9, §13 (table above).

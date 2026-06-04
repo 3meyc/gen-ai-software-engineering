@@ -25,7 +25,7 @@ todos:
     status: completed
   - id: phase-6-readme-polish
     content: "Phase 6: Write README.md; backlink polish on existing docs"
-    status: pending
+    status: completed
   - id: phase-7-final-audit
     content: "Phase 7: Final specification.md integration pass + TASKS/Mars checklist"
     status: pending

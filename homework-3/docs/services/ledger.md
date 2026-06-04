@@ -146,4 +146,4 @@ MVP: bank-only dedup per [`deduplication-reconciliation-specification.md`](../de
 | §5 Implementation notes | Sole writer rule |
 | §13 Low-level tasks | `TASK-LED-*` |
 
-*Final synthesis in Phase 4 — see `specification.md` when published.*
+**See also:** [`specification.md`](../../specification.md) — §8, §5, §13 (table above).

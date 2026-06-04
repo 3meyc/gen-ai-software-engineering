@@ -6,7 +6,7 @@
 
 ## Spec outline (checklist)
 
-Use this section as the internal TOC companion until `specification.md` exists.
+Graded synthesis: [`specification.md`](../specification.md). This section remains a quick architecture checklist.
 
 | Block | Content |
 |-------|---------|
@@ -169,4 +169,4 @@ Per-service detail: [`docs/services/`](services/) (Phase 3 complete).
 | §4 Non-functional | SLO table |
 | §12 / §13 | REST map seeds per-service tasks |
 
-*Final synthesis in Phase 4 — see `specification.md` when published.*
+**See also:** [`specification.md`](../specification.md) — §5, §12, §4 (table above).

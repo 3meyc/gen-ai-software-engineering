@@ -598,6 +598,8 @@ Each task references one or more `MO-*`, includes a prompt-style intent, hypothe
 
 | Topic | Deep dive |
 |-------|-----------|
+| Submission overview & rationale | [`README.md`](README.md) |
+| Agent guidelines | [`agents.md`](agents.md) |
 | Architecture & REST | [`docs/architecture-overview.md`](docs/architecture-overview.md) |
 | Scope & traceability | [`docs/scope-and-traceability.md`](docs/scope-and-traceability.md) |
 | Compliance | [`docs/compliance-ukraine.md`](docs/compliance-ukraine.md) |

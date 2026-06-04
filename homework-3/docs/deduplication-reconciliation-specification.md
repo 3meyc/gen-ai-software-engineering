@@ -16,6 +16,12 @@ This specification applies to:
 * **Out of scope for MVP:** Cross-source matching (e.g. receipt OCR vs bank transaction) — deferred to **`PH2-XDEDUP`**. Do not implement receipt-vs-bank merge rules in MVP tasks.
 * See [`ingestion-sources-matrix.md`](ingestion-sources-matrix.md) and [`scope-and-traceability.md`](scope-and-traceability.md).
 
+**See also:** [`specification.md`](../specification.md) §8 (dedup summary), §10 (edge cases), §11 (verification).
+
+### Cross-source deduplication (receipt vs bank — out of MVP)
+
+A transaction that appears on **both** a bank API feed and a future receipt/OCR source must **not** be auto-merged in MVP. Within-bank rules (Level 1–2) apply only to `source_system` ∈ `mono`, `otp`, `privat24` with `source_kind = bank_api`. Receipt-vs-bank fuzzy match, user merge/split UI, and `MERGED` outcomes for cross-source pairs belong to **`PH2-XDEDUP`** (Phase 2). MVP `SVC-LED` tasks must not implement receipt-vs-bank dedup.
+
 ### Related documents
 
 * [`canonical-banking-transaction-model.md`](canonical-banking-transaction-model.md) — primary and fallback keys
@@ -472,4 +478,4 @@ Every reconciliation action must generate an immutable audit record.
 | §10 Edge cases | Duplicate overlap, fuzzy review |
 | §11 Verification | Reconciliation test cases, import summary |
 
-*Final synthesis in Phase 4 — see `specification.md` when published.*
+**See also:** [`specification.md`](../specification.md) — §8, §10, §11 (table above).

@@ -18,6 +18,13 @@ The policy applies to:
 * Audit records
 * User-generated annotations
 
+### MVP scope
+
+* **In scope:** Bank tokens, account metadata, booked/preview transaction lifecycle, audit retention, erasure orchestration for MVP sources (`mono`, `otp`, `privat24`).
+* **Out of scope:** Receipt image storage and OCR purge paths until `PH2-OCR` (noted below where relevant).
+
+**See also:** [`specification.md`](../specification.md) §4 (NFR/retention), §5 (credentials), §11 (erasure verification).
+
 ### Related documents
 
 * [`compliance-ukraine.md`](compliance-ukraine.md) — UA privacy and erasure SLA summary
@@ -477,7 +484,7 @@ Financial records removed where legally permitted.
 | §5 Implementation notes | Credential handling |
 | §11 Verification | Erasure and disconnect test steps |
 
-*Final synthesis in Phase 4 — see `specification.md` when published.*
+**See also:** [`specification.md`](../specification.md) — §4, §5, §11 (table above).
 
 ---
 

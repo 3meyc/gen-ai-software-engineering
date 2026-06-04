@@ -153,8 +153,15 @@ flowchart LR
 
 ---
 
-## Spec incorporation (Phase 1)
+## Spec incorporation
 
-When `specification.md` is drafted (Phase 4), copy §1–2 from this doc’s north star, MVP boundary, and `MO-*` table; use § outline above as the document TOC; use the traceability matrix for §13 task tagging and §11 verification grouping.
+| `specification.md` section | Content from this doc |
+|----------------------------|------------------------|
+| §1–§2 | North star, MVP boundary, `MO-*` table |
+| §13 | Traceability matrix → task prefixes |
+| §11 | Verification grouped by `MO-*` |
+| §14 | `PH2-*` deferred IDs |
+
+**See also:** [`specification.md`](../specification.md) — full layered spec (Phase 4 complete).
 
 **Exit criteria (Phase 1):** IDs frozen; MVP vs Phase 2 unambiguous; admin/superadmin confirm, CSV-only export, booked-only budget, and cluster DB names consistent with plan; no implementation tasks assigned to `PH2-*`.

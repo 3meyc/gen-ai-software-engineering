@@ -1,0 +1,67 @@
+{
+  "household_id": "hh_mars_001",
+  "period_id": "bp_2026_06",
+  "label": "June 2026",
+  "start_date": "2026-06-01",
+  "end_date": "2026-06-30",
+  "currency": "UAH",
+  "visibility_notes": {
+    "admin_superadmin": "Household-wide actuals vs limits",
+    "user": "Only categories/txns attributed to caller user_id",
+    "viewer": "Read-only slice; no edit"
+  },
+  "categories": [
+    {
+      "category_id": "cat_groceries",
+      "name": "Groceries",
+      "limit_amount": 8000.00,
+      "household_actual_booked": 432.50,
+      "matching_transaction_ids": ["txn_mars_001"]
+    },
+    {
+      "category_id": "cat_utilities",
+      "name": "Utilities",
+      "limit_amount": 2500.00,
+      "household_actual_booked": 1200.00,
+      "matching_transaction_ids": ["txn_mars_002"]
+    },
+    {
+      "category_id": "cat_personal_son",
+      "name": "Son spending",
+      "limit_amount": 1500.00,
+      "household_actual_booked": 89.00,
+      "user_scope": {
+        "usr_mars_son": {
+          "actual_booked": 89.00,
+          "limit_amount": 1500.00
+        }
+      },
+      "matching_transaction_ids": ["txn_mars_003"]
+    },
+    {
+      "category_id": "cat_income",
+      "name": "Income (informational)",
+      "limit_amount": null,
+      "household_actual_booked": 15000.00,
+      "matching_transaction_ids": ["txn_mars_004"],
+      "excluded_from_overspend_alerts": true
+    }
+  ],
+  "rollup_examples": {
+    "as_admin_usr_mars_father": {
+      "total_debit_booked": 1721.50,
+      "total_credit_booked": 15000.00,
+      "categories_over_limit": []
+    },
+    "as_user_usr_mars_son": {
+      "visible_debit_booked": 89.00,
+      "visible_categories": ["cat_personal_son"]
+    },
+    "as_viewer_usr_mars_cat": {
+      "can_edit": false,
+      "visible_debit_booked": 0,
+      "notes": "Viewer may see household summary tiles if UI allows read-only; no category edit"
+    }
+  },
+  "booked_only_policy": "Pending transactions from import preview are excluded from actual_booked"
+}

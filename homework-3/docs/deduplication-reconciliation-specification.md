@@ -10,6 +10,18 @@ This specification applies to:
 * OTP
 * Privat24
 
+### MVP scope
+
+* **In scope:** Within-bank deduplication and reconciliation for `source_kind = bank_api` (`MO-3`).
+* **Out of scope for MVP:** Cross-source matching (e.g. receipt OCR vs bank transaction) — deferred to **`PH2-XDEDUP`**. Do not implement receipt-vs-bank merge rules in MVP tasks.
+* See [`ingestion-sources-matrix.md`](ingestion-sources-matrix.md) and [`scope-and-traceability.md`](scope-and-traceability.md).
+
+### Related documents
+
+* [`canonical-banking-transaction-model.md`](canonical-banking-transaction-model.md) — primary and fallback keys
+* [`bank-provider-adapter.md`](bank-provider-adapter.md) — re-fetch and checkpoint behavior
+* [`compliance-ukraine.md`](compliance-ukraine.md) — audit on reconcile actions
+
 ---
 
 # Definitions
@@ -449,3 +461,15 @@ Every reconciliation action must generate an immutable audit record.
 | REVERSED          | Existing transaction reversed |
 | REVIEW_REQUIRED   | User decision required        |
 | REJECTED          | Invalid or conflicting import |
+
+---
+
+## Spec incorporation
+
+| `specification.md` section | Content from this doc |
+|----------------------------|------------------------|
+| §8 Canonical model and dedup | Identity hierarchy, outcomes, thresholds |
+| §10 Edge cases | Duplicate overlap, fuzzy review |
+| §11 Verification | Reconciliation test cases, import summary |
+
+*Final synthesis in Phase 4 — see `specification.md` when published.*

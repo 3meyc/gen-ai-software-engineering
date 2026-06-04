@@ -7,13 +7,13 @@ todos:
     status: completed
   - id: phase-2-ingestion-provider
     content: "Phase 2a: Create ingestion-sources-matrix.md, bank-provider-adapter.md; update canonical model"
-    status: pending
+    status: completed
   - id: phase-2-rbac-compliance-mocks
     content: "Phase 2b: Create household-rbac.md, compliance-ukraine.md, mocks/*.json"
-    status: pending
+    status: completed
   - id: phase-2-architecture
     content: "Phase 2c: Create architecture-overview.md with cluster DB names + PostgreSQL note"
-    status: pending
+    status: completed
   - id: phase-3-services
     content: "Phase 3: Write docs/services/*.md (7 services, beginning/ending, REST, collections)"
     status: pending

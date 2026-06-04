@@ -10,6 +10,21 @@ This document defines a bank-agnostic canonical transaction model for ingestion 
 
 The model normalizes account and transaction data into a consistent internal representation while preserving source-specific metadata.
 
+### MVP scope
+
+* **In scope:** `source_system` values `mono`, `otp`, `privat24` via `BankProvider` (`SVC-BANK`) → confirmed import → `SVC-LED`.
+* **Out of scope (Phase 2):** `PH2-FILE`, `PH2-OCR`, `PH2-CASH` — see [`ingestion-sources-matrix.md`](ingestion-sources-matrix.md) and [`scope-and-traceability.md`](scope-and-traceability.md).
+* **Budget and export** consume rows with `status = booked` only (`MO-5`, `MO-6`).
+
+---
+
+## Related documents
+
+* [`ingestion-sources-matrix.md`](ingestion-sources-matrix.md) — trust and confirmation per source
+* [`bank-provider-adapter.md`](bank-provider-adapter.md) — provider → canonical mapping
+* [`deduplication-reconciliation-specification.md`](deduplication-reconciliation-specification.md) — identity keys (bank-only in MVP)
+* [`mocks/sample-transactions.json`](../mocks/sample-transactions.json) — fixture examples
+
 ---
 
 # Design Principles
@@ -29,7 +44,8 @@ The model normalizes account and transaction data into a consistent internal rep
 | Field                  | Type          | Required | Description                                      |
 | ---------------------- | ------------- | -------- | ------------------------------------------------ |
 | transaction_id         | string        | Yes      | Internal canonical transaction identifier        |
-| source_system          | enum          | Yes      | mono, otp, privat24                              |
+| source_system          | enum          | Yes      | mono, otp, privat24 (MVP); extended in Phase 2   |
+| source_kind            | enum          | Yes      | `bank_api` (MVP); `file`, `ocr`, `manual` (Phase 2) |
 | source_transaction_id  | string        | Yes      | Unique transaction identifier provided by source |
 | account_id             | string        | Yes      | Canonical account identifier                     |
 | source_account_id      | string        | Yes      | Source account/card identifier                   |
@@ -152,19 +168,23 @@ hash(
 
 # Normalization Rules
 
-## Amounts
+## Amount and direction (single rule — no ambiguity)
 
-Positive amount:
+Canonical storage uses **one signed decimal** in `amount` and a **direction** enum. They MUST always agree:
 
-```text
-credit
-```
+| Sign of `amount` | `direction` | Meaning |
+| ---------------- | ----------- | ------- |
+| `> 0`            | `credit`    | Money enters the account |
+| `< 0`            | `debit`     | Money leaves the account |
+| `0`              | `adjustment`| Rare; document in metadata |
 
-Negative amount:
+**Normalization steps:**
 
-```text
-debit
-```
+1. If the bank returns a **signed** amount, persist it as-is and set `direction` from the sign.
+2. If the bank returns an **absolute** amount plus a debit/credit indicator (e.g. OTP `debitCredit`), compute `amount` as negative for debit and positive for credit, then set `direction` to match.
+3. Reject or quarantine rows where sign and direction disagree after normalization (validation error in `SVC-BANK` preview).
+
+Implementers must not store absolute amounts with direction inferred only at display time.
 
 Examples:
 
@@ -172,6 +192,19 @@ Examples:
 | ------- | --------- |
 | 1000.00 | credit    |
 | -250.50 | debit     |
+
+---
+
+## `source_kind` (Phase 2 extension)
+
+| Value | `source_system` examples | MVP |
+| ----- | ------------------------ | --- |
+| `bank_api` | mono, otp, privat24 | Yes |
+| `file` | `ph2_file` (placeholder) | Phase 2 (`PH2-FILE`) |
+| `ocr` | `ph2_ocr` | Phase 2 (`PH2-OCR`) |
+| `manual` | `ph2_cash` | Phase 2 (`PH2-CASH`) |
+
+MVP imports set `source_kind = bank_api` for all ledger writes.
 
 ---
 
@@ -253,6 +286,7 @@ Example:
 {
   "transaction_id": "txn_8f9d1c",
   "source_system": "privat24",
+  "source_kind": "bank_api",
   "source_transaction_id": "P24-987654321",
   "account_id": "acc_123",
   "source_account_id": "card_456",
@@ -340,6 +374,18 @@ Before import execution:
 | Mono     | High  | Yes              | Yes               |
 | OTP      | High  | Yes              | Yes               |
 | Privat24 | High  | Yes              | Yes               |
+
+---
+
+## Spec incorporation
+
+| `specification.md` section | Content from this doc |
+|----------------------------|------------------------|
+| §8 Canonical model and dedup | Entity tables, amount/direction rule, `source_kind` |
+| §5 Implementation notes | Signed decimal, UTC timestamps, booked-only reads |
+| §6 Ingestion sources | MVP bank `source_system` enum |
+
+*Final synthesis in Phase 4 — see `specification.md` when published.*
 
 ---
 

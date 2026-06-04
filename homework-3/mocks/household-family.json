@@ -1,0 +1,81 @@
+{
+  "household_id": "hh_mars_001",
+  "display_name": "Mars Family",
+  "currency_default": "UAH",
+  "jurisdiction": "UA",
+  "members": [
+    {
+      "user_id": "usr_mars_mother",
+      "display_name": "Elena Mars",
+      "role": "superadmin",
+      "is_human": true,
+      "email": "elena.mars@example.ua"
+    },
+    {
+      "user_id": "usr_mars_father",
+      "display_name": "Oleksandr Mars",
+      "role": "admin",
+      "is_human": true,
+      "email": "oleksandr.mars@example.ua"
+    },
+    {
+      "user_id": "usr_mars_son",
+      "display_name": "Maksym Mars",
+      "role": "user",
+      "is_human": true,
+      "email": "maksym.mars@example.ua",
+      "notes": "Minor policy: user role for per-user scope testing"
+    },
+    {
+      "user_id": "usr_mars_daughter",
+      "display_name": "Sofia Mars",
+      "role": "user",
+      "is_human": true,
+      "email": "sofia.mars@example.ua"
+    },
+    {
+      "user_id": "usr_mars_cat",
+      "display_name": "Barsik (Cat)",
+      "role": "viewer",
+      "is_human": false,
+      "profile_label": "demo_pet_viewer",
+      "notes": "Non-human profile for RBAC edge tests; no export, no bank connect"
+    },
+    {
+      "user_id": "usr_mars_uncle",
+      "display_name": "Ihor Uncle",
+      "role": "viewer",
+      "is_human": true,
+      "relationship": "relative",
+      "email": "ihor.uncle@example.ua"
+    },
+    {
+      "user_id": "usr_mars_niece",
+      "display_name": "Oksana Niece",
+      "role": "viewer",
+      "is_human": true,
+      "relationship": "relative",
+      "email": "oksana.niece@example.ua"
+    }
+  ],
+  "bank_connections": [
+    {
+      "connection_id": "mono_conn_mars_01",
+      "source_system": "mono",
+      "owner_user_id": "usr_mars_father",
+      "status": "active"
+    },
+    {
+      "connection_id": "otp_conn_mars_01",
+      "source_system": "otp",
+      "owner_user_id": "usr_mars_mother",
+      "status": "active"
+    }
+  ],
+  "role_bindings_summary": {
+    "superadmin": ["usr_mars_mother"],
+    "admin": ["usr_mars_father"],
+    "user": ["usr_mars_son", "usr_mars_daughter"],
+    "viewer": ["usr_mars_cat", "usr_mars_uncle", "usr_mars_niece"]
+  }
+}

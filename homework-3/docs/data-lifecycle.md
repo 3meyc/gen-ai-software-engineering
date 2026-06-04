@@ -14,9 +14,16 @@ The policy applies to:
 * Access tokens
 * Account metadata
 * Transactions
-* Receipt images
+* Receipt images (Phase 2 / `PH2-OCR` — not stored in MVP)
 * Audit records
 * User-generated annotations
+
+### Related documents
+
+* [`compliance-ukraine.md`](compliance-ukraine.md) — UA privacy and erasure SLA summary
+* [`bank-provider-adapter.md`](bank-provider-adapter.md) — token revoke
+* [`household-rbac.md`](household-rbac.md) — who may request erasure
+* [`scope-and-traceability.md`](scope-and-traceability.md) — `MO-7`
 
 ---
 
@@ -459,6 +466,18 @@ Financial records removed where legally permitted.
 | DELETED          | Removed from active systems       |
 | LEGALLY_RETAINED | Preserved due to legal obligation |
 | ANONYMIZED       | Personal identifiers removed      |
+
+---
+
+## Spec incorporation
+
+| `specification.md` section | Content from this doc |
+|----------------------------|------------------------|
+| §4 Non-functional and policy | Retention, token rotation, erasure |
+| §5 Implementation notes | Credential handling |
+| §11 Verification | Erasure and disconnect test steps |
+
+*Final synthesis in Phase 4 — see `specification.md` when published.*
 
 ---
 

@@ -1,0 +1,119 @@
+---
+description: HW3 NestJS/Angular/Mongo FinTech stack, service boundaries, and UA household-budget domain defaults
+globs: homework-3/**/*
+alwaysApply: false
+---
+
+# Homework 3 — Stack & Domain Rules
+
+Apply when editing files under `homework-3/` or when implementing the household budget MVP described in `homework-3/specification.md`. Complements `Agent-Output-Rules.mdc` (chat scope) and `homework-3/agents.md`.
+
+**Do not** apply these patterns to `homework-1/` or `homework-2/`.
+
+---
+
+## Stack
+
+| Layer | Standard |
+|-------|----------|
+| Frontend | Angular, **strict** TypeScript, standalone components |
+| API | NestJS modules, controllers, guards, DTOs with `class-validator` |
+| Data | Mongoose schemas; **one DB per service** on shared MongoDB cluster |
+| APIs | REST `/api/v1` (BFF-public), `/internal/v1` (service-to-service) |
+| Money | `decimal(18,2)` or decimal string — **never** `number` for currency math |
+| Default currency | `UAH` (ISO 4217) |
+
+Database names: `identity_mvp`, `bank_mvp`, `ledger_mvp`, `budget_mvp`, `export_mvp`, `audit_mvp`.
+
+---
+
+## TypeScript and naming
+
+1. **`strict` on**; avoid `any` — use `unknown` + narrow or explicit interfaces.
+2. Prefer **named exports**; avoid default export except Angular route/config entrypoints.
+3. Files: `kebab-case.ts`; classes: `PascalCase`; constants: `SCREAMING_SNAKE` for enums used across services.
+4. Service IDs in comments/logs: `SVC-BFF`, `SVC-LED`, etc., matching `docs/registry/scope-and-traceability.md`.
+5. Canonical enums: `source_system` ∈ `mono | otp | privat24` (MVP); `source_kind` = `bank_api` on ledger writes.
+6. Roles: `superadmin | admin | user | viewer` — exact strings for guards and JWT claims.
+
+---
+
+## NestJS patterns
+
+1. **One module per domain** (e.g. `ImportModule`, `TransactionsModule`) under each service.
+2. Guards: `JwtAuthGuard` on BFF; `@Roles('admin', 'superadmin')` for confirm/connect bank.
+3. DTOs for every public and internal body; validate at boundary.
+4. Forward `X-Request-Id` and `X-Actor-User-Id` on downstream HTTP calls from BFF.
+5. Internal routes under `/internal/v1` — require service token or mTLS (document in README when implementing).
+6. Cron jobs only in `SVC-BANK` (sync) and worker polling in `SVC-EXP` — no shared event bus in MVP.
+
+---
+
+## Angular patterns
+
+1. **Strict templates**; no `any` in component state for money fields.
+2. Route guards mirror BFF roles (hide export for `viewer`, hide confirm for non-admin).
+3. Use async pipe / observables for API calls; do not store tokens in `localStorage` without user approval doc.
+4. Display amounts from string/decimal types; format UAH in UI layer only.
+5. Reference Mars Family roles in dev seeds — see `mocks/household-family.json`.
+
+---
+
+## MongoDB / Mongoose
+
+1. Connect only to **this service’s** database name (see `agents.md`).
+2. Define indexes from `docs/services/*.md` — especially unique `(source_system, source_transaction_id)` on ledger.
+3. **Forbidden:** `SVC-BANK`, `SVC-BUD`, or `SVC-EXP` writing to `ledger_mvp.transactions`.
+4. Encrypt `bank_mvp.tokens` at rest; never persist full PAN.
+5. Preview collections in `bank_mvp` only — not budget input.
+
+---
+
+## Service boundaries (critical)
+
+```text
+SVC-BANK: preview + confirm orchestration → calls SVC-LED apply
+SVC-LED:  sole writer of transactions
+SVC-BUD:  reads SVC-LED internal API (status=booked)
+SVC-EXP:  reads SVC-LED for CSV; format=csv only in MVP
+SVC-BFF:  proxy + RBAC; no MongoDB
+SVC-AUD:  append-only audit_events
+```
+
+Confirm import **before** ledger write. Budget and export **booked only**.
+
+---
+
+## FinTech-sensitive defaults
+
+| Do | Don't |
+|----|--------|
+| Idempotent `(source_system, source_transaction_id)` | Insert duplicate ledger rows on re-sync |
+| Admin/superadmin confirm import | Auto-book preview into ledger |
+| Mask PAN; encrypt OAuth tokens | Log tokens, refresh tokens, or full account numbers |
+| Audit append with redacted payload | Put secrets in `audit_events.payload` |
+| Reject amount/direction mismatch in preview | Store absolute amount without signed normalization |
+| `403` for viewer export | Fall back to unauthenticated export |
+| Revoke tokens on erasure start | Leave bank tokens after erasure request |
+| Paginate ledger (max 200) | Unbounded `find()` for export/household history |
+
+---
+
+## Ukraine / compliance pointers
+
+- HTTP errors / edge cases: `docs/api/errors-and-status-codes.md`
+- Data minimization and erasure: `docs/compliance/compliance-ukraine.md`, `docs/compliance/data-lifecycle-mvp.md`
+- CSV PII columns: `mocks/sample-export-manifest.json`
+- Audit retention assumption: 7 years, immutable
+
+---
+
+## Phase 2 guard
+
+Do not add `PH2-FILE`, `PH2-OCR`, `PH2-CASH`, or `PH2-XDEDUP` implementation unless the user explicitly requests Phase 2. OCR policy when built: **always confirm**.
+
+---
+
+## Verification reminder
+
+Each change should trace to `MO-*` and a `TASK-*` DoD in `specification.md` §13. Use mocks under `homework-3/mocks/` for integration tests. See `agents.md` §8.

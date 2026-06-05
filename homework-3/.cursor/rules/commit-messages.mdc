@@ -1,0 +1,19 @@
+---
+description: >-
+  Draft git commit messages with Conventional Commits v1.0.0 for homework-3 and
+  course-repo changes touching homework-3. Use when the user asks for a commit
+  message or reviews staged changes before commit.
+globs: homework-3/**/*
+alwaysApply: false
+---
+
+# Commit messages (HW3)
+
+When the user wants a commit message or is about to commit changes under `homework-3/`:
+
+1. Read and follow the **commit-messages** skill at `homework-3/.cursor/skills/commit-messages/SKILL.md`.
+2. Run `git status`, `git diff --cached`, and `git log -10 --format="%s"` before drafting.
+3. Analyze the **full** diff (spec/docs vs `platform/` code — use scope `docs(homework-3)` or `feat(platform)` when clear).
+4. Default output: **recommended** only in a `text` fence. Add **one-liner** or **split-suggestion** only when requested.
+
+**N.B.** Do not commit unless the user explicitly asks.

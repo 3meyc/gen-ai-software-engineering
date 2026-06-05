@@ -1,0 +1,8 @@
+{
+  "id": "mono_txn_sample_001",
+  "time": 1717200000,
+  "description": "Sample Mono payment",
+  "amount": "-150.00",
+  "currencyCode": 980,
+  "comment": "Adapter unit test fixture — not live API data"
+}

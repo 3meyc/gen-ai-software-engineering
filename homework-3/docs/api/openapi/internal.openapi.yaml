@@ -1,0 +1,262 @@
+openapi: 3.1.0
+info:
+  title: Household Budget Platform — Internal Service API
+  version: 1.0.0-mvp
+  description: |
+    Service-to-service REST (`/internal/v1`). Not exposed to Angular clients.
+    Auth — signed service token (MVP assumed). See internal-routes.md.
+servers:
+  - url: /internal/v1
+    description: Internal base path per service host
+
+security:
+  - ServiceToken: []
+
+tags:
+  - name: SVC-LED
+    description: Ledger — sole writer of transactions
+  - name: SVC-BANK
+    description: Bank connector internal hooks
+  - name: SVC-ID
+    description: Identity resolution
+  - name: SVC-AUD
+    description: Append-only audit
+
+paths:
+  /imports/{previewId}/apply:
+    post:
+      tags: [SVC-LED]
+      operationId: applyImport
+      summary: Apply confirmed preview to ledger (idempotent)
+      parameters:
+        - name: previewId
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: './components/schemas.yaml#/components/parameters/RequestId'
+        - $ref: './components/schemas.yaml#/components/parameters/ActorUserId'
+        - $ref: './components/schemas.yaml#/components/parameters/ActorRole'
+      responses:
+        '200':
+          description: Reconciliation summary
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/ApplyImportResult'
+              examples:
+                apply_ok:
+                  value:
+                    created: 148
+                    updated: 12
+                    duplicate_skipped: 94
+                    review_required: 0
+        '400':
+          description: Invalid preview
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/ErrorResponse'
+        '409':
+          description: Preview aborted
+          $ref: './components/schemas.yaml#/components/responses/Conflict'
+
+  /transactions:
+    get:
+      tags: [SVC-LED]
+      operationId: internalListTransactions
+      summary: Bulk booked transactions for BUD/EXP
+      parameters:
+        - name: household_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: true
+          schema:
+            $ref: './components/schemas.yaml#/components/schemas/TransactionStatus'
+          description: Must be booked for SVC-BUD and SVC-EXP
+        - name: user_scope
+          in: query
+          schema:
+            type: string
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+        - $ref: './components/schemas.yaml#/components/parameters/Cursor'
+        - $ref: './components/schemas.yaml#/components/parameters/Limit'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/TransactionListResponse'
+
+  /transactions/{transactionId}:
+    get:
+      tags: [SVC-LED]
+      operationId: internalGetTransaction
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/CanonicalTransaction'
+        '404':
+          $ref: './components/schemas.yaml#/components/responses/NotFound'
+
+  /audit/events:
+    post:
+      tags: [SVC-AUD]
+      operationId: appendAuditEvent
+      summary: Append-only audit write
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/RequestId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas.yaml#/components/schemas/AuditEventAppend'
+            examples:
+              import_confirmed:
+                value:
+                  event_type: import.confirmed
+                  household_id: hh_mars_001
+                  actor_user_id: usr_mars_father
+                  actor_role: admin
+                  resource_type: preview
+                  resource_id: prev_mars_20260604
+                  payload:
+                    created: 148
+                    duplicate_skipped: 94
+              export_denied_barsik:
+                summary: Viewer export blocked — append after BFF 403
+                value:
+                  event_type: export.denied
+                  household_id: hh_mars_001
+                  actor_user_id: usr_mars_cat
+                  actor_role: viewer
+                  resource_type: export_job
+                  resource_id: denied_at_bff
+                  payload:
+                    reason: species_not_eligible_for_csv
+                    display_name: Barsik (Cat)
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/AuditEvent'
+        '400':
+          description: Invalid payload (e.g. token-like string rejected)
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/ErrorResponse'
+    get:
+      tags: [SVC-AUD]
+      operationId: internalQueryAuditEvents
+      summary: Ops query (may mirror public /ops/audit/events)
+      parameters:
+        - name: household_id
+          in: query
+          schema:
+            type: string
+        - name: event_type
+          in: query
+          schema:
+            type: string
+        - $ref: './components/schemas.yaml#/components/parameters/Cursor'
+        - $ref: './components/schemas.yaml#/components/parameters/Limit'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/AuditEventList'
+
+  /memberships/resolve:
+    get:
+      tags: [SVC-ID]
+      operationId: resolveMembership
+      summary: Resolve role and scope for downstream services
+      parameters:
+        - name: household_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/MembershipResolve'
+              examples:
+                mars_father:
+                  value:
+                    household_id: hh_mars_001
+                    user_id: usr_mars_father
+                    role: admin
+                    scope: household
+        '404':
+          $ref: './components/schemas.yaml#/components/responses/NotFound'
+
+  /connections/{connectionId}/revoke:
+    post:
+      tags: [SVC-BANK]
+      operationId: revokeConnection
+      summary: Erasure path — revoke tokens (called by SVC-ID)
+      parameters:
+        - name: connectionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Revoked
+        '404':
+          $ref: './components/schemas.yaml#/components/responses/NotFound'
+
+  /oauth/callback:
+    post:
+      tags: [SVC-BANK]
+      operationId: oauthCallback
+      summary: Complete provider OAuth redirect (internal)
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Connection activated
+
+components:
+  securitySchemes:
+    ServiceToken:
+      $ref: './components/schemas.yaml#/components/securitySchemes/ServiceToken'

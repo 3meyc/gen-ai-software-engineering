@@ -1,0 +1,636 @@
+openapi: 3.1.0
+info:
+  title: Household Budget Platform — Public BFF API
+  version: 1.0.0-mvp
+  description: |
+    Angular-facing gateway (`SVC-BFF`). Proxies to backend NestJS services.
+    Product behavior — specification.md. Route index — public-routes.md.
+servers:
+  - url: /api/v1
+    description: BFF public base path
+
+tags:
+  - name: SVC-BFF
+    description: Gateway health
+  - name: SVC-ID
+    description: Identity and household (proxied)
+  - name: SVC-BANK
+    description: Bank connections and import preview (proxied)
+  - name: SVC-LED
+    description: Transactions (proxied)
+  - name: SVC-BUD
+    description: Budget (proxied)
+  - name: SVC-EXP
+    description: CSV export (proxied)
+  - name: SVC-AUD
+    description: Ops audit read (proxied)
+
+security:
+  - BearerAuth: []
+
+paths:
+  /health:
+    get:
+      tags: [SVC-BFF]
+      operationId: getHealth
+      summary: Health check
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/HealthResponse'
+
+  /auth/login:
+    post:
+      tags: [SVC-ID]
+      operationId: login
+      summary: Issue JWT
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas.yaml#/components/schemas/LoginRequest'
+            examples:
+              mars_father:
+                value:
+                  email: oleksandr.mars@example.ua
+                  password: "***"
+      responses:
+        '200':
+          description: Tokens issued
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/TokenResponse'
+              examples:
+                mars_father:
+                  value:
+                    access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.example
+                    refresh_token: refresh_example
+                    token_type: Bearer
+                    expires_in: 3600
+                    user_id: usr_mars_father
+                    household_id: hh_mars_001
+                    role: admin
+        '401':
+          $ref: './components/schemas.yaml#/components/responses/Unauthorized'
+
+  /auth/refresh:
+    post:
+      tags: [SVC-ID]
+      operationId: refreshToken
+      summary: Rotate JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas.yaml#/components/schemas/RefreshRequest'
+      responses:
+        '200':
+          description: New access token
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/TokenResponse'
+        '401':
+          $ref: './components/schemas.yaml#/components/responses/Unauthorized'
+
+  /households/{householdId}:
+    get:
+      tags: [SVC-ID]
+      operationId: getHousehold
+      summary: Household metadata
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - $ref: './components/schemas.yaml#/components/parameters/RequestId'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/Household'
+        '403':
+          $ref: './components/schemas.yaml#/components/responses/Forbidden'
+        '404':
+          $ref: './components/schemas.yaml#/components/responses/NotFound'
+
+  /households/{householdId}/members:
+    get:
+      tags: [SVC-ID]
+      operationId: listMembers
+      summary: List memberships
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/MemberListResponse'
+              examples:
+                mars_family:
+                  value:
+                    household_id: hh_mars_001
+                    members:
+                      - user_id: usr_mars_mother
+                        display_name: Elena Mars
+                        role: superadmin
+                      - user_id: usr_mars_father
+                        display_name: Oleksandr Mars
+                        role: admin
+
+  /households/{householdId}/invitations:
+    post:
+      tags: [SVC-ID]
+      operationId: createInvitation
+      summary: Create invite (admin, superadmin)
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - $ref: './components/schemas.yaml#/components/parameters/ActorUserId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas.yaml#/components/schemas/InvitationCreate'
+      responses:
+        '201':
+          description: Invitation created
+        '403':
+          $ref: './components/schemas.yaml#/components/responses/Forbidden'
+
+  /households/{householdId}/members/{userId}:
+    patch:
+      tags: [SVC-ID]
+      operationId: patchMemberRole
+      summary: Change member role
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas.yaml#/components/schemas/MemberRolePatch'
+      responses:
+        '200':
+          description: Updated
+        '403':
+          $ref: './components/schemas.yaml#/components/responses/Forbidden'
+    delete:
+      tags: [SVC-ID]
+      operationId: removeMember
+      summary: Remove member
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Removed
+        '403':
+          $ref: './components/schemas.yaml#/components/responses/Forbidden'
+
+  /households/{householdId}/erasure-requests:
+    post:
+      tags: [SVC-ID]
+      operationId: createErasureRequest
+      summary: Start erasure (superadmin or self)
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - $ref: './components/schemas.yaml#/components/parameters/ActorUserId'
+        - $ref: './components/schemas.yaml#/components/parameters/ActorRole'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas.yaml#/components/schemas/ErasureRequestCreate'
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/ErasureRequestResponse'
+
+  /households/{householdId}/bank-connections:
+    post:
+      tags: [SVC-BANK]
+      operationId: createBankConnection
+      summary: Start bank OAuth (admin, superadmin)
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - $ref: './components/schemas.yaml#/components/parameters/ActorUserId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas.yaml#/components/schemas/BankConnectionCreate'
+            examples:
+              mono:
+                value:
+                  source_system: mono
+                  owner_user_id: usr_mars_father
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/BankConnection'
+        '403':
+          $ref: './components/schemas.yaml#/components/responses/Forbidden'
+    get:
+      tags: [SVC-BANK]
+      operationId: listBankConnections
+      summary: List connections
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/BankConnectionList'
+
+  /households/{householdId}/bank-connections/{connectionId}:
+    get:
+      tags: [SVC-BANK]
+      operationId: getBankConnection
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - name: connectionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/BankConnection'
+    delete:
+      tags: [SVC-BANK]
+      operationId: deleteBankConnection
+      summary: Revoke connection
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - name: connectionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Revoked
+        '403':
+          $ref: './components/schemas.yaml#/components/responses/Forbidden'
+
+  /households/{householdId}/bank-connections/{connectionId}/sync:
+    post:
+      tags: [SVC-BANK]
+      operationId: triggerSync
+      summary: Trigger incremental sync
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - name: connectionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/SyncResponse'
+
+  /households/{householdId}/import-previews/{previewId}:
+    get:
+      tags: [SVC-BANK]
+      operationId: getImportPreview
+      summary: Import preview (user sees filtered rows)
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - name: previewId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/ImportPreview'
+              examples:
+                pending:
+                  value:
+                    preview_id: prev_mars_20260604
+                    household_id: hh_mars_001
+                    connection_id: mono_conn_mars_01
+                    status: pending_confirmation
+                    summary:
+                      ready_count: 148
+                      quarantined_count: 2
+                      duplicate_skipped_count: 0
+        '404':
+          $ref: './components/schemas.yaml#/components/responses/NotFound'
+
+  /households/{householdId}/import-previews/{previewId}/confirm:
+    post:
+      tags: [SVC-BANK]
+      operationId: confirmImport
+      summary: Confirm import (admin, superadmin only at BFF)
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - name: previewId
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: './components/schemas.yaml#/components/parameters/ActorUserId'
+        - $ref: './components/schemas.yaml#/components/parameters/ActorRole'
+      responses:
+        '200':
+          description: Confirmed and applied to ledger
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/ImportConfirmResponse'
+              examples:
+                father_confirm:
+                  value:
+                    preview_id: prev_mars_20260604
+                    status: confirmed
+                    apply_result:
+                      created: 148
+                      updated: 12
+                      duplicate_skipped: 94
+                      review_required: 0
+        '403':
+          description: User or viewer attempted confirm
+          $ref: './components/schemas.yaml#/components/responses/Forbidden'
+        '409':
+          description: Preview aborted (e.g. token revoked mid-import)
+          $ref: './components/schemas.yaml#/components/responses/Conflict'
+
+  /households/{householdId}/transactions:
+    get:
+      tags: [SVC-LED]
+      operationId: listTransactions
+      summary: List transactions (default status=booked)
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - name: status
+          in: query
+          schema:
+            $ref: './components/schemas.yaml#/components/schemas/TransactionStatus'
+          default: booked
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - $ref: './components/schemas.yaml#/components/parameters/Cursor'
+        - $ref: './components/schemas.yaml#/components/parameters/Limit'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/TransactionListResponse'
+              examples:
+                booked_page:
+                  value:
+                    items:
+                      - transaction_id: txn_mars_001
+                        household_id: hh_mars_001
+                        attributed_user_id: usr_mars_father
+                        source_system: mono
+                        source_kind: bank_api
+                        source_transaction_id: MONO-20260601-88421
+                        account_id: acc_mars_mono_joint
+                        source_account_id: jar_joint_01
+                        booking_timestamp: '2026-06-01T08:12:00Z'
+                        amount: '-432.50'
+                        currency: UAH
+                        transaction_type: card_payment
+                        direction: debit
+                        status: booked
+                    next_cursor: null
+                    limit: 50
+
+  /households/{householdId}/budget/periods:
+    get:
+      tags: [SVC-BUD]
+      operationId: listBudgetPeriods
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas.yaml#/components/schemas/BudgetPeriodSummary'
+
+  /households/{householdId}/budget/periods/{periodId}:
+    get:
+      tags: [SVC-BUD]
+      operationId: getBudgetPeriod
+      summary: Period with booked actuals (MO-5)
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - name: periodId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: bp_2026_06
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/BudgetPeriodDetail'
+              examples:
+                june_2026:
+                  value:
+                    period_id: bp_2026_06
+                    household_id: hh_mars_001
+                    label: June 2026
+                    start_date: '2026-06-01'
+                    end_date: '2026-06-30'
+                    currency: UAH
+                    categories:
+                      - category_id: cat_groceries
+                        name: Groceries
+                        limit_amount: '8000.00'
+                        actual_booked: '432.50'
+                    total_debit_booked: '1721.50'
+                    total_credit_booked: '15000.00'
+
+  /households/{householdId}/budget/categories/{categoryId}:
+    put:
+      tags: [SVC-BUD]
+      operationId: updateBudgetCategory
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas.yaml#/components/schemas/BudgetCategoryUpdate'
+      responses:
+        '200':
+          description: Updated
+        '403':
+          $ref: './components/schemas.yaml#/components/responses/Forbidden'
+
+  /households/{householdId}/exports:
+    post:
+      tags: [SVC-EXP]
+      operationId: createExport
+      summary: Create async CSV export job
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - $ref: './components/schemas.yaml#/components/parameters/ActorUserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas.yaml#/components/schemas/ExportJobCreate'
+            examples:
+              june_csv:
+                value:
+                  format: csv
+                  date_from: '2026-06-01'
+                  date_to: '2026-06-30'
+                  status: booked
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/ExportJob'
+        '403':
+          description: Viewer denied at BFF
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/ErrorResponse'
+              examples:
+                barsik_export_denied:
+                  summary: Mars Family cat viewer (MO-4 / MO-6)
+                  value:
+                    code: export.denied
+                    message: Species not eligible for household CSV export
+                    request_id: 7f3c9e2a-1b4d-4a8e-9c0f-barsik000001
+
+  /households/{householdId}/exports/{exportJobId}:
+    get:
+      tags: [SVC-EXP]
+      operationId: getExportJob
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - name: exportJobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/ExportJob'
+
+  /households/{householdId}/exports/{exportJobId}/download:
+    get:
+      tags: [SVC-EXP]
+      operationId: downloadExport
+      summary: Stream CSV when completed
+      parameters:
+        - $ref: './components/schemas.yaml#/components/parameters/HouseholdId'
+        - name: exportJobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: CSV file stream
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        '409':
+          description: Job not completed
+          $ref: './components/schemas.yaml#/components/responses/Conflict'
+        '403':
+          $ref: './components/schemas.yaml#/components/responses/Forbidden'
+
+  /ops/audit/events:
+    get:
+      tags: [SVC-AUD]
+      operationId: queryAuditEvents
+      summary: Ops read-only audit query (MO-8)
+      parameters:
+        - name: household_id
+          in: query
+          schema:
+            type: string
+        - name: event_type
+          in: query
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - $ref: './components/schemas.yaml#/components/parameters/Cursor'
+        - $ref: './components/schemas.yaml#/components/parameters/Limit'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas.yaml#/components/schemas/AuditEventList'
+        '403':
+          $ref: './components/schemas.yaml#/components/responses/Forbidden'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      $ref: './components/schemas.yaml#/components/securitySchemes/BearerAuth'

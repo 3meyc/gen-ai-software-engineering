@@ -1,0 +1,39 @@
+{
+  "export_job_id": "exp_mars_20260604_01",
+  "household_id": "hh_mars_001",
+  "requested_by": "usr_mars_father",
+  "requester_role": "admin",
+  "format": "csv",
+  "status": "completed",
+  "row_count": 4,
+  "columns": [
+    { "name": "transaction_id", "include_for_roles": ["superadmin", "admin", "user"], "pii": false },
+    { "name": "booking_timestamp", "include_for_roles": ["superadmin", "admin", "user"], "pii": false },
+    { "name": "source_system", "include_for_roles": ["superadmin", "admin", "user"], "pii": false },
+    { "name": "amount", "include_for_roles": ["superadmin", "admin", "user"], "pii": false },
+    { "name": "currency", "include_for_roles": ["superadmin", "admin", "user"], "pii": false },
+    { "name": "direction", "include_for_roles": ["superadmin", "admin", "user"], "pii": false },
+    { "name": "description", "include_for_roles": ["superadmin", "admin", "user"], "pii": false },
+    { "name": "merchant_name", "include_for_roles": ["superadmin", "admin", "user"], "pii": false },
+    { "name": "attributed_user_id", "include_for_roles": ["superadmin", "admin"], "pii": true },
+    { "name": "source_account_id", "include_for_roles": ["superadmin", "admin"], "pii": true },
+    { "name": "counterparty_account", "include_for_roles": ["superadmin", "admin"], "pii": true, "redact_for_user": "last4_only" }
+  ],
+  "redaction_by_role": {
+    "admin": {
+      "scope": "household_all_booked",
+      "mask_counterparty_account": false
+    },
+    "user": {
+      "scope": "own_attributed_user_id_only",
+      "mask_counterparty_account": true,
+      "omit_columns": ["attributed_user_id"]
+    },
+    "viewer": {
+      "allowed": false,
+      "expected_http_status": 403
+    }
+  },
+  "filename": "mars_family_transactions_2026-06-04.csv",
+  "audit_event_type": "export.completed"
+}

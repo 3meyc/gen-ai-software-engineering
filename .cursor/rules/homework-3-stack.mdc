@@ -1,0 +1,19 @@
+---
+description: Homework 3 household budget platform — stack, boundaries, and FinTech defaults (scoped to homework-3/)
+globs: homework-3/**/*
+alwaysApply: false
+---
+
+# Homework 3 — Stack & Domain (repo root rule)
+
+Apply when editing `homework-3/`. Full detail: [`homework-3/.cursor/rules/Stack-Domain-Rules.mdc`](homework-3/.cursor/rules/Stack-Domain-Rules.mdc) and [`homework-3/agents.md`](homework-3/agents.md).
+
+## Critical rules
+
+1. **Scope:** Only `homework-3/` unless user expands. Do not modify `homework-1/` or `homework-2/`.
+2. **Specs vs code:** Graded artifacts are docs; implementation goes under `homework-3/platform/` when requested.
+3. **Ledger:** Only `SVC-LED` writes `ledger_mvp.transactions`.
+4. **Confirm before ledger; booked-only** for budget and export.
+5. **HTTP edge cases:** [`homework-3/docs/api/errors-and-status-codes.md`](homework-3/docs/api/errors-and-status-codes.md).
+6. **No secrets in logs or audit payloads.** Money as decimal/string, not JS `number`.
+7. **Phase 2:** Do not implement `PH2-*` unless user explicitly opts in.

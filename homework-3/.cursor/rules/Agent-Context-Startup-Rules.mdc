@@ -1,0 +1,18 @@
+---
+description: HW3 agent startup — read spec index and agents.md before implementation or doc edits
+globs: homework-3/**/*
+alwaysApply: false
+---
+
+# Homework 3 — Agent Context Startup
+
+Read spec index and agents guidelines before editing docs or implementing under this package.
+
+1. For implementation, refactor, doc-structure, or verification tasks under `homework-3/`, read [`agents.md`](../agents.md) then [`docs/README.md`](../docs/README.md) before scanning source or spec files.
+2. Follow the reading order in `docs/README.md` (registry → architecture → domain → api → services → mocks).
+3. Before coding in `homework-3/platform/`, also read:
+   - [`docs/api/errors-and-status-codes.md`](../docs/api/errors-and-status-codes.md)
+   - [`docs/testing/testing-strategy.md`](../docs/testing/testing-strategy.md)
+   - Relevant `TASK-*` and `MO-*` in [`specification.md`](../specification.md) §13
+4. Run validations per [`docs/testing/testing-strategy.md`](../docs/testing/testing-strategy.md) and the changed service doc §7 before claiming a task done.
+5. Prefer targeted docs over broad repo exploration; do not modify `homework-1/` or `homework-2/`.

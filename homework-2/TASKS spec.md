@@ -196,30 +196,40 @@ Computed from keyword-hit strength (see `src/classify.ts` → `computeConfidence
 
 Generate comprehensive tests achieving **>85% code coverage**.
 
+**Clarifications (agreed):**
+
+1. **Integration / performance** — `test/integration.test.ts` and `test/performance.test.ts` are **stubbed** (`it.todo`) until Task 5; one light performance smoke test may run in Task 3.
+2. **Performance criteria** — assert correctness under load; log timings optionally; no hard SLA thresholds in Task 3.
+3. **`test/ticket-model.test.ts`** — unit tests for `validation.ts` (and related helpers), separate from API-level validation in `test/ticket-api.test.ts`.
+4. **`test/import-*.test.ts`** — exercise parser modules (`src/import/csv.ts`, `json.ts`, `xml.ts`) directly, not only HTTP import endpoints.
+5. **Invalid fixtures** — small set under `test/fixtures/` (malformed + invalid-row files).
+6. **Coverage** — Vitest `@vitest/coverage-v8`; `npm run test:coverage`; exclude `src/server.ts`; screenshot → `docs/screenshots/test_coverage.png`.
+
 **Required Test Files:**
 
 ```
-tests/
-├── test_ticket_api          # API endpoints (11 tests)
-├── test_ticket_model        # Data validation (9 tests)
-├── test_import_csv          # CSV parsing (6 tests)
-├── test_import_json         # JSON parsing (5 tests)
-├── test_import_xml          # XML parsing (5 tests)
-├── test_categorization      # Classification (10 tests)
-├── test_integration         # End-to-end workflows (5 tests)
-├── test_performance         # Benchmarks (5 tests)
-└── fixtures/                # Sample data files
+test/
+├── ticket-api.test.ts       # API endpoints (11 tests) — Task 1
+├── ticket-model.test.ts     # Data validation (9 tests)
+├── import-csv.test.ts       # CSV parsing (6 tests)
+├── import-json.test.ts      # JSON parsing (5 tests)
+├── import-xml.test.ts       # XML parsing (5 tests)
+├── categorization.test.ts   # Classification (10 tests) — Task 2
+├── integration.test.ts      # End-to-end workflows (5 tests; stub → Task 5)
+├── performance.test.ts        # Benchmarks (5 tests; stub → Task 5)
+└── fixtures/                # Sample + invalid data for tests
 ```
 
-**Sample data**
-Generate sample data files
+**Sample data (homework-2 root):**
+
 - `sample_tickets.csv` (50 tickets)
 - `sample_tickets.json` (20 tickets)
 - `sample_tickets.xml` (30 tickets)
-- Invalid data files for negative tests
+- Invalid data files for negative tests → `test/fixtures/`
 
 **Test Coverage Requirements:**
-- Overall: >85%
+
+- Overall: **>85%** (`npm run test:coverage`)
 
 ---
 

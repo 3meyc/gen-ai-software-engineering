@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tickets>
+  <ticket>
+    <customer_id>cust_001</customer_id>
+    <customer_email>user1@example.com</customer_email>
+    <customer_name>Customer 1</customer_name>
+    <subject>Support request #1 regarding account access</subject>
+    <description>Detailed description for ticket 1 with enough characters for validation.</description>
+    <category>account_access</category>
+    <priority>urgent</priority>
+    <status>new</status>
+    <tags>
+      <tag>tag1</tag>
+      <tag>batch-1</tag>
+    </tags>
+    <metadata>
+      <source>web_form</source>
+      <browser>Chrome</browser>
+      <device_type>desktop</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_002</customer_id>
+    <customer_email>user2@example.com</customer_email>
+    <customer_name>Customer 2</customer_name>
+    <subject>Support request #2 regarding technical issue</subject>
+    <description>Detailed description for ticket 2 with enough characters for validation.</description>
+    <category>technical_issue</category>
+    <priority>high</priority>
+    <status>in_progress</status>
+    <tags>
+      <tag>tag2</tag>
+      <tag>batch-1</tag>
+    </tags>
+    <metadata>
+      <source>email</source>
+      <browser>Firefox</browser>
+      <device_type>mobile</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_003</customer_id>
+    <customer_email>user3@example.com</customer_email>
+    <customer_name>Customer 3</customer_name>
+    <subject>Support request #3 regarding billing question</subject>
+    <description>Detailed description for ticket 3 with enough characters for validation.</description>
+    <category>billing_question</category>
+    <priority>medium</priority>
+    <status>waiting_customer</status>
+    <tags>
+      <tag>tag3</tag>
+      <tag>batch-1</tag>
+    </tags>
+    <metadata>
+      <source>api</source>
+      <browser>Chrome</browser>
+      <device_type>tablet</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_004</customer_id>
+    <customer_email>user4@example.com</customer_email>
+    <customer_name>Customer 4</customer_name>
+    <subject>Support request #4 regarding feature request</subject>
+    <description>Detailed description for ticket 4 with enough characters for validation.</description>
+    <category>feature_request</category>
+    <priority>low</priority>
+    <status>resolved</status>
+    <tags>
+      <tag>tag1</tag>
+      <tag>batch-1</tag>
+    </tags>
+    <metadata>
+      <source>chat</source>
+      <browser>Firefox</browser>
+      <device_type>desktop</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_005</customer_id>
+    <customer_email>user5@example.com</customer_email>
+    <customer_name>Customer 5</customer_name>
+    <subject>Support request #5 regarding bug report</subject>
+    <description>Detailed description for ticket 5 with enough characters for validation.</description>
+    <category>bug_report</category>
+    <priority>urgent</priority>
+    <status>closed</status>
+    <tags>
+      <tag>tag2</tag>
+      <tag>batch-1</tag>
+    </tags>
+    <metadata>
+      <source>phone</source>
+      <browser>Chrome</browser>
+      <device_type>mobile</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_006</customer_id>
+    <customer_email>user6@example.com</customer_email>
+    <customer_name>Customer 6</customer_name>
+    <subject>Support request #6 regarding other</subject>
+    <description>Detailed description for ticket 6 with enough characters for validation.</description>
+    <category>other</category>
+    <priority>high</priority>
+    <status>new</status>
+    <tags>
+      <tag>tag3</tag>
+      <tag>batch-1</tag>
+    </tags>
+    <metadata>
+      <source>web_form</source>
+      <browser>Firefox</browser>
+      <device_type>tablet</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_007</customer_id>
+    <customer_email>user7@example.com</customer_email>
+    <customer_name>Customer 7</customer_name>
+    <subject>Support request #7 regarding account access</subject>
+    <description>Detailed description for ticket 7 with enough characters for validation.</description>
+    <category>account_access</category>
+    <priority>medium</priority>
+    <status>in_progress</status>
+    <tags>
+      <tag>tag1</tag>
+      <tag>batch-1</tag>
+    </tags>
+    <metadata>
+      <source>email</source>
+      <browser>Chrome</browser>
+      <device_type>desktop</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_008</customer_id>
+    <customer_email>user8@example.com</customer_email>
+    <customer_name>Customer 8</customer_name>
+    <subject>Support request #8 regarding technical issue</subject>
+    <description>Detailed description for ticket 8 with enough characters for validation.</description>
+    <category>technical_issue</category>
+    <priority>low</priority>
+    <status>waiting_customer</status>
+    <tags>
+      <tag>tag2</tag>
+      <tag>batch-1</tag>
+    </tags>
+    <metadata>
+      <source>api</source>
+      <browser>Firefox</browser>
+      <device_type>mobile</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_009</customer_id>
+    <customer_email>user9@example.com</customer_email>
+    <customer_name>Customer 9</customer_name>
+    <subject>Support request #9 regarding billing question</subject>
+    <description>Detailed description for ticket 9 with enough characters for validation.</description>
+    <category>billing_question</category>
+    <priority>urgent</priority>
+    <status>resolved</status>
+    <tags>
+      <tag>tag3</tag>
+      <tag>batch-1</tag>
+    </tags>
+    <metadata>
+      <source>chat</source>
+      <browser>Chrome</browser>
+      <device_type>tablet</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_010</customer_id>
+    <customer_email>user10@example.com</customer_email>
+    <customer_name>Customer 10</customer_name>
+    <subject>Support request #10 regarding feature request</subject>
+    <description>Detailed description for ticket 10 with enough characters for validation.</description>
+    <category>feature_request</category>
+    <priority>high</priority>
+    <status>closed</status>
+    <tags>
+      <tag>tag1</tag>
+      <tag>batch-1</tag>
+    </tags>
+    <metadata>
+      <source>phone</source>
+      <browser>Firefox</browser>
+      <device_type>desktop</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_011</customer_id>
+    <customer_email>user11@example.com</customer_email>
+    <customer_name>Customer 11</customer_name>
+    <subject>Support request #11 regarding bug report</subject>
+    <description>Detailed description for ticket 11 with enough characters for validation.</description>
+    <category>bug_report</category>
+    <priority>medium</priority>
+    <status>new</status>
+    <tags>
+      <tag>tag2</tag>
+      <tag>batch-2</tag>
+    </tags>
+    <metadata>
+      <source>web_form</source>
+      <browser>Chrome</browser>
+      <device_type>mobile</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_012</customer_id>
+    <customer_email>user12@example.com</customer_email>
+    <customer_name>Customer 12</customer_name>
+    <subject>Support request #12 regarding other</subject>
+    <description>Detailed description for ticket 12 with enough characters for validation.</description>
+    <category>other</category>
+    <priority>low</priority>
+    <status>in_progress</status>
+    <tags>
+      <tag>tag3</tag>
+      <tag>batch-2</tag>
+    </tags>
+    <metadata>
+      <source>email</source>
+      <browser>Firefox</browser>
+      <device_type>tablet</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_013</customer_id>
+    <customer_email>user13@example.com</customer_email>
+    <customer_name>Customer 13</customer_name>
+    <subject>Support request #13 regarding account access</subject>
+    <description>Detailed description for ticket 13 with enough characters for validation.</description>
+    <category>account_access</category>
+    <priority>urgent</priority>
+    <status>waiting_customer</status>
+    <tags>
+      <tag>tag1</tag>
+      <tag>batch-2</tag>
+    </tags>
+    <metadata>
+      <source>api</source>
+      <browser>Chrome</browser>
+      <device_type>desktop</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_014</customer_id>
+    <customer_email>user14@example.com</customer_email>
+    <customer_name>Customer 14</customer_name>
+    <subject>Support request #14 regarding technical issue</subject>
+    <description>Detailed description for ticket 14 with enough characters for validation.</description>
+    <category>technical_issue</category>
+    <priority>high</priority>
+    <status>resolved</status>
+    <tags>
+      <tag>tag2</tag>
+      <tag>batch-2</tag>
+    </tags>
+    <metadata>
+      <source>chat</source>
+      <browser>Firefox</browser>
+      <device_type>mobile</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_015</customer_id>
+    <customer_email>user15@example.com</customer_email>
+    <customer_name>Customer 15</customer_name>
+    <subject>Support request #15 regarding billing question</subject>
+    <description>Detailed description for ticket 15 with enough characters for validation.</description>
+    <category>billing_question</category>
+    <priority>medium</priority>
+    <status>closed</status>
+    <tags>
+      <tag>tag3</tag>
+      <tag>batch-2</tag>
+    </tags>
+    <metadata>
+      <source>phone</source>
+      <browser>Chrome</browser>
+      <device_type>tablet</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_016</customer_id>
+    <customer_email>user16@example.com</customer_email>
+    <customer_name>Customer 16</customer_name>
+    <subject>Support request #16 regarding feature request</subject>
+    <description>Detailed description for ticket 16 with enough characters for validation.</description>
+    <category>feature_request</category>
+    <priority>low</priority>
+    <status>new</status>
+    <tags>
+      <tag>tag1</tag>
+      <tag>batch-2</tag>
+    </tags>
+    <metadata>
+      <source>web_form</source>
+      <browser>Firefox</browser>
+      <device_type>desktop</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_017</customer_id>
+    <customer_email>user17@example.com</customer_email>
+    <customer_name>Customer 17</customer_name>
+    <subject>Support request #17 regarding bug report</subject>
+    <description>Detailed description for ticket 17 with enough characters for validation.</description>
+    <category>bug_report</category>
+    <priority>urgent</priority>
+    <status>in_progress</status>
+    <tags>
+      <tag>tag2</tag>
+      <tag>batch-2</tag>
+    </tags>
+    <metadata>
+      <source>email</source>
+      <browser>Chrome</browser>
+      <device_type>mobile</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_018</customer_id>
+    <customer_email>user18@example.com</customer_email>
+    <customer_name>Customer 18</customer_name>
+    <subject>Support request #18 regarding other</subject>
+    <description>Detailed description for ticket 18 with enough characters for validation.</description>
+    <category>other</category>
+    <priority>high</priority>
+    <status>waiting_customer</status>
+    <tags>
+      <tag>tag3</tag>
+      <tag>batch-2</tag>
+    </tags>
+    <metadata>
+      <source>api</source>
+      <browser>Firefox</browser>
+      <device_type>tablet</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_019</customer_id>
+    <customer_email>user19@example.com</customer_email>
+    <customer_name>Customer 19</customer_name>
+    <subject>Support request #19 regarding account access</subject>
+    <description>Detailed description for ticket 19 with enough characters for validation.</description>
+    <category>account_access</category>
+    <priority>medium</priority>
+    <status>resolved</status>
+    <tags>
+      <tag>tag1</tag>
+      <tag>batch-2</tag>
+    </tags>
+    <metadata>
+      <source>chat</source>
+      <browser>Chrome</browser>
+      <device_type>desktop</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_020</customer_id>
+    <customer_email>user20@example.com</customer_email>
+    <customer_name>Customer 20</customer_name>
+    <subject>Support request #20 regarding technical issue</subject>
+    <description>Detailed description for ticket 20 with enough characters for validation.</description>
+    <category>technical_issue</category>
+    <priority>low</priority>
+    <status>closed</status>
+    <tags>
+      <tag>tag2</tag>
+      <tag>batch-2</tag>
+    </tags>
+    <metadata>
+      <source>phone</source>
+      <browser>Firefox</browser>
+      <device_type>mobile</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_021</customer_id>
+    <customer_email>user21@example.com</customer_email>
+    <customer_name>Customer 21</customer_name>
+    <subject>Support request #21 regarding billing question</subject>
+    <description>Detailed description for ticket 21 with enough characters for validation.</description>
+    <category>billing_question</category>
+    <priority>urgent</priority>
+    <status>new</status>
+    <tags>
+      <tag>tag3</tag>
+      <tag>batch-3</tag>
+    </tags>
+    <metadata>
+      <source>web_form</source>
+      <browser>Chrome</browser>
+      <device_type>tablet</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_022</customer_id>
+    <customer_email>user22@example.com</customer_email>
+    <customer_name>Customer 22</customer_name>
+    <subject>Support request #22 regarding feature request</subject>
+    <description>Detailed description for ticket 22 with enough characters for validation.</description>
+    <category>feature_request</category>
+    <priority>high</priority>
+    <status>in_progress</status>
+    <tags>
+      <tag>tag1</tag>
+      <tag>batch-3</tag>
+    </tags>
+    <metadata>
+      <source>email</source>
+      <browser>Firefox</browser>
+      <device_type>desktop</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_023</customer_id>
+    <customer_email>user23@example.com</customer_email>
+    <customer_name>Customer 23</customer_name>
+    <subject>Support request #23 regarding bug report</subject>
+    <description>Detailed description for ticket 23 with enough characters for validation.</description>
+    <category>bug_report</category>
+    <priority>medium</priority>
+    <status>waiting_customer</status>
+    <tags>
+      <tag>tag2</tag>
+      <tag>batch-3</tag>
+    </tags>
+    <metadata>
+      <source>api</source>
+      <browser>Chrome</browser>
+      <device_type>mobile</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_024</customer_id>
+    <customer_email>user24@example.com</customer_email>
+    <customer_name>Customer 24</customer_name>
+    <subject>Support request #24 regarding other</subject>
+    <description>Detailed description for ticket 24 with enough characters for validation.</description>
+    <category>other</category>
+    <priority>low</priority>
+    <status>resolved</status>
+    <tags>
+      <tag>tag3</tag>
+      <tag>batch-3</tag>
+    </tags>
+    <metadata>
+      <source>chat</source>
+      <browser>Firefox</browser>
+      <device_type>tablet</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_025</customer_id>
+    <customer_email>user25@example.com</customer_email>
+    <customer_name>Customer 25</customer_name>
+    <subject>Support request #25 regarding account access</subject>
+    <description>Detailed description for ticket 25 with enough characters for validation.</description>
+    <category>account_access</category>
+    <priority>urgent</priority>
+    <status>closed</status>
+    <tags>
+      <tag>tag1</tag>
+      <tag>batch-3</tag>
+    </tags>
+    <metadata>
+      <source>phone</source>
+      <browser>Chrome</browser>
+      <device_type>desktop</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_026</customer_id>
+    <customer_email>user26@example.com</customer_email>
+    <customer_name>Customer 26</customer_name>
+    <subject>Support request #26 regarding technical issue</subject>
+    <description>Detailed description for ticket 26 with enough characters for validation.</description>
+    <category>technical_issue</category>
+    <priority>high</priority>
+    <status>new</status>
+    <tags>
+      <tag>tag2</tag>
+      <tag>batch-3</tag>
+    </tags>
+    <metadata>
+      <source>web_form</source>
+      <browser>Firefox</browser>
+      <device_type>mobile</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_027</customer_id>
+    <customer_email>user27@example.com</customer_email>
+    <customer_name>Customer 27</customer_name>
+    <subject>Support request #27 regarding billing question</subject>
+    <description>Detailed description for ticket 27 with enough characters for validation.</description>
+    <category>billing_question</category>
+    <priority>medium</priority>
+    <status>in_progress</status>
+    <tags>
+      <tag>tag3</tag>
+      <tag>batch-3</tag>
+    </tags>
+    <metadata>
+      <source>email</source>
+      <browser>Chrome</browser>
+      <device_type>tablet</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_028</customer_id>
+    <customer_email>user28@example.com</customer_email>
+    <customer_name>Customer 28</customer_name>
+    <subject>Support request #28 regarding feature request</subject>
+    <description>Detailed description for ticket 28 with enough characters for validation.</description>
+    <category>feature_request</category>
+    <priority>low</priority>
+    <status>waiting_customer</status>
+    <tags>
+      <tag>tag1</tag>
+      <tag>batch-3</tag>
+    </tags>
+    <metadata>
+      <source>api</source>
+      <browser>Firefox</browser>
+      <device_type>desktop</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_029</customer_id>
+    <customer_email>user29@example.com</customer_email>
+    <customer_name>Customer 29</customer_name>
+    <subject>Support request #29 regarding bug report</subject>
+    <description>Detailed description for ticket 29 with enough characters for validation.</description>
+    <category>bug_report</category>
+    <priority>urgent</priority>
+    <status>resolved</status>
+    <tags>
+      <tag>tag2</tag>
+      <tag>batch-3</tag>
+    </tags>
+    <metadata>
+      <source>chat</source>
+      <browser>Chrome</browser>
+      <device_type>mobile</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust_030</customer_id>
+    <customer_email>user30@example.com</customer_email>
+    <customer_name>Customer 30</customer_name>
+    <subject>Support request #30 regarding other</subject>
+    <description>Detailed description for ticket 30 with enough characters for validation.</description>
+    <category>other</category>
+    <priority>high</priority>
+    <status>closed</status>
+    <tags>
+      <tag>tag3</tag>
+      <tag>batch-3</tag>
+    </tags>
+    <metadata>
+      <source>phone</source>
+      <browser>Firefox</browser>
+      <device_type>tablet</device_type>
+    </metadata>
+  </ticket>
+</tickets>

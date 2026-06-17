@@ -1,0 +1,21 @@
+[
+  {
+    "customer_id": "cust_bad",
+    "customer_email": "not-an-email",
+    "customer_name": "Jane Doe",
+    "subject": "Bad row",
+    "category": "other",
+    "priority": "medium",
+    "status": "new"
+  },
+  {
+    "customer_id": "cust_ok",
+    "customer_email": "good@example.com",
+    "customer_name": "John Doe",
+    "subject": "Valid row for mixed import",
+    "description": "This description is long enough to pass validation rules.",
+    "category": "billing_question",
+    "priority": "low",
+    "status": "new"
+  }
+]

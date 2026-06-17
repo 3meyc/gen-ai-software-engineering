@@ -1,0 +1,3 @@
+customer_id,customer_email,customer_name,subject,category,priority,status
+bad1,not-email,Jane,Subject,other,medium,new
+good1,good@example.com,John,Valid subject line,other,medium,new

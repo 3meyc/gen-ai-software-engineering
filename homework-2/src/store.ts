@@ -1,4 +1,4 @@
-import type { Ticket } from "./types.js";
+import type { ClassificationDecision, Ticket } from "./types.js";
 
 export type TicketStore = {
   add(ticket: Ticket): void;
@@ -6,11 +6,14 @@ export type TicketStore = {
   get(id: string): Ticket | undefined;
   update(id: string, ticket: Ticket): boolean;
   delete(id: string): boolean;
+  logClassification(decision: ClassificationDecision): void;
+  getClassificationLog(): ClassificationDecision[];
 };
 
 export function createStore(): TicketStore {
   const byId = new Map<string, Ticket>();
   const order: string[] = [];
+  const classificationLog: ClassificationDecision[] = [];
 
   return {
     add(ticket) {
@@ -34,6 +37,12 @@ export function createStore(): TicketStore {
       const idx = order.indexOf(id);
       if (idx >= 0) order.splice(idx, 1);
       return true;
+    },
+    logClassification(decision) {
+      classificationLog.push(decision);
+    },
+    getClassificationLog() {
+      return [...classificationLog];
     },
   };
 }

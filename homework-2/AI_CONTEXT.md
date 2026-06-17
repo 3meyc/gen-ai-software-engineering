@@ -107,6 +107,9 @@ Allowed enum values (reject anything else on write/import unless overridden by T
 | `metadata.source` | `web_form`, `email`, `api`, `chat`, `phone` |
 | `metadata.browser` | string |
 | `metadata.device_type` | `desktop`, `mobile`, `tablet` |
+| `classification_confidence` | `number \| null` — set by classifier; cleared on manual category/priority override |
+| `classification_reasoning` | `string \| null` — free-text explanation from classifier |
+| `classification_keywords` | `string[]` — matched phrases (`keywords_found` in classifier output) |
 
 **N.B.** Do **not** default `category`, `priority`, or `status` on create — the client must supply them (see `TASKS spec.md` Task 1).
 
@@ -126,16 +129,16 @@ Example create request (minimum required fields):
 
 Optional fields may be added: `description`, `resolved_at`, `assigned_to`, `tags`, `metadata`.
 
-## `POST /tickets` — optional auto-classify
+## `POST /tickets` — optional auto-classify (Task 2)
 
-Support optional auto-classification on create, e.g. query `?auto_classify=true` or body flag `auto_classify: true`.
+Support optional auto-classification via query `?auto_classify=true` or body `"auto_classify": true`.
 
-1. Create and validate ticket first.
-2. If flag set, run classifier on `subject` + `description` (and optionally tags).
-3. Apply `category` and `priority` from classifier; store confidence on the ticket.
-4. Log the decision (see Classification).
+1. Create and validate ticket first (client still sends required `category` / `priority` / `status`).
+2. If flag set, run classifier on `subject` + `description` + `tags`.
+3. **Overwrite** `category` and `priority` with classifier output; persist `classification_confidence`, `classification_reasoning`, `classification_keywords`.
+4. Log the decision (see Auto-classification).
 
-**N.B.** Manual `PUT` may override `category` / `priority`; preserve or replace `classification_confidence` per your documented rules.
+**N.B.** Manual `PUT` with `category` and/or `priority` **replaces** classification metadata (confidence → `null`, reasoning/keywords cleared).
 
 ## `POST /tickets/import`
 
@@ -157,7 +160,8 @@ Support optional auto-classification on create, e.g. query `?auto_classify=true`
 ```
 
 5. Malformed file (not parseable) → `400` with `{ error: "..." }` and a clear message.
-6. Partial success → `201` with summary above (unless `TASKS spec.md` is updated to specify another code).
+6. Partial success → `201` with summary above.
+7. Optional `?auto_classify=true` (or multipart `auto_classify`) — classify each successfully imported row before save (same overwrite rules as create).
 
 ## `GET /tickets` — filtering
 
@@ -191,18 +195,20 @@ No matches → `200` with `{ "tickets": [] }`.
 
 ## Auto-classification (Task 2)
 
-**Categories** (keyword / phrase matching on `subject` + `description`, case-insensitive):
+Keyword / phrase matching on `subject` + `description` + `tags`, case-insensitive. Implementation: `src/classify.ts`.
 
-| Category | Typical signals |
-|----------|-----------------|
-| `account_access` | login, password, 2FA, access, credentials |
-| `technical_issue` | error, crash, bug, broken, not working |
-| `billing_question` | payment, invoice, refund, charge, billing |
-| `feature_request` | feature, enhancement, suggestion, request |
-| `bug_report` | reproduce, steps, defect, regression |
-| `other` | no strong match |
+**Categories** — highest keyword-hit count wins; tie → first in table order:
 
-**Priority** (first match wins or highest severity wins — document choice):
+| Category | Meaning | Keywords (see `CATEGORY_KEYWORDS` in code for full list) |
+|----------|---------|----------------------------------------------------------|
+| `account_access` | Login, credentials | login, password, 2fa, locked out, credentials |
+| `bug_report` | Broke / stopped process | bug, broke, broken, crash, stopped, reproduce, regression |
+| `technical_issue` | Minor / non-critical | issue, glitch, slow, intermittent, timeout, degraded |
+| `billing_question` | Payments | payment, invoice, refund, billing, subscription |
+| `feature_request` | Enhancements | feature, enhancement, suggestion, would like |
+| `other` | No strong match | default |
+
+**Priority** — **highest severity among matched phrases wins** (urgent > high > medium > low):
 
 | Priority | Trigger phrases (substring match) |
 |----------|-----------------------------------|
@@ -211,21 +217,32 @@ No matches → `200` with `{ "tickets": [] }`.
 | `low` | minor, cosmetic, suggestion |
 | `medium` | default when no other rule matches |
 
-**`POST /tickets/:id/auto-classify` response:**
+**Confidence tiers** (`classification_confidence`):
+
+| Value | Meaning |
+|-------|---------|
+| `0.95` | Very confident |
+| `0.60` | Somewhat confident; could be wrong |
+| `0.30` | Low confidence; likely needs human review |
+
+**`POST /tickets/:id/auto-classify`:**
+
+- `200` — **full updated ticket** (includes classification fields).
+- `404` — ticket not found.
+
+**Classification fields on ticket:**
 
 ```json
 {
   "category": "account_access",
   "priority": "urgent",
-  "confidence": 0.85,
-  "reasoning": "Matched keywords: can't access, login",
-  "keywords_found": ["can't access", "login"]
+  "classification_confidence": 0.95,
+  "classification_reasoning": "Matched category \"account_access\" (login, password); priority \"urgent\" (can't access)",
+  "classification_keywords": ["login", "password", "can't access"]
 }
 ```
 
-Persist on ticket (suggested fields): `classification_confidence` (0–1), optional `classification_reasoning`, `classification_keywords`.
-
-**Decision log** — append-only in memory (array or ring buffer): ticket id, timestamp, previous vs new category/priority, confidence, trigger (`create`, `auto-classify`, `import`).
+**Decision log** — append-only in-memory on store (`logClassification` / `getClassificationLog`): ticket id, timestamp, trigger (`create`, `auto-classify`, `import`), previous vs new category/priority, confidence, `keywords_found`, reasoning (free text).
 
 ## Testing
 
@@ -301,6 +318,7 @@ homework-2/
     types.ts
     validation.ts
     ticket-logic.ts      # finalize, filter, partial update helpers
+    classification-service.ts  # auto_classify flags, persist + log
     routes/tickets.ts
     import/              # csv.ts, json.ts, xml.ts, index.ts
     classify.ts          # Task 2

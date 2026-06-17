@@ -122,34 +122,73 @@ Create a REST API for support tickets with these endpoints:
 
 ### Task 2: Auto-Classification
 
-Implement automatic ticket categorization and priority assignment.
-
-**Categories:**
-- `account_access` - login, password, 2FA issues
-- `technical_issue` - bugs, errors, crashes
-- `billing_question` - payments, invoices, refunds
-- `feature_request` - enhancements, suggestions
-- `bug_report` - defects with reproduction steps
-- `other` - uncategorizable
-
-**Priority Rules:**
-- **Urgent**: "can't access", "critical", "production down", "security"
-- **High**: "important", "blocking", "asap"
-- **Medium**: default
-- **Low**: "minor", "cosmetic", "suggestion"
+Keyword-based categorization and priority assignment on `subject` + `description` (+ `tags`). Case-insensitive substring matching. No external LLM.
 
 **Endpoint:**
-```
-POST /tickets/:id/auto-classify
-```
 
-**Response includes:** category, priority, confidence score (0-1), reasoning, keywords found
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/tickets/:id/auto-classify` | Classify existing ticket; `200` + **full updated ticket**; `404` if missing |
+
+**Optional auto-classify triggers:**
+
+1. `POST /tickets?auto_classify=true` or body `"auto_classify": true`
+2. `POST /tickets/import?auto_classify=true` or multipart field `auto_classify=true`
+
+When enabled, validate the ticket first, then **overwrite** `category` and `priority` with classifier output.
+
+**Categories & keyword vocabulary** (highest keyword-hit count wins; tie → first in order below):
+
+| Category | Meaning | Example keywords |
+|----------|---------|------------------|
+| `account_access` | Login / credentials | login, password, 2fa, locked out, credentials |
+| `bug_report` | Process-breaking — broke / stopped | bug, broke, broken, crash, stopped, reproduce, regression |
+| `technical_issue` | Non-critical / minor | issue, glitch, slow, intermittent, timeout, degraded |
+| `billing_question` | Payments | payment, invoice, refund, billing, subscription |
+| `feature_request` | Enhancements | feature, enhancement, suggestion, would like |
+| `other` | No strong match | (default) |
+
+**Priority rules** — substring match; **highest severity wins** (not first-in-text):
+
+| Priority | Phrases |
+|----------|---------|
+| `urgent` | can't access, critical, production down, security |
+| `high` | important, blocking, asap |
+| `low` | minor, cosmetic, suggestion |
+| `medium` | default when no phrase matches |
+
+**Confidence** (stored as `classification_confidence`, 0–1):
+
+| Score | Meaning |
+|-------|---------|
+| `0.95` | Very confident |
+| `0.60` | Somewhat confident; could be wrong |
+| `0.30` | Low confidence; likely needs human review |
+
+Computed from keyword-hit strength (see `src/classify.ts` → `computeConfidence`).
+
+**Ticket fields added by classification:**
+
+| Field | Type |
+|-------|------|
+| `classification_confidence` | `number \| null` |
+| `classification_reasoning` | `string \| null` (free text) |
+| `classification_keywords` | `string[]` (matched phrases; API name `keywords_found` in classifier output maps here) |
+
+**`POST /tickets/:id/auto-classify` response:** `200` — full updated ticket JSON including classification fields above.
+
+**Manual override:** `PUT /tickets/:id` with `category` and/or `priority` **replaces** classification metadata (`classification_confidence` → `null`, reasoning cleared, keywords cleared).
+
+**Decision log:** append-only in-memory log on the store (`logClassification` / `getClassificationLog`); each entry records ticket id, timestamp, trigger (`create`, `auto-classify`, `import`), previous vs new category/priority, confidence, `keywords_found`, reasoning.
 
 **Requirements:**
-- Auto-run on ticket creation (optional flag)
-- Store classification confidence
-- Allow manual override
-- Log all decisions
+
+- Auto-run on create/import when `auto_classify` flag set
+- Store classification fields on the ticket
+- Allow manual override via `PUT`
+- Log all classification decisions
+
+**Tests (Task 2 minimum):** `test/categorization.test.ts` (10+ tests) — implemented.
 
 ---
 

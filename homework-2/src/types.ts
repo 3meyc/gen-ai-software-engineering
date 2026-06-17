@@ -49,6 +49,24 @@ export type Ticket = {
   assigned_to: string | null;
   tags: string[];
   metadata: TicketMetadata;
+  classification_confidence: number | null;
+  classification_reasoning: string | null;
+  classification_keywords: string[];
+};
+
+export type ClassificationTrigger = "create" | "auto-classify" | "import";
+
+export type ClassificationDecision = {
+  ticket_id: string;
+  timestamp: string;
+  trigger: ClassificationTrigger;
+  previous_category: TicketCategory;
+  previous_priority: TicketPriority;
+  new_category: TicketCategory;
+  new_priority: TicketPriority;
+  confidence: number;
+  keywords_found: string[];
+  reasoning: string;
 };
 
 export type ImportFormat = "csv" | "json" | "xml";

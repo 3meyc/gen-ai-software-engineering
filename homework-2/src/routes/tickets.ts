@@ -1,4 +1,9 @@
 import { Hono } from "hono";
+import {
+  applyManualOverride,
+  isAutoClassifyEnabled,
+  runClassification,
+} from "../classification-service.js";
 import { detectFormat, parseImportFile } from "../import/index.js";
 import { applyPartialUpdate, filterTickets, finalizeTicket } from "../ticket-logic.js";
 import type { TicketStore } from "../store.js";
@@ -35,6 +40,16 @@ async function readJsonBody(c: {
   return { ok: true, body: body as Record<string, unknown> };
 }
 
+type ImportPayload =
+  | {
+      ok: true;
+      content: string;
+      format?: ImportFormat;
+      filename?: string;
+      autoClassifyFlag?: unknown;
+    }
+  | { ok: false; error: string };
+
 async function readImportContent(c: {
   req: {
     header: (name: string) => string | undefined;
@@ -45,10 +60,7 @@ async function readImportContent(c: {
     >;
     text: () => Promise<string>;
   };
-}): Promise<
-  | { ok: true; content: string; format?: ImportFormat; filename?: string }
-  | { ok: false; error: string }
-> {
+}): Promise<ImportPayload> {
   const contentType = c.req.header("content-type") ?? "";
 
   if (contentType.includes("multipart/form-data")) {
@@ -60,7 +72,13 @@ async function readImportContent(c: {
     }
     const content = await file.text();
     const formatHint = typeof body.format === "string" ? body.format : c.req.query("format");
-    return { ok: true, content, format: detectFormat(formatHint, file.type, file.name), filename: file.name };
+    return {
+      ok: true,
+      content,
+      format: detectFormat(formatHint, file.type, file.name),
+      filename: file.name,
+      autoClassifyFlag: body.auto_classify,
+    };
   }
 
   const content = await c.req.text();
@@ -80,6 +98,11 @@ export function createTicketRoutes(store: TicketStore) {
     if (!payload.ok) {
       return c.json({ error: payload.error }, 400);
     }
+
+    const autoClassify = isAutoClassifyEnabled(
+      c.req.query("auto_classify"),
+      payload.autoClassifyFlag,
+    );
 
     const format =
       payload.format ??
@@ -122,7 +145,11 @@ export function createTicketRoutes(store: TicketStore) {
         summary.errors.push({ row: rowNum, message: msg });
         return;
       }
-      store.add(finalizeTicket(validated.fields));
+      let ticket = finalizeTicket(validated.fields);
+      if (autoClassify) {
+        ticket = runClassification(store, ticket, "import");
+      }
+      store.add(ticket);
       summary.successful += 1;
     });
 
@@ -136,6 +163,16 @@ export function createTicketRoutes(store: TicketStore) {
       return c.json({ error: result.error, details: result.details }, 400);
     }
     return c.json({ tickets: result.tickets }, 200);
+  });
+
+  r.post("/:id/auto-classify", (c) => {
+    const ticket = store.get(c.req.param("id"));
+    if (!ticket) {
+      return c.json({ error: "Ticket not found" }, 404);
+    }
+    const updated = runClassification(store, ticket, "auto-classify");
+    store.update(ticket.id, updated);
+    return c.json(updated, 200);
   });
 
   r.get("/:id", (c) => {
@@ -152,12 +189,20 @@ export function createTicketRoutes(store: TicketStore) {
       return bodyResult.response;
     }
 
+    const autoClassify = isAutoClassifyEnabled(
+      c.req.query("auto_classify"),
+      bodyResult.body.auto_classify,
+    );
+
     const parsed = parseTicketRecord(bodyResult.body, { partial: false });
     if (!parsed.ok) {
       return c.json({ error: parsed.error, details: parsed.details }, 400);
     }
 
-    const created = finalizeTicket(parsed.fields);
+    let created = finalizeTicket(parsed.fields);
+    if (autoClassify) {
+      created = runClassification(store, created, "create");
+    }
     store.add(created);
     return c.json(created, 201);
   });
@@ -178,7 +223,8 @@ export function createTicketRoutes(store: TicketStore) {
       return c.json({ error: parsed.error, details: parsed.details }, 400);
     }
 
-    const updated = applyPartialUpdate(existing, parsed.fields);
+    let updated = applyPartialUpdate(existing, parsed.fields);
+    updated = applyManualOverride(existing, updated, bodyResult.body);
     store.update(existing.id, updated);
     return c.json(updated, 200);
   });

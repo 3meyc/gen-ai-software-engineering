@@ -9,6 +9,9 @@ export function finalizeTicket(fields: TicketFields): Ticket {
     ...fields,
     created_at: now,
     updated_at: now,
+    classification_confidence: null,
+    classification_reasoning: null,
+    classification_keywords: [],
   };
 }
 

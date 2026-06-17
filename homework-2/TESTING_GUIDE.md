@@ -10,7 +10,7 @@ Guide for running, extending, and manually verifying the Customer Support Ticket
 flowchart TB
   subgraph pyramid["Test Pyramid"]
     direction TB
-    E2E["Integration / E2E<br/>integration.test.ts<br/>5 tests — stubbed → Task 5"]
+    E2E["Integration / E2E<br/>integration.test.ts<br/>5 tests"]
     API["API / Service<br/>ticket-api.test.ts · categorization.test.ts"]
     UNIT["Unit<br/>ticket-model · import-csv/json/xml"]
     PERF["Performance smoke<br/>performance.test.ts"]
@@ -30,8 +30,8 @@ flowchart TB
 |-------|-------|-------|
 | Unit | `ticket-model.test.ts`, `import-*.test.ts` | Parsers, validation helpers |
 | API | `ticket-api.test.ts`, `categorization.test.ts` | HTTP via `app.request()`, status + body |
-| Performance | `performance.test.ts` | Light load smoke; expanded in Task 5 |
-| Integration | `integration.test.ts` | Full workflows *(todo stubs)* |
+| Performance | `performance.test.ts` | Correctness under load; timings logged, no hard SLA |
+| Integration | `integration.test.ts` | Full E2E workflows (lifecycle, import, concurrency) |
 
 ---
 
@@ -76,8 +76,8 @@ Screenshot: `docs/screenshots/test_coverage.png`
 | `test/import-json.test.ts` | 5 | ✅ |
 | `test/import-xml.test.ts` | 5 | ✅ |
 | `test/categorization.test.ts` | 10 | ✅ |
-| `test/performance.test.ts` | 5 | 1 active + 4 `todo` |
-| `test/integration.test.ts` | 5 | `todo` → Task 5 |
+| `test/performance.test.ts` | 5 | ✅ |
+| `test/integration.test.ts` | 5 | ✅ |
 
 Tests use a fresh `createStore()` when isolation is required. No live HTTP server — requests go through `createApp(store).request()`.
 
@@ -124,7 +124,7 @@ Measured on **2026-06-17** with `npx tsx scripts/bench-task4.ts` on Windows (Nod
 
 Vitest smoke test (`performance.test.ts`) logged **~83 ms** for 25 sequential creates in the test runner (includes Vitest overhead).
 
-**Interpretation:** In-memory operations are sub-millisecond per ticket at homework scale. No hard SLA thresholds — benchmarks document baseline for Task 5 expansion.
+**Interpretation:** In-memory operations are sub-millisecond per ticket at homework scale. No hard SLA thresholds — benchmarks assert correctness and log timings for baseline comparison.
 
 ### Reproduce
 
@@ -179,7 +179,7 @@ npm test -- test/performance.test.ts
 1. **No supertest** — Hono native `app.request()` keeps tests fast and portable.
 2. **Parser tests** call `parseCsv` / `parseJsonImport` / `parseXmlImport` directly, not only HTTP.
 3. **Classification tests** cover tie-breaking, priority severity, and manual override clearing metadata.
-4. **Integration / performance todos** are intentional placeholders until Task 5.
+4. **Integration / performance** suites exercise full workflows and load scenarios via `app.request()` (see `integration.test.ts`, `performance.test.ts`).
 
 ---
 

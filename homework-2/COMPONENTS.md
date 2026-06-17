@@ -196,7 +196,7 @@ No CSV/XML/JSON third-party parsers — all import parsers are hand-rolled.
 | `import-*.test.ts` | `import/*` |
 | `categorization.test.ts` | `classify.ts`, classification routes |
 | `performance.test.ts` | full stack via `app.request()` |
-| `integration.test.ts` | E2E *(stub → Task 5)* |
+| `integration.test.ts` | E2E lifecycle, import, concurrency, filters |
 
 ---
 

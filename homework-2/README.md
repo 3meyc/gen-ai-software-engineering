@@ -18,7 +18,7 @@ A REST API for customer support tickets built with **TypeScript**, **Hono**, and
 | **Task 2** | Auto-classification (`POST /tickets/:id/auto-classify`), optional `auto_classify` on create/import, decision log |
 | **Task 3** | Test suite with **87.7% line coverage** (see `docs/screenshots/test_coverage.png`) |
 | **Task 4** | Multi-level documentation (this file + linked guides below) |
-| **Task 5** | Integration & performance tests *(stubbed — see `test/integration.test.ts`)* |
+| **Task 5** | Integration & performance tests (`test/integration.test.ts`, `test/performance.test.ts`) |
 
 ### 🛠️ Technology Stack
 

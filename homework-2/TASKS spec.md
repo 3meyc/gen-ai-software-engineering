@@ -198,7 +198,7 @@ Generate comprehensive tests achieving **>85% code coverage**.
 
 **Clarifications (agreed):**
 
-1. **Integration / performance** — `test/integration.test.ts` and `test/performance.test.ts` are **stubbed** (`it.todo`) until Task 5; one light performance smoke test may run in Task 3.
+1. **Integration / performance** — `test/integration.test.ts` and `test/performance.test.ts` were stubbed in Task 3; **implemented in Task 5** (5 tests each; correctness under load, optional timing logs, no hard SLA).
 2. **Performance criteria** — assert correctness under load; log timings optionally; no hard SLA thresholds in Task 3.
 3. **`test/ticket-model.test.ts`** — unit tests for `validation.ts` (and related helpers), separate from API-level validation in `test/ticket-api.test.ts`.
 4. **`test/import-*.test.ts`** — exercise parser modules (`src/import/csv.ts`, `json.ts`, `xml.ts`) directly, not only HTTP import endpoints.
@@ -215,8 +215,8 @@ test/
 ├── import-json.test.ts      # JSON parsing (5 tests)
 ├── import-xml.test.ts       # XML parsing (5 tests)
 ├── categorization.test.ts   # Classification (10 tests) — Task 2
-├── integration.test.ts      # End-to-end workflows (5 tests; stub → Task 5)
-├── performance.test.ts        # Benchmarks (5 tests; stub → Task 5)
+├── integration.test.ts      # End-to-end workflows (5 tests) — Task 5
+├── performance.test.ts        # Benchmarks (5 tests) — Task 5
 └── fixtures/                # Sample + invalid data for tests
 ```
 
@@ -270,13 +270,22 @@ Generate 5 documentation files for different audiences:
 
 ---
 
-### Task 5: Integration & Performance Tests
+### Task 5: Integration & Performance Tests ✅
 
 Implement end-to-end tests.
 
-**Integration Tests:**
-- Complete ticket lifecycle workflow
+**Integration Tests (`test/integration.test.ts`):**
+- Complete ticket lifecycle workflow (create → classify → update → resolve → delete)
 - Bulk import with auto-classification verification
 - Concurrent operations (20+ simultaneous requests)
 - Combined filtering by category and priority
+- Multipart import upload with `file` field and `auto_classify` flag
 
+**Performance Tests (`test/performance.test.ts`):**
+- 25 sequential creates (correctness + timing log)
+- CSV import of `sample_tickets.csv` (50 rows)
+- `GET /tickets` filter on 100-ticket dataset
+- 20 concurrent `auto-classify` requests
+- JSON import baseline with `sample_tickets.json`
+
+No hard SLA thresholds — assert correctness; log timings optionally.

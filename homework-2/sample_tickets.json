@@ -1,0 +1,382 @@
+[
+  {
+    "customer_id": "cust_001",
+    "customer_email": "user1@example.com",
+    "customer_name": "Customer 1",
+    "subject": "Support request #1 regarding account access",
+    "description": "Detailed description for ticket 1 with enough characters for validation.",
+    "category": "account_access",
+    "priority": "urgent",
+    "status": "new",
+    "tags": [
+      "tag1",
+      "batch-1"
+    ],
+    "metadata": {
+      "source": "web_form",
+      "browser": "Chrome",
+      "device_type": "desktop"
+    }
+  },
+  {
+    "customer_id": "cust_002",
+    "customer_email": "user2@example.com",
+    "customer_name": "Customer 2",
+    "subject": "Support request #2 regarding technical issue",
+    "description": "Detailed description for ticket 2 with enough characters for validation.",
+    "category": "technical_issue",
+    "priority": "high",
+    "status": "in_progress",
+    "tags": [
+      "tag2",
+      "batch-1"
+    ],
+    "metadata": {
+      "source": "email",
+      "browser": "Firefox",
+      "device_type": "mobile"
+    }
+  },
+  {
+    "customer_id": "cust_003",
+    "customer_email": "user3@example.com",
+    "customer_name": "Customer 3",
+    "subject": "Support request #3 regarding billing question",
+    "description": "Detailed description for ticket 3 with enough characters for validation.",
+    "category": "billing_question",
+    "priority": "medium",
+    "status": "waiting_customer",
+    "tags": [
+      "tag3",
+      "batch-1"
+    ],
+    "metadata": {
+      "source": "api",
+      "browser": "Chrome",
+      "device_type": "tablet"
+    }
+  },
+  {
+    "customer_id": "cust_004",
+    "customer_email": "user4@example.com",
+    "customer_name": "Customer 4",
+    "subject": "Support request #4 regarding feature request",
+    "description": "Detailed description for ticket 4 with enough characters for validation.",
+    "category": "feature_request",
+    "priority": "low",
+    "status": "resolved",
+    "tags": [
+      "tag1",
+      "batch-1"
+    ],
+    "metadata": {
+      "source": "chat",
+      "browser": "Firefox",
+      "device_type": "desktop"
+    }
+  },
+  {
+    "customer_id": "cust_005",
+    "customer_email": "user5@example.com",
+    "customer_name": "Customer 5",
+    "subject": "Support request #5 regarding bug report",
+    "description": "Detailed description for ticket 5 with enough characters for validation.",
+    "category": "bug_report",
+    "priority": "urgent",
+    "status": "closed",
+    "tags": [
+      "tag2",
+      "batch-1"
+    ],
+    "metadata": {
+      "source": "phone",
+      "browser": "Chrome",
+      "device_type": "mobile"
+    }
+  },
+  {
+    "customer_id": "cust_006",
+    "customer_email": "user6@example.com",
+    "customer_name": "Customer 6",
+    "subject": "Support request #6 regarding other",
+    "description": "Detailed description for ticket 6 with enough characters for validation.",
+    "category": "other",
+    "priority": "high",
+    "status": "new",
+    "tags": [
+      "tag3",
+      "batch-1"
+    ],
+    "metadata": {
+      "source": "web_form",
+      "browser": "Firefox",
+      "device_type": "tablet"
+    }
+  },
+  {
+    "customer_id": "cust_007",
+    "customer_email": "user7@example.com",
+    "customer_name": "Customer 7",
+    "subject": "Support request #7 regarding account access",
+    "description": "Detailed description for ticket 7 with enough characters for validation.",
+    "category": "account_access",
+    "priority": "medium",
+    "status": "in_progress",
+    "tags": [
+      "tag1",
+      "batch-1"
+    ],
+    "metadata": {
+      "source": "email",
+      "browser": "Chrome",
+      "device_type": "desktop"
+    }
+  },
+  {
+    "customer_id": "cust_008",
+    "customer_email": "user8@example.com",
+    "customer_name": "Customer 8",
+    "subject": "Support request #8 regarding technical issue",
+    "description": "Detailed description for ticket 8 with enough characters for validation.",
+    "category": "technical_issue",
+    "priority": "low",
+    "status": "waiting_customer",
+    "tags": [
+      "tag2",
+      "batch-1"
+    ],
+    "metadata": {
+      "source": "api",
+      "browser": "Firefox",
+      "device_type": "mobile"
+    }
+  },
+  {
+    "customer_id": "cust_009",
+    "customer_email": "user9@example.com",
+    "customer_name": "Customer 9",
+    "subject": "Support request #9 regarding billing question",
+    "description": "Detailed description for ticket 9 with enough characters for validation.",
+    "category": "billing_question",
+    "priority": "urgent",
+    "status": "resolved",
+    "tags": [
+      "tag3",
+      "batch-1"
+    ],
+    "metadata": {
+      "source": "chat",
+      "browser": "Chrome",
+      "device_type": "tablet"
+    }
+  },
+  {
+    "customer_id": "cust_010",
+    "customer_email": "user10@example.com",
+    "customer_name": "Customer 10",
+    "subject": "Support request #10 regarding feature request",
+    "description": "Detailed description for ticket 10 with enough characters for validation.",
+    "category": "feature_request",
+    "priority": "high",
+    "status": "closed",
+    "tags": [
+      "tag1",
+      "batch-1"
+    ],
+    "metadata": {
+      "source": "phone",
+      "browser": "Firefox",
+      "device_type": "desktop"
+    }
+  },
+  {
+    "customer_id": "cust_011",
+    "customer_email": "user11@example.com",
+    "customer_name": "Customer 11",
+    "subject": "Support request #11 regarding bug report",
+    "description": "Detailed description for ticket 11 with enough characters for validation.",
+    "category": "bug_report",
+    "priority": "medium",
+    "status": "new",
+    "tags": [
+      "tag2",
+      "batch-2"
+    ],
+    "metadata": {
+      "source": "web_form",
+      "browser": "Chrome",
+      "device_type": "mobile"
+    }
+  },
+  {
+    "customer_id": "cust_012",
+    "customer_email": "user12@example.com",
+    "customer_name": "Customer 12",
+    "subject": "Support request #12 regarding other",
+    "description": "Detailed description for ticket 12 with enough characters for validation.",
+    "category": "other",
+    "priority": "low",
+    "status": "in_progress",
+    "tags": [
+      "tag3",
+      "batch-2"
+    ],
+    "metadata": {
+      "source": "email",
+      "browser": "Firefox",
+      "device_type": "tablet"
+    }
+  },
+  {
+    "customer_id": "cust_013",
+    "customer_email": "user13@example.com",
+    "customer_name": "Customer 13",
+    "subject": "Support request #13 regarding account access",
+    "description": "Detailed description for ticket 13 with enough characters for validation.",
+    "category": "account_access",
+    "priority": "urgent",
+    "status": "waiting_customer",
+    "tags": [
+      "tag1",
+      "batch-2"
+    ],
+    "metadata": {
+      "source": "api",
+      "browser": "Chrome",
+      "device_type": "desktop"
+    }
+  },
+  {
+    "customer_id": "cust_014",
+    "customer_email": "user14@example.com",
+    "customer_name": "Customer 14",
+    "subject": "Support request #14 regarding technical issue",
+    "description": "Detailed description for ticket 14 with enough characters for validation.",
+    "category": "technical_issue",
+    "priority": "high",
+    "status": "resolved",
+    "tags": [
+      "tag2",
+      "batch-2"
+    ],
+    "metadata": {
+      "source": "chat",
+      "browser": "Firefox",
+      "device_type": "mobile"
+    }
+  },
+  {
+    "customer_id": "cust_015",
+    "customer_email": "user15@example.com",
+    "customer_name": "Customer 15",
+    "subject": "Support request #15 regarding billing question",
+    "description": "Detailed description for ticket 15 with enough characters for validation.",
+    "category": "billing_question",
+    "priority": "medium",
+    "status": "closed",
+    "tags": [
+      "tag3",
+      "batch-2"
+    ],
+    "metadata": {
+      "source": "phone",
+      "browser": "Chrome",
+      "device_type": "tablet"
+    }
+  },
+  {
+    "customer_id": "cust_016",
+    "customer_email": "user16@example.com",
+    "customer_name": "Customer 16",
+    "subject": "Support request #16 regarding feature request",
+    "description": "Detailed description for ticket 16 with enough characters for validation.",
+    "category": "feature_request",
+    "priority": "low",
+    "status": "new",
+    "tags": [
+      "tag1",
+      "batch-2"
+    ],
+    "metadata": {
+      "source": "web_form",
+      "browser": "Firefox",
+      "device_type": "desktop"
+    }
+  },
+  {
+    "customer_id": "cust_017",
+    "customer_email": "user17@example.com",
+    "customer_name": "Customer 17",
+    "subject": "Support request #17 regarding bug report",
+    "description": "Detailed description for ticket 17 with enough characters for validation.",
+    "category": "bug_report",
+    "priority": "urgent",
+    "status": "in_progress",
+    "tags": [
+      "tag2",
+      "batch-2"
+    ],
+    "metadata": {
+      "source": "email",
+      "browser": "Chrome",
+      "device_type": "mobile"
+    }
+  },
+  {
+    "customer_id": "cust_018",
+    "customer_email": "user18@example.com",
+    "customer_name": "Customer 18",
+    "subject": "Support request #18 regarding other",
+    "description": "Detailed description for ticket 18 with enough characters for validation.",
+    "category": "other",
+    "priority": "high",
+    "status": "waiting_customer",
+    "tags": [
+      "tag3",
+      "batch-2"
+    ],
+    "metadata": {
+      "source": "api",
+      "browser": "Firefox",
+      "device_type": "tablet"
+    }
+  },
+  {
+    "customer_id": "cust_019",
+    "customer_email": "user19@example.com",
+    "customer_name": "Customer 19",
+    "subject": "Support request #19 regarding account access",
+    "description": "Detailed description for ticket 19 with enough characters for validation.",
+    "category": "account_access",
+    "priority": "medium",
+    "status": "resolved",
+    "tags": [
+      "tag1",
+      "batch-2"
+    ],
+    "metadata": {
+      "source": "chat",
+      "browser": "Chrome",
+      "device_type": "desktop"
+    }
+  },
+  {
+    "customer_id": "cust_020",
+    "customer_email": "user20@example.com",
+    "customer_name": "Customer 20",
+    "subject": "Support request #20 regarding technical issue",
+    "description": "Detailed description for ticket 20 with enough characters for validation.",
+    "category": "technical_issue",
+    "priority": "low",
+    "status": "closed",
+    "tags": [
+      "tag2",
+      "batch-2"
+    ],
+    "metadata": {
+      "source": "phone",
+      "browser": "Firefox",
+      "device_type": "mobile"
+    }
+  }
+]

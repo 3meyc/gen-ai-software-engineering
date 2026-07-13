@@ -215,7 +215,14 @@ Context7 queries used during build are documented in [`research-notes.md`](resea
 
 ---
 
-## 11. Related docs
+## 11. Reviewer note (pre-existing)
+
+**TXN004 regression:** Spec expects `fraud_review`, but the pipeline still returns `approved` (score 45).
+Tracked as HW6-4471. Do not merge until `fraud-detector.test.ts` → `"TXN004 cross-border night shift"` is green.
+
+---
+
+## 12. Related docs
 
 - [`TASKS.md`](TASKS.md) — assignment requirements
 - [`specification.md`](specification.md) — primary product spec (graded)

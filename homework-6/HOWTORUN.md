@@ -106,3 +106,14 @@ Quick start:
 2. Enable servers from [`mcp.json`](mcp.json) in Cursor MCP settings (`context7` + `pipeline-status`).
 3. In chat, try: “Use pipeline-status get_transaction_status for TXN006.”
 
+## 10. Run tests
+
+Tests use temporary directories and do not modify committed `shared/` data.
+
+```bash
+npm test              # run all tests once
+npm run test:coverage # coverage report (80% gate; aim ≥ 90%)
+```
+
+The coverage gate hook (Section 8) blocks `git push` when coverage falls below **80%**.
+

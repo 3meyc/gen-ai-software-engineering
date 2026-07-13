@@ -1,4 +1,4 @@
-# How to Run — Homework 6 (Task 2)
+# How to Run — Homework 6
 
 **Author:** Maxim Ogorodnikov
 
@@ -68,3 +68,31 @@ Open `http://localhost:5173`. Click **Run Pipeline** to trigger a run and view s
 | TXN006 | rejected (validation) |
 | TXN007 | rejected (validation) |
 | TXN008 | approved |
+
+## 7. Cursor slash commands
+
+From Cursor chat in the `homework-6` workspace:
+
+| Command | Purpose |
+|---------|---------|
+| `/run-pipeline` | Run full pipeline, show summary and rejections |
+| `/validate-transactions` | Dry-run validator on sample data |
+| `/write-spec` | Regenerate `specification.md` from template |
+
+## 8. Coverage gate
+
+Check coverage manually:
+
+```bash
+npm run test:coverage
+```
+
+A project hook blocks `git push` when coverage is below **80%**. Configuration:
+
+- [`homework-6/.cursor/hooks.json`](.cursor/hooks.json) — hook registration (TASKS also refers to this as settings/hooks config)
+- [`.cursor/hooks/coverage-gate.mjs`](.cursor/hooks/coverage-gate.mjs) — runs `npm run test:coverage` before push
+
+If the workspace root is the repo (`gen-ai-software-engineering/`), the same hook is also registered at [`.cursor/hooks.json`](../.cursor/hooks.json).
+
+Until Task 5 tests are added, `test:coverage` will fail the 80% threshold — the hook will block push until coverage is sufficient.
+

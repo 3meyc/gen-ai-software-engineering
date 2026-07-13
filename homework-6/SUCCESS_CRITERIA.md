@@ -1,7 +1,7 @@
 # HW6 Success Criteria (live checklist)
 
 > Update status during execution: ⬜ pending · ✅ done · ❌ blocked  
-> Last updated: Task 2 complete
+> Last updated: Task 3 complete
 
 ---
 
@@ -30,11 +30,11 @@
 
 ## Task 3 — Skills & Hooks (Agent 3)
 
-- [ ] `.cursor/commands/run-pipeline.md` — runs full pipeline via slash command
-- [ ] `.cursor/commands/validate-transactions.md` — dry-run validator
-- [ ] Coverage gate hook configured — blocks push if coverage < 80%
-- [ ] Screenshot: `docs/screenshots/skill-run-pipeline.png`
-- [ ] Screenshot: `docs/screenshots/hook-trigger.png`
+- [x] `.cursor/commands/run-pipeline.md` — runs full pipeline via slash command
+- [x] `.cursor/commands/validate-transactions.md` — dry-run validator
+- [x] Coverage gate hook configured — blocks push if coverage < 80%
+- [x] Screenshot: `docs/screenshots/skill-run-pipeline.png`
+- [x] Screenshot: `docs/screenshots/hook-trigger.png`
 
 ---
 
@@ -70,8 +70,8 @@
 | Pipeline runs to completion with no errors | ✅ |
 | All stages write valid JSON records to `shared/` directories | ✅ |
 | Simple front-end runs and shows pipeline output or status | ✅ |
-| `/run-pipeline` skill executes the pipeline via AI | ⬜ |
-| Coverage gate hook blocks push if coverage < 80% | ⬜ |
+| `/run-pipeline` skill executes the pipeline via AI | ✅ |
+| Coverage gate hook blocks push if coverage < 80% | ✅ |
 | `mcp.json` has context7 and custom MCP; both respond | ⬜ |
 | Test coverage meets gate (≥ 80%); aim for ≥ 90% | ⬜ |
 | `README.md` includes **your name** and ASCII pipeline diagram | ⬜ |
@@ -87,7 +87,7 @@
 - [x] Sample transactions analyzed; expected outcomes documented in spec
 - [x] One pipeline stage implemented and tested before starting the next
 - [x] context7 queries planned / documented for framework lookups (Hono, decimal.js, Svelte)
-- [ ] `/run-pipeline` skill set up for one-command demo
+- [x] `/run-pipeline` skill set up for one-command demo
 - [ ] Screenshots captured during development (not only at the end)
 - [ ] Presentation PDF generated before deadline and verified from PR link
 
@@ -97,3 +97,4 @@
 
 - **Task 1 done (2026-07-13):** Delivered `specification.md`, `agents.md`, `specification-TEMPLATE-hint.md`, `.cursor/commands/write-spec.md`. Third stage: Compliance Check. TXN004 expected `approved` (fraud score 45 < 50 threshold).
 - **Task 2 done (2026-07-13):** Pipeline, Hono API, Svelte dashboard, `research-notes.md`, `HOWTORUN.md`. Verified `npm run pipeline` summary: 4 approved, 2 fraud_review, 2 rejected, 2 compliance_flagged. Frontend builds successfully.
+- **Task 3 done (2026-07-13):** Slash commands `/run-pipeline`, `/validate-transactions`; `vitest.config.ts` with 80% thresholds; `.cursor/hooks.json` + `coverage-gate.mjs` (blocks `git push` when coverage < 80%). Hook verified: deny on `git push`, allow on other commands. Screenshots: `skill-run-pipeline.png`, `hook-trigger.png`. Full test suite deferred to Task 5.

@@ -9,7 +9,8 @@
     "dev:api": "tsx watch src/api/server.ts",
     "dev": "npm run dev --prefix frontend",
     "build": "npm run build --prefix frontend",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "Maxim Ogorodnikov",
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "@types/node": "^25.7.0",
+    "@vitest/coverage-v8": "^4.1.6",
     "tsx": "^4.21.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.6"

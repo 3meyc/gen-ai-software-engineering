@@ -152,12 +152,38 @@ homework-6/
   tests/
   mcp/
   docs/screenshots/
+  docs/screenshots/
   .cursor/commands/
+  .cursor/hooks.json
+  .cursor/hooks/
 ```
 
 ---
 
-## 7. Repo-root skills (reuse)
+## 7. Cursor commands (skills)
+
+| Command | File | Purpose |
+|---------|------|---------|
+| `/write-spec` | [`.cursor/commands/write-spec.md`](.cursor/commands/write-spec.md) | Regenerate specification from template |
+| `/run-pipeline` | [`.cursor/commands/run-pipeline.md`](.cursor/commands/run-pipeline.md) | End-to-end pipeline run + results summary |
+| `/validate-transactions` | [`.cursor/commands/validate-transactions.md`](.cursor/commands/validate-transactions.md) | Validator dry-run on sample data |
+
+---
+
+## 8. Hooks
+
+Coverage gate blocks `git push` when test coverage is below **80%**.
+
+| File | Role |
+|------|------|
+| [`.cursor/hooks.json`](.cursor/hooks.json) | Registers `beforeShellExecution` hook (TASKS checklist: coverage gate hook / `settings.json` equivalent) |
+| [`.cursor/hooks/coverage-gate.mjs`](.cursor/hooks/coverage-gate.mjs) | Runs `npm run test:coverage`; denies push on failure |
+
+When the workspace is the repo root, see also [`../.cursor/hooks.json`](../.cursor/hooks.json).
+
+---
+
+## 9. Repo-root skills (reuse)
 
 | Skill | When |
 |-------|------|
@@ -168,7 +194,7 @@ homework-6/
 
 ---
 
-## 8. MCP & context7 (Task 2+)
+## 10. MCP & context7 (Task 2+)
 
 Agent 2 should use **context7** during code generation to look up:
 
@@ -182,7 +208,7 @@ Custom MCP server (`pipeline-status`) exposes `get_transaction_status`, `list_pi
 
 ---
 
-## 9. Related docs
+## 11. Related docs
 
 - [`TASKS.md`](TASKS.md) — assignment requirements
 - [`specification.md`](specification.md) — primary product spec (graded)

@@ -4,6 +4,8 @@
 
 **Workspace:** Work only under `homework-4/` unless the user explicitly expands scope.
 
+**Sample app (Task 5):** Svelte 5 + Vite single-page leave request UI in `src/`. Logic in `src/lib/`; UI in `src/App.svelte`. Run with `npm run dev`.
+
 ---
 
 ## 1. Pipeline context

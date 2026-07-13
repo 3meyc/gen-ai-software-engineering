@@ -2,23 +2,24 @@
 
 > **Student name:** Max Ogorodnikov  
 > **AI tools used:** Cursor (IDE, Agent mode), Cursor CLI  
-> **Status:** Tasks 1–4 complete; Task 5 (sample mini-app) pending
+> **Status:** Tasks 1–5 complete (app with seeded bugs; pipeline fix is a separate step)
 
 ---
 
 ## Summary
 
-Implements the required **four-agent pipeline** for homework 4:
+Implements the required **four-agent pipeline** plus a **Svelte 5 leave request UI** (day off, vacation, sick leave) with intentional bugs for the pipeline to fix later.
 
-1. **Bug Research Verifier** — fact-checks research and rates quality  
-2. **Bug Fixer** — applies implementation plan and runs tests  
-3. **Security Verifier** — security report on changed code (no edits)  
-4. **Unit Test Generator** — FIRST-principled tests for changed code  
-
-Single-command run: `npm run pipeline` from this folder.
+| Component | Description |
+|-----------|-------------|
+| **Sample app** | Single-page Svelte UI — `npm run dev` |
+| **4-agent pipeline** | `npm run pipeline` |
+| **Seeded defects** | Documented in [`context/bugs/BUG-001/bug-context.md`](context/bugs/BUG-001/bug-context.md) |
 
 | Deliverable | Path |
 |-------------|------|
+| Application source | [`src/`](src/) |
+| Unit tests | [`test/`](test/) |
 | Agent definitions | [`agents/`](agents/) |
 | Skills | [`skills/`](skills/) |
 | Agent guidelines | [`agents.md`](agents.md) |
@@ -60,20 +61,28 @@ Detail: [`agents.md` §3](agents.md#3-model-selection-rationale).
 ```bash
 cd homework-4
 npm install
-npm run pipeline -- --dry-run   # validate config
-npm run pipeline                # full run (requires Cursor CLI)
-npm test
+npm run dev          # leave request UI → http://localhost:5173
+npm test             # unit tests (pass with current buggy behavior)
+npm run pipeline -- --dry-run   # validate pipeline config
+npm run pipeline     # fix bugs via agents (separate step)
 ```
 
-**Prerequisites:** `context/bugs/BUG-001/research/codebase-research.md` and `implementation-plan.md` must exist (stub seeded; Task 5 replaces with real app research).
+**Demo manager token:** `mgr-approve-2026`
+
+### Seeded bugs (before pipeline)
+
+| ID | Issue |
+|----|-------|
+| BUG-001a | Leave days off by one (inclusive range) |
+| BUG-001b | End date before start date accepted |
+| BUG-001c | Loose `==` token comparison |
+| BUG-001d | XSS via `{@html}` reason preview |
+
+Details: [`context/bugs/BUG-001/bug-context.md`](context/bugs/BUG-001/bug-context.md)
 
 ---
 
-## Task 5 boundary
-
-The sample mini-application (`src/`, seeded bugs, security issue) will be added in **Task 5**. Until then, pipeline stubs use `TBD` markers in research/plan files.
-
----
+## Pipeline (separate step)
 
 ## Screenshots
 

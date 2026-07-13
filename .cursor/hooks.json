@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": "node homework-6/.cursor/hooks/coverage-gate.mjs",
+        "matcher": "git\\s+push",
+        "failClosed": true
+      }
+    ]
+  }
+}

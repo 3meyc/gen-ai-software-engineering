@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
+    "pipeline-status": {
+      "command": "npx",
+      "args": [
+        "tsx",
+        "C:/Users/OhorodnikovMaksym/DEV/AAI/gen-ai-software-engineering/homework-6/mcp/server.ts"
+      ]
+    }
+  }
+}

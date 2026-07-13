@@ -1,9 +1,12 @@
 {
   "name": "homework-4",
   "version": "1.0.0",
-  "description": "Homework 4: 4-agent bug-fix pipeline",
+  "description": "Homework 4: 4-agent bug-fix pipeline + leave request UI",
   "type": "module",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "pipeline": "tsx scripts/run-pipeline.ts",
     "test": "vitest run",
     "test:watch": "vitest"
@@ -11,12 +14,21 @@
   "keywords": [],
   "author": "Max Ogorodnikov",
   "license": "MIT",
+  "dependencies": {
+    "svelte": "^5.39.0"
+  },
   "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^6.2.0",
     "@types/cross-spawn": "^6.0.6",
     "@types/node": "^25.7.0",
     "cross-spawn": "^7.0.6",
+    "svelte-check": "^4.3.0",
     "tsx": "^4.21.0",
     "typescript": "^6.0.3",
+    "vite": "^7.1.0",
     "vitest": "^4.1.6"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true
   }
 }

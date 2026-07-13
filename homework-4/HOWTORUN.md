@@ -1,18 +1,72 @@
 # How to Run — Homework 4
 
-Step-by-step guide to run the 4-agent pipeline and tests.
+Step-by-step guide to run the **leave request UI**, tests, and the 4-agent pipeline.
 
 ---
 
 ## 1. Prerequisites
 
 - **Node.js** 18+ (20+ recommended)
-- **Cursor CLI** (`agent` command)
-- **Cursor account** with API access (`agent login` or `CURSOR_API_KEY`)
+- **Cursor CLI** (`agent` command) — only for `npm run pipeline`
+- **Cursor account** with API access — only for pipeline
 
 ---
 
-## 2. Install Cursor CLI
+## 2. Install dependencies
+
+```bash
+cd homework-4
+npm install
+```
+
+---
+
+## 3. Run the leave request app (Svelte)
+
+```bash
+npm run dev
+```
+
+Open **http://localhost:5173**
+
+### Try the form
+
+| Field | Example |
+|-------|---------|
+| Employee name | Your name |
+| Leave type | Vacation |
+| Start / end date | 2026-07-01 → 2026-07-03 |
+| Reason | Family trip |
+| Manager token | `mgr-approve-2026` |
+
+### Known bugs (before pipeline)
+
+- **Days count:** Jul 1–3 shows **2** days (should be 3)
+- **Invalid range:** End before start still submits
+- **XSS demo:** Reason with HTML/script renders unsanitized in preview
+
+See [`context/bugs/BUG-001/bug-context.md`](context/bugs/BUG-001/bug-context.md).
+
+### Production build (optional)
+
+```bash
+npm run build
+npm run preview
+```
+
+---
+
+## 4. Run tests
+
+```bash
+npm test
+```
+
+Tests assert **current buggy behavior** so they pass before the pipeline fix step.
+
+---
+
+## 5. Install Cursor CLI (pipeline only)
 
 ### Windows (PowerShell)
 
@@ -35,7 +89,7 @@ agent status
 
 ---
 
-## 3. Authenticate
+## 6. Authenticate (pipeline only)
 
 **Option A — interactive login**
 
@@ -59,23 +113,9 @@ Keys: [Cursor Dashboard → Integrations](https://cursor.com/dashboard/integrati
 
 ---
 
-## 4. Install homework dependencies
+## 7. Run the pipeline (fix bugs — separate step)
 
-```bash
-cd homework-4
-npm install
-```
-
----
-
-## 5. Verify stub inputs exist
-
-Before running the pipeline, confirm:
-
-| File | Status |
-|------|--------|
-| `context/bugs/BUG-001/research/codebase-research.md` | Seeded stub (Task 5 replaces) |
-| `context/bugs/BUG-001/implementation-plan.md` | Seeded stub (Task 5 replaces) |
+Inputs are ready at `context/bugs/BUG-001/research/codebase-research.md` and `implementation-plan.md`.
 
 Override bug folder:
 
@@ -87,11 +127,7 @@ BUG_ID=BUG-001 npm run pipeline
 $env:BUG_ID = "BUG-001"; npm run pipeline
 ```
 
----
-
-## 6. Run the pipeline
-
-### Dry run (no agent calls — validates config)
+### Dry run
 
 ```bash
 npm run pipeline -- --dry-run
@@ -113,16 +149,6 @@ Expected outputs: see [docs/agents/README.md](docs/agents/README.md) I/O matrix.
 
 ---
 
-## 7. Run tests
-
-```bash
-npm test
-```
-
-Until Task 5 adds the mini-app, only a placeholder test runs.
-
----
-
 ## 8. Troubleshooting
 
 | Issue | Fix |
@@ -130,7 +156,7 @@ Until Task 5 adds the mini-app, only a placeholder test runs.
 | `agent: command not found` | Install Cursor CLI (step 2); restart terminal |
 | Auth errors | Run `agent login` or set `CURSOR_API_KEY` |
 | Preflight missing input | Ensure `codebase-research.md` and `implementation-plan.md` exist |
-| TBD warning | Expected before Task 5; replace stubs with real research |
+| TBD warning | Removed — research/plan reference real `src/` files |
 | Step failed, output missing | Re-run step; check agent had write access (`--force`) |
 
 ---

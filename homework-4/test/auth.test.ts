@@ -10,8 +10,12 @@ describe("isManagerTokenValid", () => {
     expect(isManagerTokenValid("wrong-token")).toBe(false);
   });
 
-  it("BUG-001c: uses loose equality (documented security smell)", () => {
-    // Loose == is used in implementation; this test documents current behavior
-    expect(isManagerTokenValid(MANAGER_TOKEN)).toBe(true);
+  it("uses strict equality for token comparison", () => {
+    const boxedToken = new String(MANAGER_TOKEN) as unknown as string;
+    expect(isManagerTokenValid(boxedToken)).toBe(false);
+  });
+
+  it("rejects empty token", () => {
+    expect(isManagerTokenValid("")).toBe(false);
   });
 });

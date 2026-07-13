@@ -23,6 +23,10 @@ export function validateLeaveRequest(request: LeaveRequest): ValidationResult {
     errors.push("End date is required.");
   }
 
+  if (request.startDate && request.endDate && request.endDate < request.startDate) {
+    errors.push("End date must be on or after start date.");
+  }
+
   if (!request.reason.trim()) {
     errors.push("Reason is required.");
   }

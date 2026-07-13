@@ -14,7 +14,7 @@ export function calculateLeaveDays(startDate: string, endDate: string): number {
   }
 
   // Intentional bug: should be Math.floor(diff / MS_PER_DAY) + 1 for inclusive range
-  return Math.floor(diff / MS_PER_DAY);
+  return Math.floor(diff / MS_PER_DAY) + 1;
 }
 
 function parseDateOnly(isoDate: string): Date {

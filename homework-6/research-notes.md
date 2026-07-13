@@ -1,6 +1,6 @@
-# Research Notes — HW6 Task 2
+# Research Notes — HW6
 
-Context7 queries used during pipeline code generation.
+Context7 queries used during pipeline code generation. MCP configuration: [`mcp.json`](mcp.json). Custom server: [`mcp/server.ts`](mcp/server.ts). See [`docs/MCP.md`](docs/MCP.md).
 
 ---
 

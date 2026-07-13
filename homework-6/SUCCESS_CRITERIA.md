@@ -1,7 +1,7 @@
 # HW6 Success Criteria (live checklist)
 
 > Update status during execution: ⬜ pending · ✅ done · ❌ blocked  
-> Last updated: Task 3 complete
+> Last updated: Task 4 complete
 
 ---
 
@@ -40,10 +40,11 @@
 
 ## Task 4 — MCP Integration
 
-- [ ] `mcp.json` — context7 and pipeline-status servers configured
-- [ ] `mcp/server.ts` (or `.js`) — `get_transaction_status`, `list_pipeline_results`, `pipeline://summary`
-- [ ] context7 used during code generation (2+ queries in `research-notes.md`)
-- [ ] Screenshot: `docs/screenshots/mcp-interaction.png`
+- [x] `mcp.json` — context7 and pipeline-status servers configured
+- [x] `mcp/server.ts` — `get_transaction_status`, `list_pipeline_results`, `pipeline://summary`
+- [x] context7 used during code generation (2+ queries in `research-notes.md`)
+- [x] Screenshot: `docs/screenshots/mcp-interaction.png`
+- [x] Human-readable MCP guide: `docs/MCP.md`
 
 ---
 
@@ -72,7 +73,7 @@
 | Simple front-end runs and shows pipeline output or status | ✅ |
 | `/run-pipeline` skill executes the pipeline via AI | ✅ |
 | Coverage gate hook blocks push if coverage < 80% | ✅ |
-| `mcp.json` has context7 and custom MCP; both respond | ⬜ |
+| `mcp.json` has context7 and custom MCP; both respond | ✅ |
 | Test coverage meets gate (≥ 80%); aim for ≥ 90% | ⬜ |
 | `README.md` includes **your name** and ASCII pipeline diagram | ⬜ |
 | `HOWTORUN.md` has numbered steps from setup to demo | ✅ |
@@ -97,4 +98,5 @@
 
 - **Task 1 done (2026-07-13):** Delivered `specification.md`, `agents.md`, `specification-TEMPLATE-hint.md`, `.cursor/commands/write-spec.md`. Third stage: Compliance Check. TXN004 expected `approved` (fraud score 45 < 50 threshold).
 - **Task 2 done (2026-07-13):** Pipeline, Hono API, Svelte dashboard, `research-notes.md`, `HOWTORUN.md`. Verified `npm run pipeline` summary: 4 approved, 2 fraud_review, 2 rejected, 2 compliance_flagged. Frontend builds successfully.
-- **Task 3 done (2026-07-13):** Slash commands `/run-pipeline`, `/validate-transactions`; `vitest.config.ts` with 80% thresholds; `.cursor/hooks.json` + `coverage-gate.mjs` (blocks `git push` when coverage < 80%). Hook verified: deny on `git push`, allow on other commands. Screenshots: `skill-run-pipeline.png`, `hook-trigger.png`. Full test suite deferred to Task 5.
+- **Task 3 done (2026-07-13):** Slash commands `/run-pipeline`, `/validate-transactions`; coverage gate hook; screenshots `skill-run-pipeline.png`, `hook-trigger.png`.
+- **Task 4 done (2026-07-13):** `mcp.json`, `mcp/server.ts` + `results-reader.ts`; `docs/MCP.md` with screenshot guide; verified reader returns 8 transactions; `mcp-interaction.png` saved.

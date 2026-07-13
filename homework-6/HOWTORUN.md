@@ -96,3 +96,13 @@ If the workspace root is the repo (`gen-ai-software-engineering/`), the same hoo
 
 Until Task 5 tests are added, `test:coverage` will fail the 80% threshold — the hook will block push until coverage is sufficient.
 
+## 9. MCP integration
+
+See **[`docs/MCP.md`](docs/MCP.md)** for full setup, server reference, example chat prompts, and how to capture `mcp-interaction.png`.
+
+Quick start:
+
+1. Run `npm run pipeline` so `shared/results/` has data.
+2. Enable servers from [`mcp.json`](mcp.json) in Cursor MCP settings (`context7` + `pipeline-status`).
+3. In chat, try: “Use pipeline-status get_transaction_status for TXN006.”
+

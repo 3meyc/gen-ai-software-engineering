@@ -151,6 +151,9 @@ homework-6/
   shared/{input,processing,output,results}/
   tests/
   mcp/
+    server.ts
+    results-reader.ts
+  mcp.json
   docs/screenshots/
   docs/screenshots/
   .cursor/commands/
@@ -194,17 +197,21 @@ When the workspace is the repo root, see also [`../.cursor/hooks.json`](../.curs
 
 ---
 
-## 10. MCP & context7 (Task 2+)
+## 10. MCP & context7
 
-Agent 2 should use **context7** during code generation to look up:
+Full guide: **[`docs/MCP.md`](docs/MCP.md)** (setup, tools, screenshot instructions).
 
-- Hono routing and `@hono/node-server`
-- `decimal.js` monetary arithmetic
-- Svelte 5 component patterns (front-end)
+| Server | Config | Purpose |
+|--------|--------|---------|
+| **context7** | [`mcp.json`](mcp.json) | Library docs lookup during development |
+| **pipeline-status** | [`mcp/server.ts`](mcp/server.ts) | Query `shared/results/` via MCP tools |
 
-Document at least 2 queries in `research-notes.md`.
+**Custom tools:** `get_transaction_status`, `list_pipeline_results`  
+**Resource:** `pipeline://summary`
 
-Custom MCP server (`pipeline-status`) exposes `get_transaction_status`, `list_pipeline_results`, and resource `pipeline://summary`.
+Context7 queries used during build are documented in [`research-notes.md`](research-notes.md) (minimum 2 required; 3 recorded).
+
+> TASKS.md references `mcp/server.py` (Python/FastMCP). This project implements the equivalent custom server in TypeScript at `mcp/server.ts`.
 
 ---
 
@@ -214,3 +221,4 @@ Custom MCP server (`pipeline-status`) exposes `get_transaction_status`, `list_pi
 - [`specification.md`](specification.md) — primary product spec (graded)
 - [`SUCCESS_CRITERIA.md`](SUCCESS_CRITERIA.md) — live submission checklist
 - [`specification-TEMPLATE-hint.md`](specification-TEMPLATE-hint.md) — template for `/write-spec`
+- [`docs/MCP.md`](docs/MCP.md) — MCP setup, tools, screenshot guide

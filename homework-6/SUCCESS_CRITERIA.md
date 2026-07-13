@@ -1,7 +1,7 @@
 # HW6 Success Criteria (live checklist)
 
 > Update status during execution: ⬜ pending · ✅ done · ❌ blocked  
-> Last updated: Task 1 complete
+> Last updated: Task 2 complete
 
 ---
 
@@ -17,14 +17,14 @@
 
 ## Task 2 — Pipeline (Agent 2)
 
-- [ ] Orchestrator/runner runs end-to-end with no errors (`npm run pipeline` or equivalent)
-- [ ] Validation stage — required fields, valid amounts, ISO 4217 currency
-- [ ] Fraud detection stage — risk scoring (high-value, timing, cross-border)
-- [ ] Compliance check stage — reporting thresholds and final status
-- [ ] All stages write valid JSON records to `shared/` directories
-- [ ] All 8 transactions from `sample-transactions.json` appear in `shared/results/`
-- [ ] Simple front-end runs and shows pipeline output or status
-- [ ] `research-notes.md` — at least 2 context7 queries documented
+- [x] Orchestrator/runner runs end-to-end with no errors (`npm run pipeline` or equivalent)
+- [x] Validation stage — required fields, valid amounts, ISO 4217 currency
+- [x] Fraud detection stage — risk scoring (high-value, timing, cross-border)
+- [x] Compliance check stage — reporting thresholds and final status
+- [x] All stages write valid JSON records to `shared/` directories
+- [x] All 8 transactions from `sample-transactions.json` appear in `shared/results/`
+- [x] Simple front-end runs and shows pipeline output or status
+- [x] `research-notes.md` — at least 2 context7 queries documented
 
 ---
 
@@ -67,15 +67,15 @@
 |-----------|--------|
 | `specification.md` has all 5 sections and Low-Level Tasks per pipeline stage | ✅ |
 | Skill that generates spec from template is present | ✅ |
-| Pipeline runs to completion with no errors | ⬜ |
-| All stages write valid JSON records to `shared/` directories | ⬜ |
-| Simple front-end runs and shows pipeline output or status | ⬜ |
+| Pipeline runs to completion with no errors | ✅ |
+| All stages write valid JSON records to `shared/` directories | ✅ |
+| Simple front-end runs and shows pipeline output or status | ✅ |
 | `/run-pipeline` skill executes the pipeline via AI | ⬜ |
 | Coverage gate hook blocks push if coverage < 80% | ⬜ |
 | `mcp.json` has context7 and custom MCP; both respond | ⬜ |
 | Test coverage meets gate (≥ 80%); aim for ≥ 90% | ⬜ |
 | `README.md` includes **your name** and ASCII pipeline diagram | ⬜ |
-| `HOWTORUN.md` has numbered steps from setup to demo | ⬜ |
+| `HOWTORUN.md` has numbered steps from setup to demo | ✅ |
 | `docs/presentation.pdf` committed and linked in PR description | ⬜ |
 | 6 screenshots in `docs/screenshots/` and **in PR description** | ⬜ |
 
@@ -85,8 +85,8 @@
 
 - [x] Spec completed before any pipeline code
 - [x] Sample transactions analyzed; expected outcomes documented in spec
-- [ ] One pipeline stage implemented and tested before starting the next
-- [ ] context7 queries planned / documented for framework lookups (Hono, decimal.js, Svelte)
+- [x] One pipeline stage implemented and tested before starting the next
+- [x] context7 queries planned / documented for framework lookups (Hono, decimal.js, Svelte)
 - [ ] `/run-pipeline` skill set up for one-command demo
 - [ ] Screenshots captured during development (not only at the end)
 - [ ] Presentation PDF generated before deadline and verified from PR link
@@ -96,3 +96,4 @@
 ## Notes / blockers
 
 - **Task 1 done (2026-07-13):** Delivered `specification.md`, `agents.md`, `specification-TEMPLATE-hint.md`, `.cursor/commands/write-spec.md`. Third stage: Compliance Check. TXN004 expected `approved` (fraud score 45 < 50 threshold).
+- **Task 2 done (2026-07-13):** Pipeline, Hono API, Svelte dashboard, `research-notes.md`, `HOWTORUN.md`. Verified `npm run pipeline` summary: 4 approved, 2 fraud_review, 2 rejected, 2 compliance_flagged. Frontend builds successfully.

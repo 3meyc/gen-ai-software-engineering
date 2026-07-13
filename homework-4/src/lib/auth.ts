@@ -6,5 +6,5 @@ export const MANAGER_TOKEN = "mgr-approve-2026";
  * in other contexts; string "mgr-approve-2026" vs user input).
  */
 export function isManagerTokenValid(token: string): boolean {
-  return token == MANAGER_TOKEN;
+  return token === MANAGER_TOKEN;
 }

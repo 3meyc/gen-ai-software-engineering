@@ -24,12 +24,23 @@ describe("validateLeaveRequest", () => {
     expect(result.errors).toContain("Employee name is required.");
   });
 
-  it("BUG-001b: accepts end date before start date (validation gap)", () => {
+  it("rejects end date before start date", () => {
     const result = validateLeaveRequest({
       ...validRequest,
       startDate: "2026-08-10",
       endDate: "2026-08-01",
     });
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain("End date must be on or after start date.");
+  });
+
+  it("accepts equal start and end dates", () => {
+    const result = validateLeaveRequest({
+      ...validRequest,
+      startDate: "2026-08-01",
+      endDate: "2026-08-01",
+    });
     expect(result.valid).toBe(true);
+    expect(result.errors).toHaveLength(0);
   });
 });

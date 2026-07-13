@@ -25,6 +25,7 @@ Implements the required **four-agent pipeline** plus a **Svelte 5 leave request 
 | Agent guidelines | [`agents.md`](agents.md) |
 | Per-agent docs | [`docs/agents/`](docs/agents/) |
 | Bug context | [`context/bugs/BUG-001/`](context/bugs/BUG-001/) |
+| Pipeline report | [`docs/md-report.md`](docs/md-report.md) |
 | How to run | [`HOWTORUN.md`](HOWTORUN.md) |
 | Task spec | [`TASKS.md`](TASKS.md) |
 
@@ -82,7 +83,9 @@ Details: [`context/bugs/BUG-001/bug-context.md`](context/bugs/BUG-001/bug-contex
 
 ---
 
-## Pipeline (separate step)
+## Pipeline
+
+Full run summary (BUG-001): [`docs/pipeline-report.md`](docs/pipeline-report.md)
 
 ## Screenshots
 

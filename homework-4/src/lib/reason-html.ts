@@ -1,7 +1,15 @@
 /**
- * BUG-001d (security): Renders user reason as HTML without sanitization.
- * Used with {@html} in the UI — XSS risk if reason contains script tags.
+ * Formats user reason as safe HTML for preview display.
  */
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export function formatReasonAsHtml(reason: string): string {
-  return `<p class="reason-preview">${reason}</p>`;
+  return `<p class="reason-preview">${escapeHtml(reason)}</p>`;
 }
